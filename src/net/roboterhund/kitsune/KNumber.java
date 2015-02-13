@@ -75,7 +75,7 @@ public class KNumber {
 	 * @param numerator
 	 * @param denominator
 	 */
-	public KNumber (long numerator, long denominator) {
+	KNumber (long numerator, long denominator) {
 		setValue (numerator, denominator);
 	}
 
@@ -139,7 +139,7 @@ public class KNumber {
 	 * @param numerator
 	 * @param denominator
 	 */
-	public void setValue (long numerator, long denominator) {
+	void setValue (long numerator, long denominator) {
 		// store initial values
 		this.numerator = numerator;
 		this.denominator = denominator;
