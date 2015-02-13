@@ -159,6 +159,7 @@ public class KNumber {
 			this.denominator /= denominator;
 		}
 
+		// TODO optimize check
 		// check if fits in int
 		fitsInInt = (
 			(
