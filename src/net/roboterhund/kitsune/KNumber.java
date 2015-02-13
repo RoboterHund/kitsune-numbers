@@ -18,19 +18,40 @@ package net.roboterhund.kitsune;
 import java.math.BigDecimal;
 
 /**
+ * A mutable rational number container.
+ * <p>
+ * Values are stored in primitive data types.
+ * <p>
+ * <code>BigDecimal</code> is used as fallback,
+ * but methods in this package try to avoid
+ * unnecessary allocation.
  *
+ * @author RoboterHund87
+ * @version 1.0.0
  */
 public class KNumber {
 
+	/**
+	 * Default precision of numbers with infinite decimal expansion,
+	 * unless overridden by
+	 * {@link net.roboterhund.kitsune.KNumber#defaultPrecision}.
+	 */
 	public static final int DEFAULT_PRECISION = 24;
 
+	/**
+	 * Global setting of default precision
+	 * of numbers with infinite decimal expansion.
+	 * <p>
+	 * The default value is
+	 * {@link net.roboterhund.kitsune.KNumber#DEFAULT_PRECISION}.
+	 */
 	public static int defaultPrecision = DEFAULT_PRECISION;
 
 	/**
 	 * <code>int</code> size flag.
 	 * <p>
 	 * If <code>true</code>, both numerator and denominator
-	 * fit in a Java int/Integer.
+	 * fit in a Java <code>int</code>/<code>Integer</code>.
 	 */
 	boolean fitsInInt;
 
@@ -45,6 +66,8 @@ public class KNumber {
 	 * Denominator.
 	 * <p>
 	 * Stores both int and long number.
+	 * <p>
+	 * Implementation must ensure that denominator is never negative or zero.
 	 */
 	long denominator;
 
@@ -55,6 +78,8 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue()} call on existing object.
 	 */
 	public KNumber () {
 		setValue ();
@@ -62,8 +87,10 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(KNumber)} call on existing object.
 	 *
-	 * @param number
+	 * @param number number copied to <code>this</code>.
 	 */
 	public KNumber (KNumber number) {
 		setValue (number);
@@ -71,9 +98,12 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(long, long)} call on existing object.
 	 *
-	 * @param numerator
-	 * @param denominator
+	 * @param numerator numerator.
+	 * @param denominator denominator.
+	 * @deprecated // TODO remove
 	 */
 	KNumber (long numerator, long denominator) {
 		setValue (numerator, denominator);
@@ -81,8 +111,10 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(BigDecimal)} call on existing object.
 	 *
-	 * @param bigDecimal
+	 * @param bigDecimal value.
 	 */
 	public KNumber (BigDecimal bigDecimal) {
 		setValue (bigDecimal);
@@ -90,8 +122,10 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(long)} call on existing object.
 	 *
-	 * @param longValue
+	 * @param longValue integer value.
 	 */
 	public KNumber (long longValue) {
 		setValue (longValue);
@@ -99,8 +133,14 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(double)} call on existing object.
+	 * <p>
+	 * <b>Note</b>: actual value is subject to the limitations of
+	 * the <code>double</code> data type.
 	 *
-	 * @param doubleValue
+	 * @param doubleValue value,
+	 * not guaranteed to match source code representation.
 	 */
 	public KNumber (double doubleValue) {
 		setValue (doubleValue);
@@ -108,15 +148,19 @@ public class KNumber {
 
 	/**
 	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(double)} call on existing object.
 	 *
-	 * @param stringValue
+	 * @param stringValue string in format
+	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
+	 * (signed or unsigned integer with optional point followed by decimals).
 	 */
 	public KNumber (String stringValue) {
 		setValue (stringValue);
 	}
 
 	/**
-	 *
+	 * Set value to zero.
 	 */
 	public void setValue () {
 		fitsInInt = true;
@@ -126,7 +170,9 @@ public class KNumber {
 	}
 
 	/**
-	 * @param number
+	 * Copy value.
+	 *
+	 * @param number copied number.
 	 */
 	public void setValue (KNumber number) {
 		fitsInInt = number.fitsInInt;
@@ -136,8 +182,12 @@ public class KNumber {
 	}
 
 	/**
-	 * @param numerator
-	 * @param denominator
+	 * Set value.
+	 * <p>
+	 * The resulting fraction is automatically simplified.
+	 *
+	 * @param numerator numerator.
+	 * @param denominator denominator, must be positive and non-zero.
 	 */
 	void setValue (long numerator, long denominator) {
 		// store initial values
@@ -175,7 +225,9 @@ public class KNumber {
 	}
 
 	/**
-	 * @param bigDecimal
+	 * Set value.
+	 *
+	 * @param bigDecimal new value, assigned directly.
 	 */
 	public void setValue (BigDecimal bigDecimal) {
 		fitsInInt = false;
@@ -184,7 +236,9 @@ public class KNumber {
 	}
 
 	/**
-	 * @param longValue
+	 * Set integer value.
+	 *
+	 * @param longValue new value.
 	 */
 	public void setValue (long longValue) {
 		// store initial values
@@ -202,17 +256,27 @@ public class KNumber {
 	}
 
 	/**
-	 * TODO move all setValue methods with non-essential data types elsewhere
+	 * Set value.
+	 * <p>
+	 * <b>Note</b>: this method involves object creation and
+	 * is subject to the limitations of the <code>double</code> data type.
 	 *
-	 * @param doubleValue
+	 * @param doubleValue value,
+	 * not guaranteed to match source code representation.
 	 */
 	public void setValue (double doubleValue) {
+		// TODO move all setValue methods with non-essential data types elsewhere
 		// TODO replace with more efficient method
 		setValue (new BigDecimal (doubleValue).toPlainString ());
 	}
 
 	/**
-	 * @param stringValue
+	 * Set value from string.
+	 *
+	 * @param stringValue string in format
+	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
+	 * (signed or unsigned integer with optional point followed by decimals).
+	 * @throws java.lang.NumberFormatException unable to parse string.
 	 */
 	public void setValue (String stringValue) {
 		if (setLongIntValue (stringValue)) {
@@ -222,8 +286,11 @@ public class KNumber {
 	}
 
 	/**
-	 * @param stringValue
-	 * @return
+	 * Try to parse string and
+	 * set the numeric value as a simple fraction.
+	 *
+	 * @param stringValue string to parse.
+	 * @return <code>true</code> iff successful.
 	 */
 	private boolean setLongIntValue (String stringValue) {
 		try {
@@ -239,6 +306,7 @@ public class KNumber {
 					Long.parseLong (stringValue.substring (0, decPointPos));
 
 				// get decimals
+				// TODO check for invalid decimals substring
 				String decimals = stringValue.substring (decPointPos + 1);
 
 				// get denominator as scale of 10
@@ -283,7 +351,9 @@ public class KNumber {
 	/**
 	 * Convert to BigDecimal.
 	 *
-	 * @return BigDecimal, 24 decimals if infinite expansion.
+	 * @return BigDecimal, with
+	 * {@link net.roboterhund.kitsune.KNumber#defaultPrecision}
+	 * decimals if number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal () {
 		return toBigDecimal (defaultPrecision);
@@ -292,7 +362,10 @@ public class KNumber {
 	/**
 	 * Convert to BigDecimal.
 	 *
-	 * @return BigDecimal, 24 decimals if infinite expansion.
+	 * @param precision number of decimals to store if the
+	 * number has infinite decimal expansion.
+	 * @return BigDecimal, with specified precision if the
+	 * number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal (int precision) {
 		if (bigDecimal != null) {
@@ -318,7 +391,9 @@ public class KNumber {
 	}
 
 	/**
-	 *
+	 * If the number is stored as
+	 * {@link java.math.BigDecimal},
+	 * try to revert to a simple fraction representation.
 	 */
 	public void compact () {
 		if (bigDecimal != null) {

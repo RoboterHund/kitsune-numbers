@@ -268,6 +268,37 @@ public class KCalculatorTest {
 			3,
 			FITS_IN_LONG
 		);
+
+		/* * * * * */
+		a.setValue (Long.MAX_VALUE);
+		b.setValue (1);
+		calculator.add (a, b);
+		BigDecimal maxLongBigDecimal = new BigDecimal (Long.MAX_VALUE);
+		assertResultEquals (
+			BIGGER_THAN_INT,
+			result.numerator,
+			result.denominator,
+			maxLongBigDecimal.add (BigDecimal.ONE)
+		);
+		// continue
+
+		// the result does not revert to simple fraction representation
+		calculator.subtract (b);
+		assertResultEquals (
+			BIGGER_THAN_INT,
+			result.numerator,
+			result.denominator,
+			maxLongBigDecimal
+		);
+		// continue
+
+		result.compact ();
+		assertResultEquals (
+			BIGGER_THAN_INT,
+			Long.MAX_VALUE,
+			1,
+			FITS_IN_LONG
+		);
 	}
 
 	// check internal values of number

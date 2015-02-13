@@ -43,9 +43,9 @@ public abstract class CommonTest {
 		BigDecimal bigDecimal
 	) {
 		assertEquals ("fitsInInt", fitsInInt, testedNumber.fitsInInt);
+		assertEquals ("bigDecimal", bigDecimal, testedNumber.bigDecimal);
 		assertEquals ("numerator", numerator, testedNumber.numerator);
 		assertEquals ("denominator", denominator, testedNumber.denominator);
-		assertEquals ("bigDecimal", bigDecimal, testedNumber.bigDecimal);
 	}
 
 }
