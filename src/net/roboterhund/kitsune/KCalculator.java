@@ -83,8 +83,10 @@ public class KCalculator {
 					+ term_2.numerator * term_1.denominator,
 				term_1.denominator * term_2.denominator
 			);
+			return;
 
-		} else {
+		} else if (term_1.bigDecimal == null
+			&& term_2.bigDecimal == null) {
 			// long operation
 
 			if (term_1.denominator == 1) {
@@ -150,14 +152,14 @@ public class KCalculator {
 					}
 				}
 			}
-
-			// BigDecimal operation
-
-			result.setValue (
-				term_1.toBigDecimal ()
-					.add (term_2.toBigDecimal ())
-			);
 		}
+
+		// BigDecimal operation
+
+		result.setValue (
+			term_1.toBigDecimal ()
+				.add (term_2.toBigDecimal ())
+		);
 	}
 
 	/**
@@ -202,8 +204,10 @@ public class KCalculator {
 					- subtrahend.numerator * minuend.denominator,
 				minuend.denominator * subtrahend.denominator
 			);
+			return;
 
-		} else {
+		} else if (minuend.bigDecimal == null
+			&& subtrahend.bigDecimal == null) {
 			// long operation
 
 			if (minuend.denominator == 1) {
@@ -271,14 +275,14 @@ public class KCalculator {
 					}
 				}
 			}
-
-			// BigDecimal operation
-
-			result.setValue (
-				minuend.toBigDecimal ()
-					.subtract (subtrahend.toBigDecimal ())
-			);
 		}
+
+		// BigDecimal operation
+
+		result.setValue (
+			minuend.toBigDecimal ()
+				.subtract (subtrahend.toBigDecimal ())
+		);
 	}
 
 	/**
@@ -307,8 +311,10 @@ public class KCalculator {
 				factor_1.numerator * factor_2.numerator,
 				factor_1.denominator * factor_2.denominator
 			);
+			return;
 
-		} else {
+		} else if (factor_1.bigDecimal == null
+			&& factor_2.bigDecimal == null) {
 			// long operation
 
 			if (multiply (factor_1.numerator, factor_2.numerator)) {
@@ -341,14 +347,14 @@ public class KCalculator {
 					}
 				}
 			}
-
-			// BigDecimal operation
-
-			result.setValue (
-				factor_1.toBigDecimal ()
-					.multiply (factor_2.toBigDecimal ())
-			);
 		}
+
+		// BigDecimal operation
+
+		result.setValue (
+			factor_1.toBigDecimal ()
+				.multiply (factor_2.toBigDecimal ())
+		);
 	}
 
 	/**
@@ -388,76 +394,79 @@ public class KCalculator {
 	 * @param divisor number by which to divide.
 	 */
 	public void divide (KNumber dividend, KNumber divisor) {
+		if (dividend.bigDecimal == null
+			&& divisor.bigDecimal == null) {
 
-		if (dividend.denominator == 1) {
-			if (divisor.denominator == 1) {
-				// dividend, divisor integers
-				result.setValue (
-					dividend.numerator,
-					divisor.numerator
-				);
-				return;
+			if (dividend.denominator == 1) {
+				if (divisor.denominator == 1) {
+					// dividend, divisor integers
+					result.setValue (
+						dividend.numerator,
+						divisor.numerator
+					);
+					return;
+
+				} else {
+					// dividend integer
+					if (dividend.fitsInInt
+						&& divisor.fitsInInt) {
+						// int operation
+
+						result.setValue (
+							dividend.numerator * divisor.denominator,
+							divisor.numerator
+						);
+						return;
+
+					} else {
+						// long operation
+
+						if (multiply (dividend.numerator, divisor.denominator)) {
+							result.setValue (
+								intResult,
+								divisor.numerator
+							);
+							return;
+						}
+					}
+				}
 
 			} else {
-				// dividend integer
 				if (dividend.fitsInInt
 					&& divisor.fitsInInt) {
 					// int operation
 
 					result.setValue (
 						dividend.numerator * divisor.denominator,
-						divisor.numerator
+						dividend.denominator * divisor.numerator
 					);
 					return;
 
 				} else {
 					// long operation
 
-					if (multiply (dividend.numerator, divisor.denominator)) {
-						result.setValue (
-							intResult,
-							divisor.numerator
-						);
-						return;
-					}
-				}
-			}
-
-		} else {
-			if (dividend.fitsInInt
-				&& divisor.fitsInInt) {
-				// int operation
-
-				result.setValue (
-					dividend.numerator * divisor.denominator,
-					dividend.denominator * divisor.numerator
-				);
-				return;
-
-			} else {
-				// long operation
-
-				if (divisor.denominator == 1) {
-					// divisor integer
-					if (multiply (dividend.denominator, divisor.numerator)) {
-						result.setValue (
-							dividend.numerator,
-							intResult
-						);
-						return;
-					}
-
-				} else {
-					// dividend, divisor not integers
-					if (multiply (dividend.numerator, divisor.denominator)) {
-						long numerator = intResult;
-
+					if (divisor.denominator == 1) {
+						// divisor integer
 						if (multiply (dividend.denominator, divisor.numerator)) {
 							result.setValue (
-								numerator,
+								dividend.numerator,
 								intResult
 							);
 							return;
+						}
+
+					} else {
+						// dividend, divisor not integers
+						if (multiply (dividend.numerator, divisor.denominator)) {
+							long numerator = intResult;
+
+							if (multiply (dividend.denominator, divisor.numerator)) {
+								result.setValue (
+									numerator,
+									intResult
+								);
+								return;
+							}
 						}
 					}
 				}
@@ -487,14 +496,21 @@ public class KCalculator {
 	 */
 	private boolean add (long term_1, long term_2) {
 		if (term_1 >= 0) {
-			if (term_2 > 0 && term_1 > Long.MAX_VALUE - term_2) {
+			if (term_2 > 0
+				&& term_1 > Long.MAX_VALUE - term_2) {
+				// term_1 + term_2 > Long.MAX_VALUE
 				return false;
 			}
+
 		} else {
-			if (term_2 < 0 && term_1 < Long.MIN_VALUE - term_2) {
+			// term_1 < 0
+			if (term_2 < 0
+				&& term_1 < Long.MIN_VALUE - term_2) {
+				// term_1 + term_2 < Long.MIN_VALUE
 				return false;
 			}
 		}
+
 		intResult = term_1 + term_2;
 		return true;
 	}
@@ -509,15 +525,23 @@ public class KCalculator {
 	 * @return <code>true</code> iff operation completed without overflow.
 	 */
 	private boolean subtract (long minuend, long subtrahend) {
-		if (minuend < 0) {
-			if (minuend < Long.MIN_VALUE + subtrahend) {
+		if (minuend >= 0) {
+			if (subtrahend < 0
+				&& minuend > Long.MAX_VALUE + subtrahend) {
+				// minuend - subtrahend > Long.MAX_VALUE
 				return false;
 			}
+
 		} else {
-			if (minuend > Long.MAX_VALUE + subtrahend) {
+			// minuend < 0
+			if (
+				subtrahend > 0
+					&& minuend < Long.MIN_VALUE + subtrahend) {
+				// minuend - subtrahend < Long.MIN_VALUE
 				return false;
 			}
 		}
+
 		intResult = minuend - subtrahend;
 		return true;
 	}
@@ -535,18 +559,28 @@ public class KCalculator {
 		if (factor_2 > 0) {
 			if (factor_1 > Long.MAX_VALUE / factor_2
 				|| factor_1 < Long.MIN_VALUE / factor_2) {
+				//    factor_1 * factor_2 > Long.MAX_VALUE
+				// or factor_1 * factor_2 < Long.MIN_VALUE
 				return false;
 			}
+
 		} else if (factor_2 < -1) {
 			if (factor_1 < Long.MAX_VALUE / factor_2
 				|| factor_1 > Long.MIN_VALUE / factor_2) {
+				//    factor_1 * factor_2 > Long.MAX_VALUE
+				// or factor_1 * factor_2 < Long.MIN_VALUE
+				// factor_2 is negative => order inverted
 				return false;
 			}
+
 		} else if (factor_2 == -1) {
 			if (factor_1 == Long.MIN_VALUE) {
+				// factor_1 * factor_2 =
+				// Long.MIN_VALUE * -1 = Long.MAX_VALUE + 1
 				return false;
 			}
 		}
+
 		intResult = factor_1 * factor_2;
 		return true;
 	}

@@ -196,6 +196,17 @@ public class KCalculatorTest {
 			1,
 			FITS_IN_LONG
 		);
+
+		/* * * * * */
+		a.setValue (-1);
+		b.setValue (Long.MIN_VALUE);
+		calculator.multiply (a, b);
+		assertResultEquals (
+			BIGGER_THAN_INT,
+			result.numerator,
+			result.denominator,
+			new BigDecimal (Long.MAX_VALUE).add (BigDecimal.ONE)
+		);
 	}
 
 	@Test
