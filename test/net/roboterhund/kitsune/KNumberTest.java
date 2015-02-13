@@ -1,3 +1,18 @@
+/*
+ Copyright 2015 RoboterHund87
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package net.roboterhund.kitsune;
 
 import org.junit.Test;
@@ -5,16 +20,16 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static org.junit.Assert.*;
+import static net.roboterhund.kitsune.CommonTest.BIGGER_THAN_INT;
+import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
+import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
+import static net.roboterhund.kitsune.CommonTest.IS_INTEGER;
+import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
+import static org.junit.Assert.assertEquals;
 
 public class KNumberTest {
 
-	private static final boolean FITS_IN_INT = true;
-	private static final boolean BIGGER_THAN_INT = false;
-	private static final long IS_INTEGER = 1;
-	private static final BigDecimal FITS_IN_LONG = null;
-
-	KNumber testedNumber;
+	private KNumber testedNumber;
 
 	@Test
 	public void testConstructor () throws Exception {
@@ -27,6 +42,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// 0
 		testedNumber = new KNumber (0);
 		assertTestedNumberEquals (
@@ -36,6 +52,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// max int
 		testedNumber = new KNumber (Integer.MAX_VALUE);
 		assertTestedNumberEquals (
@@ -45,6 +62,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// max int + 1
 		testedNumber = new KNumber ((long) Integer.MAX_VALUE + 1);
 		assertTestedNumberEquals (
@@ -54,6 +72,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// max long
 		testedNumber = new KNumber (Long.MAX_VALUE);
 		assertTestedNumberEquals (
@@ -63,6 +82,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// min int
 		testedNumber = new KNumber (Integer.MIN_VALUE);
 		assertTestedNumberEquals (
@@ -72,6 +92,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// min int - 1
 		testedNumber = new KNumber ((long) Integer.MIN_VALUE - 1);
 		assertTestedNumberEquals (
@@ -81,6 +102,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		// min long
 		testedNumber = new KNumber (Long.MIN_VALUE);
 		assertTestedNumberEquals (
@@ -96,6 +118,7 @@ public class KNumberTest {
 		testedNumber = new KNumber ();
 		String stringValue;
 
+		/* * * * * */
 		testedNumber.setValue (1, 2);
 		assertTestedNumberEquals (
 			FITS_IN_INT,
@@ -104,6 +127,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		testedNumber.setValue (1000, 2000);
 		assertTestedNumberEquals (
 			FITS_IN_INT,
@@ -112,6 +136,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		int a = -42;
 		int b = 401;
 		testedNumber.setValue (a * 9999, b * 9999);
@@ -122,6 +147,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		stringValue = String.valueOf (Long.MAX_VALUE);
 		testedNumber.setValue (stringValue);
 		assertTestedNumberEquals (
@@ -131,6 +157,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		stringValue = "0";
 		BigDecimal maxValue = new BigDecimal (stringValue);
 		testedNumber.setValue (maxValue);
@@ -141,6 +168,7 @@ public class KNumberTest {
 			new BigDecimal (stringValue)
 		);
 
+		/* * * * * */
 		BigInteger maxValuePlusOne =
 			new BigInteger (String.valueOf (Long.MAX_VALUE))
 				.add (BigInteger.ONE);
@@ -153,6 +181,7 @@ public class KNumberTest {
 			new BigDecimal (maxValuePlusOne)
 		);
 
+		/* * * * * */
 		double minValue = Long.MIN_VALUE;
 		testedNumber.setValue (minValue);
 		assertTestedNumberEquals (
@@ -162,6 +191,7 @@ public class KNumberTest {
 			FITS_IN_LONG
 		);
 
+		/* * * * * */
 		BigInteger minValueMinusOne =
 			new BigInteger (String.valueOf (Long.MIN_VALUE))
 				.subtract (BigInteger.ONE);
@@ -173,6 +203,42 @@ public class KNumberTest {
 			testedNumber.denominator,
 			new BigDecimal (minValueMinusOne)
 		);
+
+		/* * * * * */
+		testedNumber.setValue ("0.2");
+		assertTestedNumberEquals (
+			FITS_IN_INT,
+			1,
+			5,
+			FITS_IN_LONG
+		);
+
+		/* * * * * */
+		// demonstration of problems with precision of 'double'
+		boolean preciseValueSet;
+		testedNumber = new KNumber ();
+		testedNumber.setValue (0.2);
+		try {
+			assertTestedNumberEquals (
+				FITS_IN_INT,
+				1,
+				5,
+				FITS_IN_LONG
+			);
+			// this cannot happen
+			preciseValueSet = true;
+
+		} catch (AssertionError error) {
+			assertTestedNumberEquals (
+				FITS_IN_INT,
+				0,
+				1,
+				new BigDecimal (0.2)
+			);
+			// this is what should happen
+			preciseValueSet = false;
+		}
+		assertEquals (false, preciseValueSet);
 	}
 
 	// check internal values of number
@@ -182,10 +248,13 @@ public class KNumberTest {
 		long denominator,
 		BigDecimal bigDecimal
 	) {
-		assertEquals ("fitsInInt", fitsInInt, testedNumber.fitsInInt);
-		assertEquals ("numerator", numerator, testedNumber.numerator);
-		assertEquals ("denominator", denominator, testedNumber.denominator);
-		assertEquals ("bigDecimal", bigDecimal, testedNumber.bigDecimal);
+		assertNumberEquals (
+			testedNumber,
+			fitsInInt,
+			numerator,
+			denominator,
+			bigDecimal
+		);
 	}
 
 }

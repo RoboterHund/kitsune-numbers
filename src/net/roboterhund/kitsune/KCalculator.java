@@ -422,12 +422,12 @@ public class KCalculator {
 	 * @return
 	 */
 	private boolean add (long term_1, long term_2) {
-		if (term_1 < 0) {
-			if (term_1 < Integer.MIN_VALUE - term_2) {
+		if (term_1 >= 0) {
+			if (term_2 > 0 && term_1 > Long.MAX_VALUE - term_2) {
 				return false;
 			}
 		} else {
-			if (term_1 > Integer.MAX_VALUE - term_2) {
+			if (term_2 < 0 && term_1 < Long.MIN_VALUE - term_2) {
 				return false;
 			}
 		}
@@ -442,11 +442,11 @@ public class KCalculator {
 	 */
 	private boolean subtract (long minuend, long subtrahend) {
 		if (minuend < 0) {
-			if (minuend < Integer.MIN_VALUE + subtrahend) {
+			if (minuend < Long.MIN_VALUE + subtrahend) {
 				return false;
 			}
 		} else {
-			if (minuend > Integer.MAX_VALUE + subtrahend) {
+			if (minuend > Long.MAX_VALUE + subtrahend) {
 				return false;
 			}
 		}
@@ -461,17 +461,17 @@ public class KCalculator {
 	 */
 	private boolean multiply (long factor_1, long factor_2) {
 		if (factor_2 > 0) {
-			if (factor_1 > Integer.MAX_VALUE / factor_2
-				|| factor_1 < Integer.MIN_VALUE / factor_2) {
+			if (factor_1 > Long.MAX_VALUE / factor_2
+				|| factor_1 < Long.MIN_VALUE / factor_2) {
 				return false;
 			}
 		} else if (factor_2 < -1) {
-			if (factor_1 < Integer.MAX_VALUE / factor_2
-				|| factor_1 > Integer.MIN_VALUE / factor_2) {
+			if (factor_1 < Long.MAX_VALUE / factor_2
+				|| factor_1 > Long.MIN_VALUE / factor_2) {
 				return false;
 			}
 		} else if (factor_2 == -1) {
-			if (factor_1 == Integer.MIN_VALUE) {
+			if (factor_1 == Long.MIN_VALUE) {
 				return false;
 			}
 		}
