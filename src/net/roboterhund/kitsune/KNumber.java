@@ -25,9 +25,6 @@ import java.math.BigDecimal;
  * <code>BigDecimal</code> is used as fallback,
  * but methods in this package try to avoid
  * unnecessary allocation.
- *
- * @author RoboterHund87
- * @version 1.0.0
  */
 public class KNumber {
 

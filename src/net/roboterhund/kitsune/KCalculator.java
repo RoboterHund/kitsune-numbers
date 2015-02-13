@@ -18,12 +18,24 @@ package net.roboterhund.kitsune;
 import java.math.BigDecimal;
 
 /**
- *
+ * Singleton object to perform calculations with {@link
+ * net.roboterhund.kitsune.KNumber} objects.
+ * <p>
+ * Feed operands as parameters, result is stored in {@link
+ * net.roboterhund.kitsune.KCalculator#result}, overwriting previous value.
+ * <p>
+ * Calculations try to produce exact, rational results, whenever possible.
+ * <p>
+ * <code>BigDecimal</code> is used as fallback,
+ * but methods in this package try to avoid
+ * unnecessary allocation.
  */
 public class KCalculator {
 
 	/**
-	 *
+	 * If a calculation produces numbers with infinite decimal expansion,
+	 * and they must be converted to {@link java.math.BigDecimal},
+	 * this setting determines the number of decimals stored.
 	 */
 	public int precision = KNumber.DEFAULT_PRECISION;
 
@@ -35,20 +47,30 @@ public class KCalculator {
 	public KNumber result;
 
 	/**
-	 * Intermediate result.
+	 * Result of last primitive calculation.
+	 *
+	 * @see net.roboterhund.kitsune.KCalculator#add(long, long)
+	 * @see net.roboterhund.kitsune.KCalculator#subtract(long, long)
+	 * @see net.roboterhund.kitsune.KCalculator#multiply(long, long)
 	 */
 	private long intResult;
 
 	/**
-	 * @param term_2
+	 * Add number to previous result.
+	 *
+	 * @param term_2 number to add.
 	 */
 	public void add (KNumber term_2) {
 		add (result, term_2);
 	}
 
 	/**
-	 * @param term_1
-	 * @param term_2
+	 * Add two numbers.
+	 * <p>
+	 * Overwrite result.
+	 *
+	 * @param term_1 first term.
+	 * @param term_2 second term.
 	 */
 	public void add (KNumber term_1, KNumber term_2) {
 		if (term_1.fitsInInt
@@ -139,22 +161,36 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param subtrahend
+	 * Subtract number from previous result.
+	 *
+	 * @param subtrahend number subtracted.
 	 */
 	public void subtract (KNumber subtrahend) {
 		subtract (result, subtrahend);
 	}
 
 	/**
-	 * @param minuend
+	 * Subtract previous result from number.
+	 * <p>
+	 * <b>Note</b>: the resulting value is stored in the minuend,
+	 * overwriting its value.
+	 * Previous result is left intact.
+	 *
+	 * @param minuend number from which the previous result is subtracted.
+	 * <b>Overwritten</b>.
 	 */
 	public void subtractFrom (KNumber minuend) {
+		KNumber prevResult = result;
+		result = minuend;
 		subtract (minuend, result);
+		result = prevResult;
 	}
 
 	/**
-	 * @param minuend
-	 * @param subtrahend
+	 * Subtract two numbers.
+	 *
+	 * @param minuend number subtracted from.
+	 * @param subtrahend number to subtract.
 	 */
 	public void subtract (KNumber minuend, KNumber subtrahend) {
 		if (minuend.fitsInInt
@@ -246,15 +282,21 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param factor_2
+	 * Multiply previous result by a number.
+	 *
+	 * @param factor_2 second factor.
 	 */
 	public void multiply (KNumber factor_2) {
 		multiply (result, factor_2);
 	}
 
 	/**
-	 * @param factor_1
-	 * @param factor_2
+	 * Multiply two numbers.
+	 * <p>
+	 * Overwrite result.
+	 *
+	 * @param factor_1 first factor.
+	 * @param factor_2 second factor.
 	 */
 	public void multiply (KNumber factor_1, KNumber factor_2) {
 		if (factor_1.fitsInInt
@@ -310,22 +352,40 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param divisor
+	 * Divide previous result by a number.
+	 *
+	 * @param divisor number by which to divide.
 	 */
 	public void divide (KNumber divisor) {
 		divide (result, divisor);
 	}
 
 	/**
-	 * @param dividend
+	 * Divide a number by the previous result.
+	 * <p>
+	 * <b>Note</b>: the resulting value is stored in the dividend,
+	 * overwriting its value.
+	 * Previous result is left intact.
+	 *
+	 * @param dividend number that is divided.
+	 * <b>Overwritten</b>.
 	 */
 	public void divideThat (KNumber dividend) {
+		KNumber prevResult = result;
+		result = dividend;
 		divide (dividend, result);
+		result = prevResult;
 	}
 
 	/**
-	 * @param dividend
-	 * @param divisor
+	 * Divide two numbers.
+	 * <p>
+	 * <b>Note</b>: precision is lost if
+	 * the calculation cannot be performed with primitive data types,
+	 * and the result has infinite decimal expansion.
+	 *
+	 * @param dividend number divided.
+	 * @param divisor number by which to divide.
 	 */
 	public void divide (KNumber dividend, KNumber divisor) {
 
@@ -417,9 +477,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param term_1
-	 * @param term_2
-	 * @return
+	 * Primitive addition, guarded against <code>long</code> overflow.
+	 * <p>
+	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
+	 *
+	 * @param term_1 first operand.
+	 * @param term_2 second operand.
+	 * @return <code>true</code> iff operation completed without overflow.
 	 */
 	private boolean add (long term_1, long term_2) {
 		if (term_1 >= 0) {
@@ -436,9 +500,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param minuend
-	 * @param subtrahend
-	 * @return
+	 * Primitive subtraction, guarded against <code>long</code> overflow.
+	 * <p>
+	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
+	 *
+	 * @param minuend first operand.
+	 * @param subtrahend second operand.
+	 * @return <code>true</code> iff operation completed without overflow.
 	 */
 	private boolean subtract (long minuend, long subtrahend) {
 		if (minuend < 0) {
@@ -455,9 +523,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * @param factor_1
-	 * @param factor_2
-	 * @return
+	 * Primitive multiplication, guarded against <code>long</code> overflow.
+	 * <p>
+	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
+	 *
+	 * @param factor_1 first operand.
+	 * @param factor_2 second operand.
+	 * @return <code>true</code> iff operation completed without overflow.
 	 */
 	private boolean multiply (long factor_1, long factor_2) {
 		if (factor_2 > 0) {
