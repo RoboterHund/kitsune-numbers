@@ -15,6 +15,7 @@
  */
 package net.roboterhund.kitsune;
 
+import java.io.PrintStream;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +34,9 @@ public abstract class CommonTest {
 
 	// kNumber.bigDecimal == null
 	public static final BigDecimal FITS_IN_LONG = null;
+
+	// output print stream
+	public static final PrintStream out = System.out;
 
 	// check internal values of number
 	public static void assertNumberEquals (

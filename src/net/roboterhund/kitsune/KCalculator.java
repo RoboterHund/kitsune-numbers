@@ -372,6 +372,7 @@ public class KCalculator {
 	 * @param divided number that is divided.
 	 * Overwritten with the result of the division.
 	 * @param divisor number by which to divide.
+	 * @throws java.lang.ArithmeticException division by zero.
 	 */
 	public void divide (
 		KNumber divided,
@@ -393,6 +394,7 @@ public class KCalculator {
 	 * @param result overwritten with the result.
 	 * @param dividend number that is divided.
 	 * @param divisor number by which to divide.
+	 * @throws java.lang.ArithmeticException division by zero.
 	 */
 	public void divide (
 		KNumber result,
