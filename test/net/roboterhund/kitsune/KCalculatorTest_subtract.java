@@ -33,13 +33,11 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 		a = new KNumber ();
 		b = new KNumber ();
 
-		calculator.result = result;
-
 		/* * * * * */
 
 		a.setValue ("100.1");
 		b.setValue ("0.2");
-		calculator.subtract (a, b);
+		calculator.subtract (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			999,
@@ -51,7 +49,7 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 
 		a.setValue ("1000000000000.1");
 		b.setValue ("9999999999999.9");
-		calculator.subtract (a, b);
+		calculator.subtract (result, a, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			-44999999999999L,
@@ -65,7 +63,7 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 		String bString = "9999999999999.999";
 		a.setValue (aString);
 		b.setValue (bString);
-		calculator.subtract (a, b);
+		calculator.subtract (result, a, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			result.numerator,

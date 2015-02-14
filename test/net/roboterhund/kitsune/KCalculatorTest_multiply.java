@@ -33,12 +33,10 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		a = new KNumber ();
 		b = new KNumber ();
 
-		calculator.result = result;
-
 		/* * * * * */
 		a.setValue ("12.34");
 		b.setValue (10);
-		calculator.multiply (a, b);
+		calculator.multiply (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			617,
@@ -49,7 +47,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		/* * * * * */
 		a.setValue (-2.5);
 		b.setValue (4);
-		calculator.multiply (a, b);
+		calculator.multiply (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			-6,
@@ -60,7 +58,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		/* * * * * */
 		a.setValue (-1);
 		b.setValue (Long.MIN_VALUE);
-		calculator.multiply (a, b);
+		calculator.multiply (result, a, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			result.numerator,

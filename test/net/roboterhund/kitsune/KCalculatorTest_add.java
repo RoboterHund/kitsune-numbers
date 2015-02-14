@@ -35,20 +35,10 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		a = new KNumber ();
 		b = new KNumber ();
 
-		boolean operationFailed = false;
-		try {
-			calculator.add (a, b);
-		} catch (NullPointerException e) {
-			operationFailed = true;
-		}
-		assertEquals (true, operationFailed);
-
-		calculator.result = result;
-
 		/* * * * * */
 		a.setValue (1);
 		b.setValue (2);
-		calculator.add (a, b);
+		calculator.add (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			3,
@@ -57,7 +47,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (calculator.result);
+		calculator.add (result, result);
 		assertResultEquals (
 			FITS_IN_INT,
 			6,
@@ -66,7 +56,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			7,
@@ -80,7 +70,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		String bString = "100000000";
 		a.setValue (aString);
 		b.setValue (bString);
-		calculator.add (a, b);
+		calculator.add (result, a, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			1000000000000000023L,
@@ -111,7 +101,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		/* * * * * */
 		a.setValue ("12341234.25");
 		b.setValue ("67867867.89");
-		calculator.add (a, b);
+		calculator.add (result, a, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			4010455107L,
@@ -121,9 +111,9 @@ public class KCalculatorTest_add extends KCalculatorTest {
 
 
 		/* * * * * */
-		calculator.result.setValue (0);
+		result.setValue (0);
 		a.setValue (0.5);
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			1,
@@ -132,7 +122,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			1,
@@ -141,7 +131,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			3,
@@ -151,8 +141,8 @@ public class KCalculatorTest_add extends KCalculatorTest {
 
 		/* * * * * */
 		a.setValue (Integer.MAX_VALUE);
-		calculator.result.setValue (0);
-		calculator.add (a);
+		result.setValue (0);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			Integer.MAX_VALUE,
@@ -162,7 +152,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		// continue
 
 		a.setValue (1);
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			(long) Integer.MAX_VALUE + 1,
@@ -172,7 +162,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		// continue
 
 		a.setValue (-1);
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			Integer.MAX_VALUE,

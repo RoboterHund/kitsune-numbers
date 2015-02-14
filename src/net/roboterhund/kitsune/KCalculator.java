@@ -21,10 +21,8 @@ import java.math.BigDecimal;
  * Singleton object to perform calculations with {@link
  * net.roboterhund.kitsune.KNumber} objects.
  * <p>
- * Feed operands as parameters, result is stored in {@link
- * net.roboterhund.kitsune.KCalculator#result}, overwriting previous value.
- * <p>
- * Calculations try to produce exact, rational results, whenever possible.
+ * Calculations try to produce, whenever possible,
+ * exact, rational results.
  * <p>
  * <code>BigDecimal</code> is used as fallback,
  * but methods in this package try to avoid
@@ -40,13 +38,6 @@ public class KCalculator {
 	public int precision = KNumber.DEFAULT_PRECISION;
 
 	/**
-	 * Final calculation result storage.
-	 * <p>
-	 * Must be set before using any method.
-	 */
-	public KNumber result;
-
-	/**
 	 * Result of last primitive calculation.
 	 *
 	 * @see net.roboterhund.kitsune.KCalculator#add(long, long)
@@ -56,23 +47,34 @@ public class KCalculator {
 	private long intResult;
 
 	/**
-	 * Add number to previous result.
+	 * Add two numbers.
 	 *
+	 * @param add_to number to add to.
+	 * Overwritten with the result of the addition.
 	 * @param term_2 number to add.
 	 */
-	public void add (KNumber term_2) {
-		add (result, term_2);
+	public void add (
+		KNumber add_to,
+		KNumber term_2) {
+
+		add (
+			add_to,
+			add_to,
+			term_2);
 	}
 
 	/**
 	 * Add two numbers.
-	 * <p>
-	 * Overwrite result.
 	 *
+	 * @param result overwritten with the result.
 	 * @param term_1 first term.
 	 * @param term_2 second term.
 	 */
-	public void add (KNumber term_1, KNumber term_2) {
+	public void add (
+		KNumber result,
+		KNumber term_1,
+		KNumber term_2) {
+
 		if (term_1.fitsInInt
 			&& term_2.fitsInInt) {
 			// int operation
@@ -163,38 +165,34 @@ public class KCalculator {
 	}
 
 	/**
-	 * Subtract number from previous result.
+	 * Subtract two numbers.
 	 *
+	 * @param subtract_from number to subtract from.
+	 * Overwritten with the result of the subtraction.
 	 * @param subtrahend number subtracted.
 	 */
-	public void subtract (KNumber subtrahend) {
-		subtract (result, subtrahend);
-	}
+	public void subtract (
+		KNumber subtract_from,
+		KNumber subtrahend) {
 
-	/**
-	 * Subtract previous result from number.
-	 * <p>
-	 * <b>Note</b>: the resulting value is stored in the minuend,
-	 * overwriting its value.
-	 * Previous result is left intact.
-	 *
-	 * @param minuend number from which the previous result is subtracted.
-	 * <b>Overwritten</b>.
-	 */
-	public void subtractFrom (KNumber minuend) {
-		KNumber prevResult = result;
-		result = minuend;
-		subtract (minuend, result);
-		result = prevResult;
+		subtract (
+			subtract_from,
+			subtract_from,
+			subtrahend);
 	}
 
 	/**
 	 * Subtract two numbers.
 	 *
+	 * @param result overwritten with the result.
 	 * @param minuend number subtracted from.
 	 * @param subtrahend number to subtract.
 	 */
-	public void subtract (KNumber minuend, KNumber subtrahend) {
+	public void subtract (
+		KNumber result,
+		KNumber minuend,
+		KNumber subtrahend) {
+
 		if (minuend.fitsInInt
 			&& subtrahend.fitsInInt) {
 			// int operation
@@ -286,23 +284,34 @@ public class KCalculator {
 	}
 
 	/**
-	 * Multiply previous result by a number.
+	 * Multiply two numbers.
 	 *
+	 * @param multiplied first factor.
+	 * Overwritten with the result of the multiplication.
 	 * @param factor_2 second factor.
 	 */
-	public void multiply (KNumber factor_2) {
-		multiply (result, factor_2);
+	public void multiply (
+		KNumber multiplied,
+		KNumber factor_2) {
+
+		multiply (
+			multiplied,
+			multiplied,
+			factor_2);
 	}
 
 	/**
 	 * Multiply two numbers.
-	 * <p>
-	 * Overwrite result.
 	 *
+	 * @param result overwritten with the result.
 	 * @param factor_1 first factor.
 	 * @param factor_2 second factor.
 	 */
-	public void multiply (KNumber factor_1, KNumber factor_2) {
+	public void multiply (
+		KNumber result,
+		KNumber factor_1,
+		KNumber factor_2) {
+
 		if (factor_1.fitsInInt
 			&& factor_2.fitsInInt) {
 			// int operation
@@ -358,29 +367,20 @@ public class KCalculator {
 	}
 
 	/**
-	 * Divide previous result by a number.
+	 * Divide two numbers.
 	 *
+	 * @param divided number that is divided.
+	 * Overwritten with the result of the division.
 	 * @param divisor number by which to divide.
 	 */
-	public void divide (KNumber divisor) {
-		divide (result, divisor);
-	}
+	public void divide (
+		KNumber divided,
+		KNumber divisor) {
 
-	/**
-	 * Divide a number by the previous result.
-	 * <p>
-	 * <b>Note</b>: the resulting value is stored in the dividend,
-	 * overwriting its value.
-	 * Previous result is left intact.
-	 *
-	 * @param dividend number that is divided.
-	 * <b>Overwritten</b>.
-	 */
-	public void divideThat (KNumber dividend) {
-		KNumber prevResult = result;
-		result = dividend;
-		divide (dividend, result);
-		result = prevResult;
+		divide (
+			divided,
+			divided,
+			divisor);
 	}
 
 	/**
@@ -390,10 +390,15 @@ public class KCalculator {
 	 * the calculation cannot be performed with primitive data types,
 	 * and the result has infinite decimal expansion.
 	 *
-	 * @param dividend number divided.
+	 * @param result overwritten with the result.
+	 * @param dividend number that is divided.
 	 * @param divisor number by which to divide.
 	 */
-	public void divide (KNumber dividend, KNumber divisor) {
+	public void divide (
+		KNumber result,
+		KNumber dividend,
+		KNumber divisor) {
+
 		if (dividend.bigDecimal == null
 			&& divisor.bigDecimal == null) {
 

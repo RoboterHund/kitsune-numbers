@@ -30,12 +30,10 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 		a = new KNumber ();
 		b = new KNumber ();
 
-		calculator.result = result;
-
 		/* * * * * */
 		a.setValue (222);
 		b.setValue (333);
-		calculator.divide (a, b);
+		calculator.divide (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			2,

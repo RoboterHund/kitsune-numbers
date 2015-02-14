@@ -33,12 +33,10 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		a = new KNumber ();
 		b = new KNumber ();
 
-		calculator.result = result;
-
 		/* * * * * */
 		a.setValue (222);
 		b.setValue (333);
-		calculator.divide (a, b);
+		calculator.divide (result, a, b);
 		assertResultEquals (
 			FITS_IN_INT,
 			2,
@@ -47,8 +45,8 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		a.setValue (calculator.result);
-		calculator.add (a);
+		a.setValue (result);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			4,
@@ -57,7 +55,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			2,
@@ -66,7 +64,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (a);
+		calculator.add (result, a);
 		assertResultEquals (
 			FITS_IN_INT,
 			8,
@@ -77,7 +75,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		/* * * * * */
 		a.setValue (Long.MAX_VALUE);
 		b.setValue (1);
-		calculator.add (a, b);
+		calculator.add (result, a, b);
 		BigDecimal maxLongBigDecimal = new BigDecimal (Long.MAX_VALUE);
 		assertResultEquals (
 			BIGGER_THAN_INT,
@@ -88,7 +86,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		// the result does not revert to simple fraction representation
-		calculator.subtract (b);
+		calculator.subtract (result, b);
 		assertResultEquals (
 			BIGGER_THAN_INT,
 			result.numerator,
