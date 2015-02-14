@@ -15,31 +15,32 @@
  */
 package net.roboterhund.kitsune;
 
-import java.math.BigDecimal;
+import org.junit.Test;
 
-import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
+import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
+import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
 
-// test KCalculator
-public abstract class KCalculatorTest {
+public class KCalculatorTest_divide extends KCalculatorTest {
 
-	protected KNumber result;
-	protected KNumber a;
-	protected KNumber b;
-	protected KCalculator calculator;
+	@Test
+	public void testDivide () throws Exception {
+		calculator = new KCalculator ();
 
-	// check internal values of number
-	protected void assertResultEquals (
-		boolean fitsInInt,
-		long numerator,
-		long denominator,
-		BigDecimal bigDecimal
-	) {
-		assertNumberEquals (
-			result,
-			fitsInInt,
-			numerator,
-			denominator,
-			bigDecimal
+		result = new KNumber ();
+		a = new KNumber ();
+		b = new KNumber ();
+
+		calculator.result = result;
+
+		/* * * * * */
+		a.setValue (222);
+		b.setValue (333);
+		calculator.divide (a, b);
+		assertResultEquals (
+			FITS_IN_INT,
+			2,
+			3,
+			FITS_IN_LONG
 		);
 	}
 

@@ -27,6 +27,7 @@ import static net.roboterhund.kitsune.CommonTest.IS_INTEGER;
 import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
 import static org.junit.Assert.assertEquals;
 
+// test KNumber in isolation
 public class KNumberTest {
 
 	private KNumber testedNumber;
