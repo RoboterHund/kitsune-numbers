@@ -158,6 +158,9 @@ public class KCalculator {
 			term_1.toBigDecimal ()
 				.add (term_2.toBigDecimal ())
 		);
+
+		result.approx = term_1.approx + term_2.approx;
+		result.compact ();
 	}
 
 	/**
@@ -272,6 +275,9 @@ public class KCalculator {
 			minuend.toBigDecimal ()
 				.subtract (subtrahend.toBigDecimal ())
 		);
+
+		result.approx = minuend.approx - subtrahend.approx;
+		result.compact ();
 	}
 
 	/**
@@ -369,6 +375,9 @@ public class KCalculator {
 			factor_1.toBigDecimal ()
 				.multiply (factor_2.toBigDecimal ())
 		);
+
+		result.approx = factor_1.approx * factor_2.approx;
+		result.compact ();
 	}
 
 	/**
@@ -475,6 +484,9 @@ public class KCalculator {
 					BigDecimal.ROUND_HALF_UP
 				)
 		);
+
+		result.approx = dividend.approx / divisor.approx;
+		result.compact ();
 	}
 
 	/**

@@ -74,6 +74,13 @@ public class KNumber {
 	BigDecimal bigDecimal;
 
 	/**
+	 * Approximated value of {@link #bigDecimal}.
+	 * <p>
+	 * Used to compact values automatically.
+	 */
+	double approx;
+
+	/**
 	 * Constructor.
 	 * <p>
 	 * Equivalent to a {@link #setValue()} call on existing object.
@@ -315,39 +322,50 @@ public class KNumber {
 				// store integer part in numerator
 				long numerator =
 					Long.parseLong (stringValue.substring (0, decPointPos));
+				long denominator = 1;
 
 				// get decimals
 				// TODO check for invalid decimals substring
 				String decimals = stringValue.substring (decPointPos + 1);
+				int lastNonZero;
+				for (lastNonZero = decimals.length () - 1;
+				     lastNonZero >= 0;
+				     lastNonZero--) {
 
-				// get denominator as scale of 10
-				long multiplier = 10;
-				int exp = decimals.length ();
-				long denominator = 1;
-				long maxMultiplier = Long.MAX_VALUE / multiplier;
-				while (exp != 0) {
-					if ((exp & 1) != 0) {
-						if (denominator > maxMultiplier) {
+					if (decimals.charAt (lastNonZero) != '0') {
+						break;
+					}
+				}
+				decimals = decimals.substring (0, lastNonZero + 1);
+				if (!decimals.isEmpty ()) {
+					// get denominator as scale of 10
+					long multiplier = 10;
+					int exp = decimals.length ();
+					long maxMultiplier = Long.MAX_VALUE / multiplier;
+					while (exp != 0) {
+						if ((exp & 1) != 0) {
+							if (denominator > maxMultiplier) {
+								return false;
+							}
+							denominator *= multiplier;
+						}
+						if (multiplier > maxMultiplier) {
 							return false;
 						}
-						denominator *= multiplier;
+						multiplier *= multiplier;
+						maxMultiplier = Long.MAX_VALUE / multiplier;
+						exp >>= 1;
 					}
-					if (multiplier > maxMultiplier) {
+
+					// multiply numerator by scale of 10
+					if (numerator > Long.MAX_VALUE / denominator) {
 						return false;
 					}
-					multiplier *= multiplier;
-					maxMultiplier = Long.MAX_VALUE / multiplier;
-					exp >>= 1;
-				}
+					numerator *= denominator;
 
-				// multiply numerator by scale of 10
-				if (numerator > Long.MAX_VALUE / denominator) {
-					return false;
+					// add decimal part to numerator
+					numerator += Long.parseLong (decimals);
 				}
-				numerator *= denominator;
-
-				// add decimal part to numerator
-				numerator += Long.parseLong (decimals);
 
 				// normalize
 				setValue (numerator, denominator);
@@ -383,6 +401,8 @@ public class KNumber {
 			return bigDecimal;
 
 		} else {
+			approx = (double) numerator / denominator;
+
 			BigDecimal numeratorBigDecimal = new BigDecimal (numerator);
 			BigDecimal denominatorBigDecimal = new BigDecimal (denominator);
 			try {
@@ -405,9 +425,15 @@ public class KNumber {
 	 * If the number is stored as
 	 * {@link java.math.BigDecimal},
 	 * try to revert to a simple fraction representation.
+	 * <p>
+	 * The conversion is actually performed only if
+	 * it is estimated that it will be succesful.
 	 */
 	public void compact () {
-		if (bigDecimal != null) {
+		if (bigDecimal != null
+			&& approx < Long.MAX_VALUE
+			&& approx > Long.MIN_VALUE) {
+
 			setValue (bigDecimal.toPlainString ());
 		}
 	}

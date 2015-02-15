@@ -87,10 +87,17 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		result.compact ();
+		// test of automatic conversion to rational representation
+		b.setValue (1);
+		calculator.add (result, b);
+		b.setValue (2);
+		calculator.divide (result, b);
+		// Long.MAX_VALUE / 2 + 1
+		// does not overflow, and, due to rounding, actually equals
+		// (Long.MAX_VALUE + 1) / 2
 		assertResultEquals (
 			KProfile.LONG_INTEGER,
-			Long.MAX_VALUE,
+			Long.MAX_VALUE / 2 + 1,
 			1,
 			null
 		);
