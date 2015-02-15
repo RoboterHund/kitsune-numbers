@@ -110,7 +110,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		// show the data types used to store the result
 
 		String format =
-			"Results of %d iterarions:\n"
+			"Results of %d iterations:\n"
 
 				+ "add:\n"
 				+ "\tint: %d\n"

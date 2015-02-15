@@ -74,13 +74,6 @@ public class KNumber {
 	BigDecimal bigDecimal;
 
 	/**
-	 * Approximated value of {@link #bigDecimal}.
-	 * <p>
-	 * Used to compact values automatically.
-	 */
-	double approx;
-
-	/**
 	 * Constructor.
 	 * <p>
 	 * Equivalent to a {@link #setValue()} call on existing object.
@@ -364,7 +357,12 @@ public class KNumber {
 					numerator *= denominator;
 
 					// add decimal part to numerator
-					numerator += Long.parseLong (decimals);
+					long decimalPart = Long.parseLong (decimals);
+					if (stringValue.charAt (0) == '-') {
+						numerator -= decimalPart;
+					} else {
+						numerator += decimalPart;
+					}
 				}
 
 				// normalize
@@ -401,8 +399,6 @@ public class KNumber {
 			return bigDecimal;
 
 		} else {
-			approx = (double) numerator / denominator;
-
 			BigDecimal numeratorBigDecimal = new BigDecimal (numerator);
 			BigDecimal denominatorBigDecimal = new BigDecimal (denominator);
 			try {
@@ -430,9 +426,7 @@ public class KNumber {
 	 * it is estimated that it will be succesful.
 	 */
 	public void compact () {
-		if (bigDecimal != null
-			&& approx < Long.MAX_VALUE
-			&& approx > Long.MIN_VALUE) {
+		if (bigDecimal != null) {
 
 			setValue (bigDecimal.toPlainString ());
 		}

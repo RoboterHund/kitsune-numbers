@@ -42,7 +42,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		calculator.multiply (result, a, b);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
-			-6,
+			-10,
 			1,
 			null
 		);
