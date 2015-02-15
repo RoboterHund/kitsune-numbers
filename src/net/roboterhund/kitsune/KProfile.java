@@ -1,7 +1,17 @@
 package net.roboterhund.kitsune;
 
 /**
+ * Collection of values related to number profiles.
+ * <p>
+ * Contains:
+ * <ul>
+ * <li>List of number profiles.</li>
+ * <li>List of calculator routes.</li>
+ * <li>2-dimensional table mapping operand profiles
+ * to calculator routes.</li>
+ * </ul>
  *
+ * @see KNumber#profile
  */
 public abstract class KProfile {
 

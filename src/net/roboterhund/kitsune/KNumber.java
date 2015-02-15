@@ -44,6 +44,12 @@ public class KNumber {
 	 */
 	public static int defaultPrecision = DEFAULT_PRECISION;
 
+	/**
+	 * Number profile.
+	 * <p>
+	 * Determines how the numeric value is stored internally,
+	 * and how to perform operations with it.
+	 */
 	int profile;
 
 	/**
