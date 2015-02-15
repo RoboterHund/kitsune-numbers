@@ -19,49 +19,41 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static net.roboterhund.kitsune.CommonTest.BIGGER_THAN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
-import static net.roboterhund.kitsune.CommonTest.IS_INTEGER;
 import static org.junit.Assert.assertEquals;
 
 public class KCalculatorTest_add extends KCalculatorTest {
 
 	@Test
 	public void testAdd () throws Exception {
-		calculator = new KCalculator ();
-
-		result = new KNumber ();
-		a = new KNumber ();
-		b = new KNumber ();
+		reset ();
 
 		/* * * * * */
 		a.setValue (1);
 		b.setValue (2);
 		calculator.add (result, a, b);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			3,
-			IS_INTEGER,
-			FITS_IN_LONG
+			1,
+			null
 		);
 		// continue
 
 		calculator.add (result, result);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			6,
-			IS_INTEGER,
-			FITS_IN_LONG
+			1,
+			null
 		);
 		// continue
 
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			7,
-			IS_INTEGER,
-			FITS_IN_LONG
+			1,
+			null
 		);
 		// continue
 
@@ -72,10 +64,10 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		b.setValue (bString);
 		calculator.add (result, a, b);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.LONG_RATIONAL,
 			1000000000000000023L,
 			10000000000L,
-			FITS_IN_LONG
+			null
 		);
 
 		BigDecimal expectedResultBigDecimal =
@@ -103,10 +95,10 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		b.setValue ("67867867.89");
 		calculator.add (result, a, b);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.LONG_RATIONAL,
 			4010455107L,
 			50,
-			FITS_IN_LONG
+			null
 		);
 
 
@@ -115,28 +107,28 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		a.setValue (0.5);
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			1,
 			2,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			1,
 			1,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			3,
 			2,
-			FITS_IN_LONG
+			null
 		);
 
 		/* * * * * */
@@ -144,30 +136,30 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		result.setValue (0);
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			Integer.MAX_VALUE,
 			1,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		a.setValue (1);
 		calculator.add (result, a);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.LONG_INTEGER,
 			(long) Integer.MAX_VALUE + 1,
 			1,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		a.setValue (-1);
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			Integer.MAX_VALUE,
 			1,
-			FITS_IN_LONG
+			null
 		);
 	}
 

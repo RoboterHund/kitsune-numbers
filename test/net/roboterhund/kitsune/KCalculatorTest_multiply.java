@@ -19,29 +19,21 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static net.roboterhund.kitsune.CommonTest.BIGGER_THAN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
-
 public class KCalculatorTest_multiply extends KCalculatorTest {
 
 	@Test
 	public void testMultiply () throws Exception {
-		calculator = new KCalculator ();
-
-		result = new KNumber ();
-		a = new KNumber ();
-		b = new KNumber ();
+		reset ();
 
 		/* * * * * */
 		a.setValue ("12.34");
 		b.setValue (10);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			617,
 			5,
-			FITS_IN_LONG
+			null
 		);
 
 		/* * * * * */
@@ -49,10 +41,10 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		b.setValue (4);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			-6,
 			1,
-			FITS_IN_LONG
+			null
 		);
 
 		/* * * * * */
@@ -60,7 +52,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		b.setValue (Long.MIN_VALUE);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.BIG,
 			result.numerator,
 			result.denominator,
 			new BigDecimal (Long.MAX_VALUE).add (BigDecimal.ONE)

@@ -19,57 +19,49 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static net.roboterhund.kitsune.CommonTest.BIGGER_THAN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
-
 public class KCalculatorTest_result extends KCalculatorTest {
 
 	@Test
 	public void testNumberResult () throws Exception {
-		calculator = new KCalculator ();
-
-		result = new KNumber ();
-		a = new KNumber ();
-		b = new KNumber ();
+		reset ();
 
 		/* * * * * */
 		a.setValue (222);
 		b.setValue (333);
 		calculator.divide (result, a, b);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			2,
 			3,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		a.setValue (result);
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			4,
 			3,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_INTEGER,
 			2,
 			1,
-			FITS_IN_LONG
+			null
 		);
 		// continue
 
 		calculator.add (result, a);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			8,
 			3,
-			FITS_IN_LONG
+			null
 		);
 
 		/* * * * * */
@@ -78,7 +70,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		calculator.add (result, a, b);
 		BigDecimal maxLongBigDecimal = new BigDecimal (Long.MAX_VALUE);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.BIG,
 			result.numerator,
 			result.denominator,
 			maxLongBigDecimal.add (BigDecimal.ONE)
@@ -88,7 +80,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// the result does not revert to simple fraction representation
 		calculator.subtract (result, b);
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.BIG,
 			result.numerator,
 			result.denominator,
 			maxLongBigDecimal
@@ -97,10 +89,10 @@ public class KCalculatorTest_result extends KCalculatorTest {
 
 		result.compact ();
 		assertResultEquals (
-			BIGGER_THAN_INT,
+			KProfile.LONG_INTEGER,
 			Long.MAX_VALUE,
 			1,
-			FITS_IN_LONG
+			null
 		);
 	}
 

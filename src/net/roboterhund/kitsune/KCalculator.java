@@ -75,11 +75,71 @@ public class KCalculator {
 		KNumber term_1,
 		KNumber term_2) {
 
-		if (term_1.fitsInInt
-			&& term_2.fitsInInt) {
-			// int operation
+		switch (KProfile.route[term_1.profile][term_2.profile]) {
+		default:
+			// go to end
+			break;
 
-			// TODO complete overflow test
+		case KProfile._PRE__RAT_:
+			if (multiply (term_1.numerator, term_2.denominator)) {
+				long n1_mul_d2 = intResult;
+
+				if (multiply (term_2.numerator, term_1.denominator)) {
+					long n2_mul_d1 = intResult;
+
+					if (add (n1_mul_d2, n2_mul_d1)) {
+						long numerator = intResult;
+
+						if (multiply (term_1.denominator, term_2.denominator)) {
+							result.setValue (
+								numerator,
+								intResult
+							);
+							return;
+						}
+					}
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT1:
+			if (multiply (term_1.numerator, term_2.denominator)) {
+				long n1_mul_d2 = intResult;
+
+				if (add (n1_mul_d2, term_2.numerator)) {
+					result.setValue (
+						intResult,
+						term_2.denominator
+					);
+					return;
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT2:
+			if (multiply (term_2.numerator, term_1.denominator)) {
+				long n2_mul_d1 = intResult;
+
+				if (add (term_1.numerator, n2_mul_d1)) {
+					result.setValue (
+						intResult,
+						term_1.denominator
+					);
+					return;
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT_:
+			if (add (term_1.numerator, term_2.numerator)) {
+				result.setValue (
+					intResult
+				);
+				return;
+			}
+			break;
+
+		case KProfile._POST_RAT_:
 			result.setValue (
 				term_1.numerator * term_2.denominator
 					+ term_2.numerator * term_1.denominator,
@@ -87,76 +147,12 @@ public class KCalculator {
 			);
 			return;
 
-		} else if (term_1.bigDecimal == null
-			&& term_2.bigDecimal == null) {
-			// long operation
-
-			if (term_1.denominator == 1) {
-				if (term_2.denominator == 1) {
-					// both terms integers
-					if (add (term_1.numerator, term_2.numerator)) {
-						result.setValue (
-							intResult
-						);
-						return;
-					}
-
-				} else {
-					// term 1 integer
-					if (multiply (term_1.numerator, term_2.denominator)) {
-						long n1_mul_d2 = intResult;
-
-						if (add (n1_mul_d2, term_2.numerator)) {
-							result.setValue (
-								intResult,
-								term_2.denominator
-							);
-							return;
-						}
-					}
-				}
-
-			} else {
-				if (term_2.denominator == 1) {
-					// term 2 integer
-					if (multiply (term_2.numerator, term_1.denominator)) {
-						long n2_mul_d1 = intResult;
-
-						if (add (term_1.numerator, n2_mul_d1)) {
-							result.setValue (
-								intResult,
-								term_1.denominator
-							);
-							return;
-						}
-					}
-
-				} else {
-					// both terms not integers
-					if (multiply (term_1.numerator, term_2.denominator)) {
-						long n1_mul_d2 = intResult;
-
-						if (multiply (term_2.numerator, term_1.denominator)) {
-							long n2_mul_d1 = intResult;
-
-							if (add (n1_mul_d2, n2_mul_d1)) {
-								long numerator = intResult;
-
-								if (multiply (term_1.denominator, term_2.denominator)) {
-									result.setValue (
-										numerator,
-										intResult
-									);
-									return;
-								}
-							}
-						}
-					}
-				}
-			}
+		case KProfile._POST_INT_:
+			result.setValue (
+				term_1.numerator + term_2.numerator
+			);
+			return;
 		}
-
-		// BigDecimal operation
 
 		result.setValue (
 			term_1.toBigDecimal ()
@@ -193,10 +189,71 @@ public class KCalculator {
 		KNumber minuend,
 		KNumber subtrahend) {
 
-		if (minuend.fitsInInt
-			&& subtrahend.fitsInInt) {
-			// int operation
+		switch (KProfile.route[minuend.profile][subtrahend.profile]) {
+		default:
+			// go to end
+			break;
 
+		case KProfile._PRE__RAT_:
+			if (multiply (minuend.numerator, subtrahend.denominator)) {
+				long n1_mul_d2 = intResult;
+
+				if (multiply (subtrahend.numerator, minuend.denominator)) {
+					long n2_mul_d1 = intResult;
+
+					if (subtract (n1_mul_d2, n2_mul_d1)) {
+						long numerator = intResult;
+
+						if (multiply (minuend.denominator, subtrahend.denominator)) {
+							result.setValue (
+								numerator,
+								intResult
+							);
+							return;
+						}
+					}
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT1:
+			if (multiply (minuend.numerator, subtrahend.denominator)) {
+				long n1_mul_d2 = intResult;
+
+				if (subtract (n1_mul_d2, subtrahend.numerator)) {
+					result.setValue (
+						intResult,
+						subtrahend.denominator
+					);
+					return;
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT2:
+			if (multiply (subtrahend.numerator, minuend.denominator)) {
+				long n2_mul_d1 = intResult;
+
+				if (subtract (minuend.numerator, n2_mul_d1)) {
+					result.setValue (
+						intResult,
+						minuend.denominator
+					);
+					return;
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT_:
+			if (subtract (minuend.numerator, subtrahend.numerator)) {
+				result.setValue (
+					intResult
+				);
+				return;
+			}
+			break;
+
+		case KProfile._POST_RAT_:
 			result.setValue (
 				minuend.numerator * subtrahend.denominator
 					- subtrahend.numerator * minuend.denominator,
@@ -204,78 +261,12 @@ public class KCalculator {
 			);
 			return;
 
-		} else if (minuend.bigDecimal == null
-			&& subtrahend.bigDecimal == null) {
-			// long operation
-
-			if (minuend.denominator == 1) {
-				if (subtrahend.denominator == 1) {
-					// minuend, subtrahend integers
-					if (subtract (minuend.numerator, subtrahend.numerator)) {
-						result.setValue (
-							intResult
-						);
-						return;
-					}
-
-				} else {
-					// minuend integer
-					if (multiply (minuend.numerator, subtrahend.denominator)) {
-						long n1_mul_d2 = intResult;
-
-						if (subtract (n1_mul_d2, subtrahend.numerator)) {
-							result.setValue (
-								intResult,
-								subtrahend.denominator
-							);
-							return;
-						}
-					}
-				}
-
-			} else {
-				if (subtrahend.denominator == 1) {
-					// subtrahend integer
-					if (multiply (subtrahend.numerator, minuend.denominator)) {
-						long n2_mul_d1 = intResult;
-
-						if (subtract (minuend.numerator, n2_mul_d1)) {
-							result.setValue (
-								intResult,
-								minuend.denominator
-							);
-							return;
-						}
-					}
-
-				} else {
-					// minuend, subtrahend not integers
-					if (multiply (minuend.numerator, subtrahend.denominator)) {
-						long n1_mul_d2 = intResult;
-
-						if (multiply (subtrahend.numerator, minuend.denominator)) {
-							long n2_mul_d1 = intResult;
-
-							if (subtract (n1_mul_d2, n2_mul_d1)) {
-								long numerator = intResult;
-
-								if (multiply (
-									minuend.denominator, subtrahend.denominator)) {
-
-									result.setValue (
-										numerator,
-										intResult
-									);
-									return;
-								}
-							}
-						}
-					}
-				}
-			}
+		case KProfile._POST_INT_:
+			result.setValue (
+				minuend.numerator - subtrahend.numerator
+			);
+			return;
 		}
-
-		// BigDecimal operation
 
 		result.setValue (
 			minuend.toBigDecimal ()
@@ -312,53 +303,67 @@ public class KCalculator {
 		KNumber factor_1,
 		KNumber factor_2) {
 
-		if (factor_1.fitsInInt
-			&& factor_2.fitsInInt) {
-			// int operation
+		switch (KProfile.route[factor_1.profile][factor_2.profile]) {
+		default:
+			// go to end
+			break;
 
+		case KProfile._PRE__RAT_:
+			if (multiply (factor_1.numerator, factor_2.numerator)) {
+				long numerator = intResult;
+
+				if (multiply (factor_1.denominator, factor_2.denominator)) {
+					result.setValue (
+						numerator,
+						intResult
+					);
+					return;
+				}
+			}
+			break;
+
+		case KProfile._PRE__INT1:
+			if (multiply (factor_1.numerator, factor_2.numerator)) {
+				result.setValue (
+					intResult,
+					factor_2.denominator
+				);
+				return;
+			}
+			break;
+
+		case KProfile._PRE__INT2:
+			if (multiply (factor_1.numerator, factor_2.numerator)) {
+				result.setValue (
+					intResult,
+					factor_1.denominator
+				);
+				return;
+			}
+			break;
+
+		case KProfile._PRE__INT_:
+			if (multiply (factor_1.numerator, factor_2.numerator)) {
+				result.setValue (
+					intResult
+				);
+				return;
+			}
+			break;
+
+		case KProfile._POST_RAT_:
 			result.setValue (
 				factor_1.numerator * factor_2.numerator,
 				factor_1.denominator * factor_2.denominator
 			);
 			return;
 
-		} else if (factor_1.bigDecimal == null
-			&& factor_2.bigDecimal == null) {
-			// long operation
-
-			if (multiply (factor_1.numerator, factor_2.numerator)) {
-				long numerator = intResult;
-
-				if (factor_1.denominator == 1) {
-					if (factor_2.denominator == 1) {
-						// both factors integers
-						result.setValue (numerator);
-						return;
-
-					} else {
-						// factor 1 integer
-						result.setValue (numerator, factor_2.denominator);
-						return;
-					}
-
-				} else {
-					if (factor_2.denominator == 1) {
-						// factor 2 integer
-						result.setValue (numerator, factor_1.denominator);
-						return;
-
-					} else {
-						// both factors not integers
-						if (multiply (factor_1.denominator, factor_2.denominator)) {
-							result.setValue (numerator, intResult);
-							return;
-						}
-					}
-				}
-			}
+		case KProfile._POST_INT_:
+			result.setValue (
+				factor_1.numerator * factor_2.numerator
+			);
+			return;
 		}
-
-		// BigDecimal operation
 
 		result.setValue (
 			factor_1.toBigDecimal ()
@@ -401,86 +406,66 @@ public class KCalculator {
 		KNumber dividend,
 		KNumber divisor) {
 
-		if (dividend.bigDecimal == null
-			&& divisor.bigDecimal == null) {
+		switch (KProfile.route[dividend.profile][divisor.profile]) {
+		default:
+			// go to end
+			break;
 
-			if (dividend.denominator == 1) {
-				if (divisor.denominator == 1) {
-					// dividend, divisor integers
+		case KProfile._PRE__RAT_:
+			if (multiply (dividend.numerator, divisor.denominator)) {
+				long numerator = intResult;
+
+				if (multiply (divisor.numerator, dividend.denominator)) {
 					result.setValue (
-						dividend.numerator,
-						divisor.numerator
+						numerator,
+						intResult
 					);
 					return;
-
-				} else {
-					// dividend integer
-					if (dividend.fitsInInt
-						&& divisor.fitsInInt) {
-						// int operation
-
-						result.setValue (
-							dividend.numerator * divisor.denominator,
-							divisor.numerator
-						);
-						return;
-
-					} else {
-						// long operation
-
-						if (multiply (dividend.numerator, divisor.denominator)) {
-							result.setValue (
-								intResult,
-								divisor.numerator
-							);
-							return;
-						}
-					}
-				}
-
-			} else {
-				if (dividend.fitsInInt
-					&& divisor.fitsInInt) {
-					// int operation
-
-					result.setValue (
-						dividend.numerator * divisor.denominator,
-						dividend.denominator * divisor.numerator
-					);
-					return;
-
-				} else {
-					// long operation
-
-					if (divisor.denominator == 1) {
-						// divisor integer
-						if (multiply (dividend.denominator, divisor.numerator)) {
-							result.setValue (
-								dividend.numerator,
-								intResult
-							);
-							return;
-						}
-
-					} else {
-						// dividend, divisor not integers
-						if (multiply (dividend.numerator, divisor.denominator)) {
-							long numerator = intResult;
-
-							if (multiply (dividend.denominator, divisor.numerator)) {
-								result.setValue (
-									numerator,
-									intResult
-								);
-								return;
-							}
-						}
-					}
 				}
 			}
-		}
+			break;
 
-		// BigDecimal operation
+		case KProfile._PRE__INT1:
+			if (multiply (dividend.numerator, divisor.denominator)) {
+				result.setValue (
+					intResult,
+					divisor.numerator
+				);
+				return;
+			}
+			break;
+
+		case KProfile._PRE__INT2:
+			if (multiply (divisor.numerator, dividend.denominator)) {
+				result.setValue (
+					dividend.numerator,
+					intResult
+				);
+				return;
+			}
+			break;
+
+		case KProfile._PRE__INT_:
+			result.setValue (
+				dividend.numerator,
+				divisor.numerator
+			);
+			return;
+
+		case KProfile._POST_RAT_:
+			result.setValue (
+				dividend.numerator * divisor.denominator,
+				divisor.numerator * dividend.denominator
+			);
+			return;
+
+		case KProfile._POST_INT_:
+			result.setValue (
+				dividend.numerator,
+				divisor.numerator
+			);
+			return;
+		}
 
 		result.setValue (
 			dividend.toBigDecimal ()

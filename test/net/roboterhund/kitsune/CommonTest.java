@@ -23,30 +23,18 @@ import static org.junit.Assert.assertEquals;
 // common test functions, constants, etc.
 public abstract class CommonTest {
 
-	// kNumber.fitsInInt == true
-	public static final boolean FITS_IN_INT = true;
-
-	// kNumber.fitsInInt == false
-	public static final boolean BIGGER_THAN_INT = false;
-
-	// kNumber.denominator == 1
-	public static final long IS_INTEGER = 1;
-
-	// kNumber.bigDecimal == null
-	public static final BigDecimal FITS_IN_LONG = null;
-
 	// output print stream
 	public static final PrintStream out = System.out;
 
 	// check internal values of number
 	public static void assertNumberEquals (
 		KNumber testedNumber,
-		boolean fitsInInt,
+		int profile,
 		long numerator,
 		long denominator,
 		BigDecimal bigDecimal
 	) {
-		assertEquals ("fitsInInt", fitsInInt, testedNumber.fitsInInt);
+		assertEquals ("profile", profile, testedNumber.profile);
 		assertEquals ("bigDecimal", bigDecimal, testedNumber.bigDecimal);
 		assertEquals ("numerator", numerator, testedNumber.numerator);
 		assertEquals ("denominator", denominator, testedNumber.denominator);

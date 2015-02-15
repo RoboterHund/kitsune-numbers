@@ -31,7 +31,7 @@ public class KNumber {
 	/**
 	 * Default precision of numbers with infinite decimal expansion,
 	 * unless overridden by
-	 * {@link net.roboterhund.kitsune.KNumber#defaultPrecision}.
+	 * {@link KNumber#defaultPrecision}.
 	 */
 	public static final int DEFAULT_PRECISION = 24;
 
@@ -40,17 +40,11 @@ public class KNumber {
 	 * of numbers with infinite decimal expansion.
 	 * <p>
 	 * The default value is
-	 * {@link net.roboterhund.kitsune.KNumber#DEFAULT_PRECISION}.
+	 * {@link KNumber#DEFAULT_PRECISION}.
 	 */
 	public static int defaultPrecision = DEFAULT_PRECISION;
 
-	/**
-	 * <code>int</code> size flag.
-	 * <p>
-	 * If <code>true</code>, both numerator and denominator
-	 * fit in a Java <code>int</code>/<code>Integer</code>.
-	 */
-	boolean fitsInInt;
+	int profile;
 
 	/**
 	 * Numerator.
@@ -109,7 +103,8 @@ public class KNumber {
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(BigDecimal)} call on existing object.
+	 * Equivalent to a {@link #setValue(java.math.BigDecimal)} call on existing
+	 * object.
 	 *
 	 * @param bigDecimal value.
 	 */
@@ -160,7 +155,7 @@ public class KNumber {
 	 * Set value to zero.
 	 */
 	public void setValue () {
-		fitsInInt = true;
+		profile = KProfile.INT_INTEGER;
 		numerator = 0;
 		denominator = 1;
 		bigDecimal = null;
@@ -172,7 +167,7 @@ public class KNumber {
 	 * @param number copied number.
 	 */
 	public void setValue (KNumber number) {
-		fitsInInt = number.fitsInInt;
+		profile = number.profile;
 		numerator = number.numerator;
 		denominator = number.denominator;
 		bigDecimal = number.bigDecimal;
@@ -204,18 +199,29 @@ public class KNumber {
 			// normalize result
 			this.numerator /= denominator;
 			this.denominator /= denominator;
+
 		}
 
-		// TODO optimize check
 		// check if fits in int
-		fitsInInt = (
-			(
+		if (this.denominator == 1) {
+			profile = ((
+				this.numerator <= Integer.MAX_VALUE
+					&& this.numerator >= Integer.MIN_VALUE
+			)) ?
+				KProfile.INT_INTEGER :
+				KProfile.LONG_INTEGER;
+
+		} else {
+			profile = ((
 				this.numerator <= Integer.MAX_VALUE
 					&& this.numerator >= Integer.MIN_VALUE
 			) && (
 				this.denominator <= Integer.MAX_VALUE
-					&& this.denominator >= Integer.MIN_VALUE)
-		);
+					&& this.denominator >= Integer.MIN_VALUE
+			)) ?
+				KProfile.INT_RATIONAL :
+				KProfile.LONG_RATIONAL;
+		}
 
 		// discard old value, if any
 		bigDecimal = null;
@@ -227,7 +233,7 @@ public class KNumber {
 	 * @param bigDecimal new value, assigned directly.
 	 */
 	public void setValue (BigDecimal bigDecimal) {
-		fitsInInt = false;
+		profile = KProfile.BIG;
 		this.bigDecimal = bigDecimal;
 		// other members no longer relevant
 	}
@@ -243,10 +249,12 @@ public class KNumber {
 		this.denominator = 1;
 
 		// check if fits in int
-		fitsInInt = (
+		profile = ((
 			this.numerator <= Integer.MAX_VALUE
 				&& this.numerator >= Integer.MIN_VALUE
-		);
+		)) ?
+			KProfile.INT_INTEGER :
+			KProfile.LONG_INTEGER;
 
 		// discard old value, if any
 		bigDecimal = null;
@@ -273,13 +281,13 @@ public class KNumber {
 	 * @param stringValue string in format
 	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
 	 * (signed or unsigned integer with optional point followed by decimals).
-	 * @throws java.lang.NumberFormatException unable to parse string.
+	 * @throws NumberFormatException unable to parse string.
 	 */
 	public void setValue (String stringValue) {
 		if (setLongIntValue (stringValue)) {
 			return;
 		}
-		bigDecimal = new BigDecimal (stringValue);
+		setValue (new BigDecimal (stringValue));
 	}
 
 	/**
@@ -349,7 +357,7 @@ public class KNumber {
 	 * Convert to BigDecimal.
 	 *
 	 * @return BigDecimal, with
-	 * {@link net.roboterhund.kitsune.KNumber#defaultPrecision}
+	 * {@link KNumber#defaultPrecision}
 	 * decimals if number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal () {

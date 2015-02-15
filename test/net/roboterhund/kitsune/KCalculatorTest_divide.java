@@ -17,28 +17,21 @@ package net.roboterhund.kitsune;
 
 import org.junit.Test;
 
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_INT;
-import static net.roboterhund.kitsune.CommonTest.FITS_IN_LONG;
-
 public class KCalculatorTest_divide extends KCalculatorTest {
 
 	@Test
 	public void testDivide () throws Exception {
-		calculator = new KCalculator ();
-
-		result = new KNumber ();
-		a = new KNumber ();
-		b = new KNumber ();
+		reset ();
 
 		/* * * * * */
 		a.setValue (222);
 		b.setValue (333);
 		calculator.divide (result, a, b);
 		assertResultEquals (
-			FITS_IN_INT,
+			KProfile.INT_RATIONAL,
 			2,
 			3,
-			FITS_IN_LONG
+			null
 		);
 	}
 
