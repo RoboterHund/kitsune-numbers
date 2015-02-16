@@ -91,6 +91,8 @@ public class KNumber {
 	 */
 	BigInteger bigDenominator;
 
+	// TODO redesign construction to increase robustness
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -118,9 +120,21 @@ public class KNumber {
 	 *
 	 * @param numerator numerator.
 	 * @param denominator denominator.
-	 * @deprecated // TODO remove
 	 */
-	KNumber (long numerator, long denominator) {
+	public KNumber (long numerator, long denominator) {
+		if (denominator < 0) {
+			if (numerator == Long.MIN_VALUE
+				|| denominator == Long.MIN_VALUE) {
+				setValue (
+					new BigInteger (String.valueOf (numerator)),
+					new BigInteger (String.valueOf (denominator))
+				);
+				compact ();
+				return;
+			}
+			numerator = -numerator;
+			denominator = -denominator;
+		}
 		setValue (numerator, denominator);
 	}
 
@@ -313,19 +327,16 @@ public class KNumber {
 			// normalize result
 			this.bigNumerator = bigNumerator.divide (gcd);
 			this.bigDenominator = bigDenominator.divide (gcd);
-
-			if (bigDenominator.compareTo (BigInteger.ONE) == 0) {
-				bigDenominator = BigInteger.ONE;
-			}
 		}
 
 		if (this.bigDenominator.compareTo (BigInteger.ZERO) < 0) {
-			this.bigNumerator = bigNumerator.negate ();
-			this.bigDenominator = bigDenominator.negate ();
+			this.bigNumerator = this.bigNumerator.negate ();
+			this.bigDenominator = this.bigDenominator.negate ();
 		}
 
-		//noinspection NumberEquality
-		if (bigDenominator == BigInteger.ONE) {
+		if (this.bigDenominator.equals (BigInteger.ONE)) {
+			// make sure that the already existing BigInteger.ONE is reused
+			this.bigDenominator = BigInteger.ONE;
 			profile = KProfile.BIG_INTEGER;
 
 		} else {

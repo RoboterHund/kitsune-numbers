@@ -57,6 +57,22 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 			result.denominator,
 			new BigDecimal (Long.MAX_VALUE).add (BigDecimal.ONE)
 		);
+		// continue
+
+		b.setValue (1, 2);
+		calculator.multiply (result, b);
+		assertResultEquals (
+			KProfile.LONG_INTEGER,
+			result.numerator,
+			result.denominator,
+			new BigDecimal (Long.MAX_VALUE)
+				.add (BigDecimal.ONE)
+				.divide (
+					new BigDecimal (2),
+					KNumber.defaultPrecision,
+					BigDecimal.ROUND_HALF_UP
+				)
+		);
 	}
 
 }

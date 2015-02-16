@@ -169,6 +169,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 	 * @param out if not null, print info while in progress here
 	 * @return elapsed thread time, in nanoseconds.
 	 */
+	@SuppressWarnings ("SameParameterValue")
 	public long randomTest (
 		RandomTestData data,
 		boolean forceBigDecimal,
@@ -412,6 +413,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		public ArrayList<KNumber> results_multiply;
 		public ArrayList<KNumber> results_divide;
 
+		@SuppressWarnings ("SameParameterValue")
 		public void init (
 			int numOperations,
 			int bitsIn_integer,

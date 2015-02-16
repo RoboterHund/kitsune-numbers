@@ -33,6 +33,16 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 			3,
 			null
 		);
+		// continue
+
+		b.setValue (1, 6);
+		calculator.divide (result, b);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			4,
+			1,
+			null
+		);
 	}
 
 }

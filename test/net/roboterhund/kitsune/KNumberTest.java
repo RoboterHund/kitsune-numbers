@@ -108,6 +108,67 @@ public class KNumberTest {
 			1,
 			null
 		);
+
+
+		/* * * * * */
+		testedNumber = new KNumber (10, -20);
+		assertTestedNumberEquals (
+			KProfile.INT_RATIONAL,
+			-1,
+			2,
+			null
+		);
+
+		/* * * * * */
+		testedNumber = new KNumber (Long.MIN_VALUE, -1);
+		assertTestedNumberEquals (
+			KProfile.BIG_INTEGER,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			new BigDecimal (Long.MAX_VALUE).add (BigDecimal.ONE)
+		);
+
+		/* * * * * */
+		// proof that the number of the correct profile is generated
+		// even if there is overflow during its construction
+		testedNumber = new KNumber (Long.MIN_VALUE, -2);
+		assertTestedNumberEquals (
+			KProfile.LONG_INTEGER,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			new BigDecimal (Long.MIN_VALUE).divide (
+				new BigDecimal (-2),
+				KNumber.defaultPrecision,
+				BigDecimal.ROUND_HALF_UP)
+		);
+
+		/* * * * * */
+		testedNumber = new KNumber (new BigDecimal ("-4.200"));
+		assertTestedNumberEquals (
+			KProfile.INT_RATIONAL,
+			-21,
+			5,
+			null
+		);
+
+		/* * * * * */
+		// "Works on my machine."
+		testedNumber = new KNumber (0.125);
+		assertTestedNumberEquals (
+			KProfile.INT_RATIONAL,
+			1,
+			8,
+			null
+		);
+
+		/* * * * * */
+		testedNumber = new KNumber ("1.01");
+		assertTestedNumberEquals (
+			KProfile.INT_RATIONAL,
+			101,
+			100,
+			null
+		);
 	}
 
 	@Test
