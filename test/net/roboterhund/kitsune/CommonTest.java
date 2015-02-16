@@ -28,7 +28,7 @@ public abstract class CommonTest {
 
 	// check internal values of number
 	public static void assertNumberEquals (
-		KNumber testedNumber,
+		KNumRegister testedNumber,
 		int profile,
 		long numerator,
 		long denominator,
@@ -61,7 +61,7 @@ public abstract class CommonTest {
 		assertEquals ("denominator", denominator, testedNumber.denominator);
 	}
 
-	public static void validate (BigDecimal expected, KNumber number) {
+	public static void validate (BigDecimal expected, KNumRegister number) {
 		assertEquals (
 			"validate",
 			expected.toPlainString (),

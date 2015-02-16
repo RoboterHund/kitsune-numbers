@@ -26,7 +26,7 @@ package net.roboterhund.kitsune;
  * to calculator routes.</li>
  * </ul>
  *
- * @see KNumber#profile
+ * @see KNumRegister#profile
  */
 abstract class KProfile {
 

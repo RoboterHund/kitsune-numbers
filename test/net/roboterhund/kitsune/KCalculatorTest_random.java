@@ -208,12 +208,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				a.setValue (stringValue);
 			}
 			if (data.aOperands != null) {
-				data.aOperands.add (new KNumber (a));
+				data.aOperands.add (new KNumRegister (a));
 			}
 
 			b.setValue (getRandomNumber (data, random));
 			if (data.bOperands != null) {
-				data.bOperands.add (new KNumber (b));
+				data.bOperands.add (new KNumRegister (b));
 			}
 
 			startMeasureTime = threadMXBean.getThreadCpuTime (threadId);
@@ -226,7 +226,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				result
 			);
 			if (data.results_add != null) {
-				data.results_add.add (new KNumber (result));
+				data.results_add.add (new KNumRegister (result));
 			}
 			switch (result.profile) {
 			case KProfile.BIG_RATIONAL:
@@ -253,7 +253,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				result
 			);
 			if (data.results_subtract != null) {
-				data.results_subtract.add (new KNumber (result));
+				data.results_subtract.add (new KNumRegister (result));
 			}
 			switch (result.profile) {
 			case KProfile.BIG_RATIONAL:
@@ -277,7 +277,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				elapsedTime += endMeasureTime - startMeasureTime;
 				operationsPerformed++;
 				if (data.results_multiply != null) {
-					data.results_multiply.add (new KNumber (result));
+					data.results_multiply.add (new KNumRegister (result));
 				}
 				switch (result.profile) {
 				case KProfile.BIG_RATIONAL:
@@ -303,12 +303,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			validate (
 				a.toBigDecimal ().divide (
 					b.toBigDecimal (),
-					KNumber.defaultPrecision,
+					KNumRegister.defaultPrecision,
 					BigDecimal.ROUND_HALF_UP),
 				result
 			);
 			if (data.results_divide != null) {
-				data.results_divide.add (new KNumber (result));
+				data.results_divide.add (new KNumRegister (result));
 			}
 			switch (result.profile) {
 			case KProfile.BIG_RATIONAL:
@@ -406,12 +406,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		public long integerMask;
 		public long decimalsMask;
 
-		public ArrayList<KNumber> aOperands;
-		public ArrayList<KNumber> bOperands;
-		public ArrayList<KNumber> results_add;
-		public ArrayList<KNumber> results_subtract;
-		public ArrayList<KNumber> results_multiply;
-		public ArrayList<KNumber> results_divide;
+		public ArrayList<KNumRegister> aOperands;
+		public ArrayList<KNumRegister> bOperands;
+		public ArrayList<KNumRegister> results_add;
+		public ArrayList<KNumRegister> results_subtract;
+		public ArrayList<KNumRegister> results_multiply;
+		public ArrayList<KNumRegister> results_divide;
 
 		@SuppressWarnings ("SameParameterValue")
 		public void init (
@@ -444,22 +444,22 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			this.decimalsMask = getMask (bitsIn_decimal);
 
 			if (storeA) {
-				aOperands = new ArrayList<KNumber> ();
+				aOperands = new ArrayList<KNumRegister> ();
 			}
 			if (storeB) {
-				bOperands = new ArrayList<KNumber> ();
+				bOperands = new ArrayList<KNumRegister> ();
 			}
 			if (storeResults_add) {
-				results_add = new ArrayList<KNumber> ();
+				results_add = new ArrayList<KNumRegister> ();
 			}
 			if (storeResults_subtract) {
-				results_subtract = new ArrayList<KNumber> ();
+				results_subtract = new ArrayList<KNumRegister> ();
 			}
 			if (storeResults_multiply) {
-				results_multiply = new ArrayList<KNumber> ();
+				results_multiply = new ArrayList<KNumRegister> ();
 			}
 			if (storeResults_divide) {
-				results_divide = new ArrayList<KNumber> ();
+				results_divide = new ArrayList<KNumRegister> ();
 			}
 		}
 

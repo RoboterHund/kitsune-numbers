@@ -22,18 +22,18 @@ import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
 // test KCalculator
 public abstract class KCalculatorTest {
 
-	protected KNumber result;
-	protected KNumber a;
-	protected KNumber b;
+	protected KNumRegister result;
+	protected KNumRegister a;
+	protected KNumRegister b;
 	protected KCalculator calculator;
 
 	// reset objects
 	protected void reset () {
 		calculator = new KCalculator ();
 
-		result = new KNumber ();
-		a = new KNumber ();
-		b = new KNumber ();
+		result = new KNumRegister ();
+		a = new KNumRegister ();
+		b = new KNumRegister ();
 	}
 
 	// check internal values of number

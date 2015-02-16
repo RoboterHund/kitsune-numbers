@@ -24,14 +24,14 @@ import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
 import static org.junit.Assert.assertEquals;
 
 // test KNumber in isolation
-public class KNumberTest {
+public class KNumRegisterTest {
 
-	private KNumber testedNumber;
+	private KNumRegister testedNumber;
 
 	@Test
 	public void testConstructor () throws Exception {
 		// default value
-		testedNumber = new KNumber ();
+		testedNumber = new KNumRegister ();
 		assertTestedNumberEquals (
 			KProfile.INT_INTEGER,
 			0,
@@ -41,7 +41,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// 0
-		testedNumber = new KNumber (0);
+		testedNumber = new KNumRegister (0);
 		assertTestedNumberEquals (
 			KProfile.INT_INTEGER,
 			0,
@@ -51,7 +51,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// max int
-		testedNumber = new KNumber (Integer.MAX_VALUE);
+		testedNumber = new KNumRegister (Integer.MAX_VALUE);
 		assertTestedNumberEquals (
 			KProfile.INT_INTEGER,
 			Integer.MAX_VALUE,
@@ -61,7 +61,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// max int + 1
-		testedNumber = new KNumber ((long) Integer.MAX_VALUE + 1);
+		testedNumber = new KNumRegister ((long) Integer.MAX_VALUE + 1);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
 			(long) Integer.MAX_VALUE + 1,
@@ -71,7 +71,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// max long
-		testedNumber = new KNumber (Long.MAX_VALUE);
+		testedNumber = new KNumRegister (Long.MAX_VALUE);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
 			Long.MAX_VALUE,
@@ -81,7 +81,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// min int
-		testedNumber = new KNumber (Integer.MIN_VALUE);
+		testedNumber = new KNumRegister (Integer.MIN_VALUE);
 		assertTestedNumberEquals (
 			KProfile.INT_INTEGER,
 			Integer.MIN_VALUE,
@@ -91,7 +91,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// min int - 1
-		testedNumber = new KNumber ((long) Integer.MIN_VALUE - 1);
+		testedNumber = new KNumRegister ((long) Integer.MIN_VALUE - 1);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
 			(long) Integer.MIN_VALUE - 1,
@@ -101,7 +101,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// min long
-		testedNumber = new KNumber (Long.MIN_VALUE);
+		testedNumber = new KNumRegister (Long.MIN_VALUE);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
 			Long.MIN_VALUE,
@@ -111,7 +111,7 @@ public class KNumberTest {
 
 
 		/* * * * * */
-		testedNumber = new KNumber (10, -20);
+		testedNumber = new KNumRegister (10, -20);
 		assertTestedNumberEquals (
 			KProfile.INT_RATIONAL,
 			-1,
@@ -120,7 +120,7 @@ public class KNumberTest {
 		);
 
 		/* * * * * */
-		testedNumber = new KNumber (Long.MIN_VALUE, -1);
+		testedNumber = new KNumRegister (Long.MIN_VALUE, -1);
 		assertTestedNumberEquals (
 			KProfile.BIG_INTEGER,
 			testedNumber.numerator,
@@ -131,19 +131,19 @@ public class KNumberTest {
 		/* * * * * */
 		// proof that the number of the correct profile is generated
 		// even if there is overflow during its construction
-		testedNumber = new KNumber (Long.MIN_VALUE, -2);
+		testedNumber = new KNumRegister (Long.MIN_VALUE, -2);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
 			testedNumber.numerator,
 			testedNumber.denominator,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (-2),
-				KNumber.defaultPrecision,
+				KNumRegister.defaultPrecision,
 				BigDecimal.ROUND_HALF_UP)
 		);
 
 		/* * * * * */
-		testedNumber = new KNumber (new BigDecimal ("-4.200"));
+		testedNumber = new KNumRegister (new BigDecimal ("-4.200"));
 		assertTestedNumberEquals (
 			KProfile.INT_RATIONAL,
 			-21,
@@ -153,7 +153,7 @@ public class KNumberTest {
 
 		/* * * * * */
 		// "Works on my machine."
-		testedNumber = new KNumber (0.125);
+		testedNumber = new KNumRegister (0.125);
 		assertTestedNumberEquals (
 			KProfile.INT_RATIONAL,
 			1,
@@ -162,7 +162,7 @@ public class KNumberTest {
 		);
 
 		/* * * * * */
-		testedNumber = new KNumber ("1.01");
+		testedNumber = new KNumRegister ("1.01");
 		assertTestedNumberEquals (
 			KProfile.INT_RATIONAL,
 			101,
@@ -173,7 +173,7 @@ public class KNumberTest {
 
 	@Test
 	public void testSetValue () throws Exception {
-		testedNumber = new KNumber ();
+		testedNumber = new KNumRegister ();
 		String stringValue;
 
 		/* * * * * */
@@ -274,7 +274,7 @@ public class KNumberTest {
 		/* * * * * */
 		// demonstration of problems with precision of 'double'
 		boolean preciseValueSet;
-		testedNumber = new KNumber ();
+		testedNumber = new KNumRegister ();
 		testedNumber.setValue (0.2);
 		try {
 			assertTestedNumberEquals (

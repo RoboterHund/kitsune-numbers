@@ -27,12 +27,12 @@ import java.math.BigInteger;
  * but methods in this package try to avoid
  * unnecessary allocation.
  */
-public class KNumber {
+public class KNumRegister {
 
 	/**
 	 * Default precision of numbers with infinite decimal expansion,
 	 * unless overridden by
-	 * {@link KNumber#defaultPrecision}.
+	 * {@link KNumRegister#defaultPrecision}.
 	 */
 	public static final int DEFAULT_PRECISION = 24;
 
@@ -41,7 +41,7 @@ public class KNumber {
 	 * of numbers with infinite decimal expansion.
 	 * <p>
 	 * The default value is
-	 * {@link KNumber#DEFAULT_PRECISION}.
+	 * {@link KNumRegister#DEFAULT_PRECISION}.
 	 */
 	public static int defaultPrecision = DEFAULT_PRECISION;
 
@@ -98,18 +98,18 @@ public class KNumber {
 	 * <p>
 	 * Equivalent to a {@link #setValue()} call on existing object.
 	 */
-	public KNumber () {
+	public KNumRegister () {
 		setValue ();
 	}
 
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(KNumber)} call on existing object.
+	 * Equivalent to a {@link #setValue(KNumRegister)} call on existing object.
 	 *
 	 * @param number number copied to <code>this</code>.
 	 */
-	public KNumber (KNumber number) {
+	public KNumRegister (KNumRegister number) {
 		setValue (number);
 	}
 
@@ -121,7 +121,7 @@ public class KNumber {
 	 * @param numerator numerator.
 	 * @param denominator denominator.
 	 */
-	public KNumber (long numerator, long denominator) {
+	public KNumRegister (long numerator, long denominator) {
 		if (denominator < 0) {
 			if (numerator == Long.MIN_VALUE
 				|| denominator == Long.MIN_VALUE) {
@@ -146,7 +146,7 @@ public class KNumber {
 	 *
 	 * @param bigDecimal value.
 	 */
-	public KNumber (BigDecimal bigDecimal) {
+	public KNumRegister (BigDecimal bigDecimal) {
 		setValue (bigDecimal);
 	}
 
@@ -157,7 +157,7 @@ public class KNumber {
 	 *
 	 * @param longValue integer value.
 	 */
-	public KNumber (long longValue) {
+	public KNumRegister (long longValue) {
 		setValue (longValue);
 	}
 
@@ -172,7 +172,7 @@ public class KNumber {
 	 * @param doubleValue value,
 	 * not guaranteed to match source code representation.
 	 */
-	public KNumber (double doubleValue) {
+	public KNumRegister (double doubleValue) {
 		setValue (doubleValue);
 	}
 
@@ -185,7 +185,7 @@ public class KNumber {
 	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
 	 * (signed or unsigned integer with optional point followed by decimals).
 	 */
-	public KNumber (String stringValue) {
+	public KNumRegister (String stringValue) {
 		setValue (stringValue);
 	}
 
@@ -205,7 +205,7 @@ public class KNumber {
 	 *
 	 * @param number copied number.
 	 */
-	public void setValue (KNumber number) {
+	public void setValue (KNumRegister number) {
 		profile = number.profile;
 		numerator = number.numerator;
 		denominator = number.denominator;
@@ -546,7 +546,7 @@ public class KNumber {
 	 * Convert to BigDecimal.
 	 *
 	 * @return BigDecimal, with
-	 * {@link KNumber#defaultPrecision}
+	 * {@link KNumRegister#defaultPrecision}
 	 * decimals if number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal () {

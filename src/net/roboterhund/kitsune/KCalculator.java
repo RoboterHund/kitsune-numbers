@@ -16,8 +16,8 @@
 package net.roboterhund.kitsune;
 
 /**
- * Singleton object to perform calculations with {@link
- * net.roboterhund.kitsune.KNumber} objects.
+ * Singleton object to perform calculations with
+ * {@link KNumRegister} objects.
  * <p>
  * Calculations try to produce, whenever possible,
  * exact, rational results.
@@ -33,7 +33,7 @@ public class KCalculator {
 	 * and they must be converted to {@link java.math.BigDecimal},
 	 * this setting determines the number of decimals stored.
 	 */
-	public int precision = KNumber.DEFAULT_PRECISION;
+	public int precision = KNumRegister.DEFAULT_PRECISION;
 
 	/**
 	 * Result of last primitive calculation.
@@ -52,8 +52,8 @@ public class KCalculator {
 	 * @param term_2 number to add.
 	 */
 	public void add (
-		KNumber add_to,
-		KNumber term_2) {
+		KNumRegister add_to,
+		KNumRegister term_2) {
 
 		add (
 			add_to,
@@ -69,9 +69,9 @@ public class KCalculator {
 	 * @param term_2 second term.
 	 */
 	public void add (
-		KNumber result,
-		KNumber term_1,
-		KNumber term_2) {
+		KNumRegister result,
+		KNumRegister term_1,
+		KNumRegister term_2) {
 
 		int route = KProfile.route[term_1.profile][term_2.profile];
 
@@ -207,8 +207,8 @@ public class KCalculator {
 	 * @param subtrahend number subtracted.
 	 */
 	public void subtract (
-		KNumber subtract_from,
-		KNumber subtrahend) {
+		KNumRegister subtract_from,
+		KNumRegister subtrahend) {
 
 		subtract (
 			subtract_from,
@@ -224,9 +224,9 @@ public class KCalculator {
 	 * @param subtrahend number to subtract.
 	 */
 	public void subtract (
-		KNumber result,
-		KNumber minuend,
-		KNumber subtrahend) {
+		KNumRegister result,
+		KNumRegister minuend,
+		KNumRegister subtrahend) {
 
 		int route = KProfile.route[minuend.profile][subtrahend.profile];
 
@@ -362,8 +362,8 @@ public class KCalculator {
 	 * @param factor_2 second factor.
 	 */
 	public void multiply (
-		KNumber multiplied,
-		KNumber factor_2) {
+		KNumRegister multiplied,
+		KNumRegister factor_2) {
 
 		multiply (
 			multiplied,
@@ -379,9 +379,9 @@ public class KCalculator {
 	 * @param factor_2 second factor.
 	 */
 	public void multiply (
-		KNumber result,
-		KNumber factor_1,
-		KNumber factor_2) {
+		KNumRegister result,
+		KNumRegister factor_1,
+		KNumRegister factor_2) {
 
 		int route = KProfile.route[factor_1.profile][factor_2.profile];
 
@@ -497,8 +497,8 @@ public class KCalculator {
 	 * @throws java.lang.ArithmeticException division by zero.
 	 */
 	public void divide (
-		KNumber divided,
-		KNumber divisor) {
+		KNumRegister divided,
+		KNumRegister divisor) {
 
 		divide (
 			divided,
@@ -519,9 +519,9 @@ public class KCalculator {
 	 * @throws java.lang.ArithmeticException division by zero.
 	 */
 	public void divide (
-		KNumber result,
-		KNumber dividend,
-		KNumber divisor) {
+		KNumRegister result,
+		KNumRegister dividend,
+		KNumRegister divisor) {
 
 		int route = KProfile.route[dividend.profile][divisor.profile];
 
