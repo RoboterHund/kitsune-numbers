@@ -172,7 +172,7 @@ public class KNumberTest {
 		stringValue = maxValuePlusOne.toString ();
 		testedNumber.setValue (stringValue);
 		assertTestedNumberEquals (
-			KProfile.BIG,
+			KProfile.BIG_INTEGER,
 			testedNumber.numerator,
 			testedNumber.denominator,
 			new BigDecimal (maxValuePlusOne)
@@ -195,7 +195,7 @@ public class KNumberTest {
 		stringValue = minValueMinusOne.toString ();
 		testedNumber.setValue (stringValue);
 		assertTestedNumberEquals (
-			KProfile.BIG,
+			KProfile.BIG_INTEGER,
 			testedNumber.numerator,
 			testedNumber.denominator,
 			new BigDecimal (minValueMinusOne)
@@ -227,7 +227,7 @@ public class KNumberTest {
 
 		} catch (AssertionError error) {
 			assertTestedNumberEquals (
-				KProfile.BIG,
+				KProfile.BIG_RATIONAL,
 				0,
 				1,
 				new BigDecimal (0.2)

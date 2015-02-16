@@ -70,7 +70,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		calculator.add (result, a, b);
 		BigDecimal maxLongBigDecimal = new BigDecimal (Long.MAX_VALUE);
 		assertResultEquals (
-			KProfile.BIG,
+			KProfile.BIG_INTEGER,
 			result.numerator,
 			result.denominator,
 			maxLongBigDecimal.add (BigDecimal.ONE)

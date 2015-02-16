@@ -52,7 +52,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		b.setValue (Long.MIN_VALUE);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
-			KProfile.BIG,
+			KProfile.BIG_INTEGER,
 			result.numerator,
 			result.denominator,
 			new BigDecimal (Long.MAX_VALUE).add (BigDecimal.ONE)

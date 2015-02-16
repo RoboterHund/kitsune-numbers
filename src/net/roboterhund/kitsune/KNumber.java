@@ -301,25 +301,49 @@ public class KNumber {
 		BigInteger bigNumerator,
 		BigInteger bigDenominator) {
 
-		if (bigDenominator.compareTo (BigInteger.ZERO) < 0) {
-			bigNumerator = bigNumerator.negate ();
-			bigDenominator = bigDenominator.negate ();
-		}
-
 		// find greatest common divisor
 		BigInteger gcd = bigNumerator.gcd (bigDenominator);
 
-		if (gcd.compareTo (BigInteger.ONE) != 0) {
+		if (gcd.compareTo (BigInteger.ONE) == 0) {
+			// no need to divide
+			this.bigNumerator = bigNumerator;
+			this.bigDenominator = bigDenominator;
+
+		} else {
 			// normalize result
 			this.bigNumerator = bigNumerator.divide (gcd);
 			this.bigDenominator = bigDenominator.divide (gcd);
 
-		} else {
-			this.bigNumerator = bigNumerator;
-			this.bigDenominator = bigDenominator;
+			if (bigDenominator.compareTo (BigInteger.ONE) == 0) {
+				bigDenominator = BigInteger.ONE;
+			}
 		}
 
-		profile = KProfile.BIG;
+		if (this.bigDenominator.compareTo (BigInteger.ZERO) < 0) {
+			this.bigNumerator = bigNumerator.negate ();
+			this.bigDenominator = bigDenominator.negate ();
+		}
+
+		//noinspection NumberEquality
+		if (bigDenominator == BigInteger.ONE) {
+			profile = KProfile.BIG_INTEGER;
+
+		} else {
+			profile = KProfile.BIG_RATIONAL;
+		}
+	}
+
+	/**
+	 * Set integer value.
+	 * <p>
+	 * For internal use by {@link KCalculator}.
+	 *
+	 * @param bigNumerator new numerator.
+	 */
+	public void setValue (BigInteger bigNumerator) {
+		this.bigNumerator = bigNumerator;
+		this.bigDenominator = BigInteger.ONE;
+		profile = KProfile.BIG_INTEGER;
 	}
 
 	/**
@@ -527,7 +551,7 @@ public class KNumber {
 	 * number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal (int precision) {
-		if (profile == KProfile.BIG) {
+		if (profile <= KProfile.BIG_INTEGER) {
 			return new BigDecimal (bigNumerator)
 				.divide (
 					new BigDecimal (bigDenominator),
@@ -554,7 +578,11 @@ public class KNumber {
 			bigNumerator = new BigInteger (String.valueOf (numerator));
 		}
 		if (bigDenominator == null) {
-			bigDenominator = new BigInteger (String.valueOf (denominator));
+			if (denominator == 1) {
+				bigDenominator = BigInteger.ONE;
+			} else {
+				bigDenominator = new BigInteger (String.valueOf (denominator));
+			}
 		}
 	}
 

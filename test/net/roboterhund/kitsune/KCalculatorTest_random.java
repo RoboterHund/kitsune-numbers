@@ -133,19 +133,19 @@ public class KCalculatorTest_random extends KCalculatorTest {
 
 			data.numIntResults_add,
 			data.numLongResults_add,
-			data.numBigDecimalResults_add,
+			data.numBigResults_add,
 
 			data.numIntResults_subtract,
 			data.numLongResults_subtract,
-			data.numBigDecimalResults_subtract,
+			data.numBigResults_subtract,
 
 			data.numIntResults_multiply,
 			data.numLongResults_multiply,
-			data.numBigDecimalResults_multiply,
+			data.numBigResults_multiply,
 
 			data.numIntResults_divide,
 			data.numLongResults_divide,
-			data.numBigDecimalResults_divide
+			data.numBigResults_divide
 		);
 	}
 
@@ -228,8 +228,9 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				data.results_add.add (new KNumber (result));
 			}
 			switch (result.profile) {
-			case KProfile.BIG:
-				data.numBigDecimalResults_add++;
+			case KProfile.BIG_RATIONAL:
+			case KProfile.BIG_INTEGER:
+				data.numBigResults_add++;
 				break;
 			case KProfile.LONG_RATIONAL:
 			case KProfile.LONG_INTEGER:
@@ -254,8 +255,9 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				data.results_subtract.add (new KNumber (result));
 			}
 			switch (result.profile) {
-			case KProfile.BIG:
-				data.numBigDecimalResults_subtract++;
+			case KProfile.BIG_RATIONAL:
+			case KProfile.BIG_INTEGER:
+				data.numBigResults_subtract++;
 				break;
 			case KProfile.LONG_RATIONAL:
 			case KProfile.LONG_INTEGER:
@@ -277,8 +279,9 @@ public class KCalculatorTest_random extends KCalculatorTest {
 					data.results_multiply.add (new KNumber (result));
 				}
 				switch (result.profile) {
-				case KProfile.BIG:
-					data.numBigDecimalResults_multiply++;
+				case KProfile.BIG_RATIONAL:
+				case KProfile.BIG_INTEGER:
+					data.numBigResults_multiply++;
 					break;
 				case KProfile.LONG_RATIONAL:
 				case KProfile.LONG_INTEGER:
@@ -307,8 +310,9 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				data.results_divide.add (new KNumber (result));
 			}
 			switch (result.profile) {
-			case KProfile.BIG:
-				data.numBigDecimalResults_divide++;
+			case KProfile.BIG_RATIONAL:
+			case KProfile.BIG_INTEGER:
+				data.numBigResults_divide++;
 				break;
 			case KProfile.LONG_RATIONAL:
 			case KProfile.LONG_INTEGER:
@@ -384,19 +388,19 @@ public class KCalculatorTest_random extends KCalculatorTest {
 
 		public int numIntResults_add;
 		public int numLongResults_add;
-		public int numBigDecimalResults_add;
+		public int numBigResults_add;
 
 		public int numIntResults_subtract;
 		public int numLongResults_subtract;
-		public int numBigDecimalResults_subtract;
+		public int numBigResults_subtract;
 
 		public int numIntResults_multiply;
 		public int numLongResults_multiply;
-		public int numBigDecimalResults_multiply;
+		public int numBigResults_multiply;
 
 		public int numIntResults_divide;
 		public int numLongResults_divide;
-		public int numBigDecimalResults_divide;
+		public int numBigResults_divide;
 
 		public long integerMask;
 		public long decimalsMask;
@@ -423,16 +427,16 @@ public class KCalculatorTest_random extends KCalculatorTest {
 
 			numIntResults_add = 0;
 			numLongResults_add = 0;
-			numBigDecimalResults_add = 0;
+			numBigResults_add = 0;
 			numIntResults_subtract = 0;
 			numLongResults_subtract = 0;
-			numBigDecimalResults_subtract = 0;
+			numBigResults_subtract = 0;
 			numIntResults_multiply = 0;
 			numLongResults_multiply = 0;
-			numBigDecimalResults_multiply = 0;
+			numBigResults_multiply = 0;
 			numIntResults_divide = 0;
 			numLongResults_divide = 0;
-			numBigDecimalResults_divide = 0;
+			numBigResults_divide = 0;
 
 			this.integerMask = getMask (bitsIn_integer);
 			this.decimalsMask = getMask (bitsIn_decimal);

@@ -81,7 +81,7 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 		BigDecimal result = new BigDecimal (aString)
 			.subtract (new BigDecimal (bString));
 		assertResultEquals (
-			KProfile.BIG,
+			KProfile.BIG_RATIONAL,
 			this.result.numerator,
 			this.result.denominator,
 			result

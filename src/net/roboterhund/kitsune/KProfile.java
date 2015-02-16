@@ -17,51 +17,73 @@ public abstract class KProfile {
 
 	// number profiles
 
-	// stored in BigDecimal
-	static final int BIG = 0;
+	// rational
+	// stored in BigInteger
+	static final int BIG_RATIONAL = 0;
 
-	// rational stored in long members
-	static final int LONG_RATIONAL = 1;
+	// integer
+	// stored in BigInteger
+	static final int BIG_INTEGER = 1;
 
-	// integer stored in long members
-	static final int LONG_INTEGER = 2;
+	// rational
+	// stored in long
+	static final int LONG_RATIONAL = 2;
 
-	// rational stored in int members
-	static final int INT_RATIONAL = 3;
+	// integer
+	// stored in long
+	static final int LONG_INTEGER = 3;
 
-	// integer stored in int members
-	static final int INT_INTEGER = 4;
+	// rational
+	// stored in int
+	static final int INT_RATIONAL = 4;
+
+	// integer
+	// stored in int
+	static final int INT_INTEGER = 5;
 
 	/* */
 
 	// calculator routes
 
-	// use generic method
-	static final int _BIGNUM___ = 0;
+	// rational operands
+	// use BigInteger
+	static final int BIG__RAT_ = 0;
+
+	// operand 1 integer, operand 2 rational
+	// use BigInteger
+	static final int BIG__INT1 = 1;
+
+	// operand 1 rational, operand 2 integer
+	// use BigInteger
+	static final int BIG__INT2 = 2;
+
+	// integer operands
+	// use BigInteger
+	static final int BIG__INT_ = 3;
 
 	// rational operands
 	// check long overflow before each step
-	static final int _PRE__RAT_ = 1;
+	static final int LONG_RAT_ = 4;
 
 	// operand 1 integer, operand 2 rational
 	// check long overflow before each step
-	static final int _PRE__INT1 = 2;
+	static final int LONG_INT1 = 5;
 
 	// operand 1 rational, operand 2 integer
 	// check long overflow before each step
-	static final int _PRE__INT2 = 3;
+	static final int LONG_INT2 = 6;
 
 	// integer operands
 	// check long overflow before each step
-	static final int _PRE__INT_ = 4;
+	static final int LONG_INT_ = 7;
 
 	// rational operands
 	// check int overflow after operation
-	static final int _POST_RAT_ = 5;
+	static final int INT__RAT_ = 8;
 
 	// integer operands
 	// check int overflow after operation
-	static final int _POST_INT_ = 6;
+	static final int INT__INT_ = 9;
 
 	/* */
 
@@ -69,17 +91,19 @@ public abstract class KProfile {
 	static final int[][] route = {
 		// \2
 		// 1\
-		//      big   long rat.   long int.    int rat.    int int.
-		// big
-		{_BIGNUM___, _BIGNUM___, _BIGNUM___, _BIGNUM___, _BIGNUM___},
+		// big rat.   big int.  long rat.  long int.   int rat.   int int.
+		// big rat.
+		{BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2},
+		// big int.
+		{BIG__INT1, BIG__INT_, BIG__INT1, BIG__INT_, BIG__INT1, BIG__INT_},
 		// long rat.
-		{_BIGNUM___, _PRE__RAT_, _PRE__INT2, _PRE__RAT_, _PRE__INT2},
+		{BIG__RAT_, BIG__INT2, LONG_RAT_, LONG_INT2, LONG_RAT_, LONG_INT2},
 		// long int.
-		{_BIGNUM___, _PRE__INT1, _PRE__INT_, _PRE__INT1, _PRE__INT_},
+		{BIG__INT1, BIG__INT_, LONG_INT1, LONG_INT_, LONG_INT1, LONG_INT_},
 		// int rat.
-		{_BIGNUM___, _PRE__RAT_, _PRE__INT2, _POST_RAT_, _POST_RAT_},
+		{BIG__RAT_, BIG__INT2, LONG_RAT_, LONG_INT2, INT__RAT_, INT__RAT_},
 		// int int.
-		{_BIGNUM___, _PRE__INT1, _PRE__INT_, _POST_RAT_, _POST_INT_}
+		{BIG__INT1, BIG__INT_, LONG_INT1, LONG_INT_, INT__RAT_, INT__INT_}
 	};
 
 }
