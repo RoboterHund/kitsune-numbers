@@ -159,10 +159,10 @@ public class KNumberTest {
 		BigDecimal maxValue = new BigDecimal (stringValue);
 		testedNumber.setValue (maxValue);
 		assertTestedNumberEquals (
-			KProfile.BIG,
-			testedNumber.numerator,
-			testedNumber.denominator,
-			new BigDecimal (stringValue)
+			KProfile.INT_INTEGER,
+			0,
+			1,
+			null
 		);
 
 		/* * * * * */

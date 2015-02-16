@@ -77,34 +77,14 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		// the result does not revert to simple fraction representation
+		// the result reverts to simple fraction representation
 		calculator.subtract (result, b);
 		assertResultEquals (
-			KProfile.BIG,
-			result.numerator,
-			result.denominator,
-			maxLongBigDecimal
+			KProfile.LONG_INTEGER,
+			Long.MAX_VALUE,
+			1,
+			null
 		);
-		// continue
-
-		// TODO make this work
-		// test of automatic conversion to rational representation
-		//noinspection ConstantConditions,ConstantConditions,ConstantIfStatement
-		if (false) {
-			b.setValue (1);
-			calculator.add (result, b);
-			b.setValue (2);
-			calculator.divide (result, b);
-			// Long.MAX_VALUE / 2 + 1
-			// does not overflow, and, due to rounding, actually equals
-			// (Long.MAX_VALUE + 1) / 2
-			assertResultEquals (
-				KProfile.LONG_INTEGER,
-				Long.MAX_VALUE / 2 + 1,
-				1,
-				null
-			);
-		}
 	}
 
 }

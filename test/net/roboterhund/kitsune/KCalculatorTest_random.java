@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static net.roboterhund.kitsune.CommonTest.out;
+import static net.roboterhund.kitsune.CommonTest.validate;
 
 // test KCalculator
 public class KCalculatorTest_random extends KCalculatorTest {
@@ -57,14 +58,6 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			false,
 			false
 		);
-		// unfortunately, there are some numbers that,
-		// when used as operands,
-		// slow down the calculations.
-		// this numbers can be observed if using
-		// 32 bits for integer part and
-		// 18 bits for decimals.
-		// these numbers probably overflow long
-		// in the midst of the operation
 
 		// this was used for a test of how large BigDecimals
 		// affect performance
@@ -72,13 +65,14 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		BigDecimal bigDecimalOperand = null;
 
 		boolean useBigDecimal = false;
-		// uncomment to use the bigger number
-//		useBigDecimal = true;
+		// note: current version compacts automatically
+		useBigDecimal = true;
 
 		if (useBigDecimal) {
 			bigDecimalOperand = new BigDecimal (Long.MAX_VALUE);
 			bigDecimalOperand =
-				bigDecimalOperand.multiply (bigDecimalOperand);
+				bigDecimalOperand.multiply (bigDecimalOperand)
+					.add (BigDecimal.ONE);
 		}
 
 		// more parameters
@@ -115,22 +109,22 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				+ "add:\n"
 				+ "\tint: %d\n"
 				+ "\tlong: %d\n"
-				+ "\tBigDecimal: %d\n"
+				+ "\tBigInteger: %d\n"
 
 				+ "subtract:\n"
 				+ "\tint: %d\n"
 				+ "\tlong: %d\n"
-				+ "\tBigDecimal: %d\n"
+				+ "\tBigInteger: %d\n"
 
 				+ "multiply:\n"
 				+ "\tint: %d\n"
 				+ "\tlong: %d\n"
-				+ "\tBigDecimal: %d\n"
+				+ "\tBigInteger: %d\n"
 
 				+ "divide:\n"
 				+ "\tint: %d\n"
 				+ "\tlong: %d\n"
-				+ "\tBigDecimal: %d\n";
+				+ "\tBigInteger: %d\n";
 
 		out.printf (
 			format,
@@ -206,6 +200,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				if (bigDecimalOperand != null) {
 					a.setValue (bigDecimalOperand);
 				} else {
+					// not valid with this version
 					a.setValue (new BigDecimal (stringValue));
 				}
 			} else {
@@ -225,6 +220,10 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
+			validate (
+				a.toBigDecimal ().add (b.toBigDecimal ()),
+				result
+			);
 			if (data.results_add != null) {
 				data.results_add.add (new KNumber (result));
 			}
@@ -247,6 +246,10 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
+			validate (
+				a.toBigDecimal ().subtract (b.toBigDecimal ()),
+				result
+			);
 			if (data.results_subtract != null) {
 				data.results_subtract.add (new KNumber (result));
 			}
@@ -293,6 +296,13 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
+			validate (
+				a.toBigDecimal ().divide (
+					b.toBigDecimal (),
+					KNumber.defaultPrecision,
+					BigDecimal.ROUND_HALF_UP),
+				result
+			);
 			if (data.results_divide != null) {
 				data.results_divide.add (new KNumber (result));
 			}

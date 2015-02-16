@@ -19,6 +19,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.assertEquals;
+
 public class KCalculatorTest_subtract extends KCalculatorTest {
 
 	@Test
@@ -50,19 +52,50 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 		);
 
 		/* * * * * */
+		String aString;
+		String bString;
 
-		String aString = "1000000000000.111";
-		String bString = "9999999999999.999";
+		aString = "1000000000000.1111";
+		bString = "9999999999999.9999";
 		a.setValue (aString);
 		b.setValue (bString);
+		assertEquals (a.profile, KProfile.LONG_RATIONAL);
+		assertEquals (b.profile, KProfile.LONG_RATIONAL);
 		calculator.subtract (result, a, b);
 		assertResultEquals (
-			KProfile.BIG,
+			KProfile.LONG_RATIONAL,
 			result.numerator,
 			result.denominator,
 			new BigDecimal (aString)
 				.subtract (new BigDecimal (bString))
 		);
+
+		/* * * * * */
+		aString = "-1.000000000000111";
+		bString = "69999999999999.99999";
+		a.setValue (aString);
+		b.setValue (bString);
+		assertEquals (KProfile.LONG_RATIONAL, a.profile);
+		assertEquals (KProfile.LONG_RATIONAL, b.profile);
+		calculator.subtract (result, a, b);
+		BigDecimal result = new BigDecimal (aString)
+			.subtract (new BigDecimal (bString));
+		assertResultEquals (
+			KProfile.BIG,
+			this.result.numerator,
+			this.result.denominator,
+			result
+		);
+		//noinspection ConstantConditions,ConstantIfStatement
+		if (false) {
+			System.out.println (
+				aString
+					+ " - "
+					+ bString
+					+ " = "
+					+ result.toPlainString ()
+			);
+		}
 	}
 
 }

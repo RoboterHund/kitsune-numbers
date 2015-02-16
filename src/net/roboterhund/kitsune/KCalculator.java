@@ -15,8 +15,6 @@
  */
 package net.roboterhund.kitsune;
 
-import java.math.BigDecimal;
-
 /**
  * Singleton object to perform calculations with {@link
  * net.roboterhund.kitsune.KNumber} objects.
@@ -154,10 +152,15 @@ public class KCalculator {
 			return;
 		}
 
+		term_1.setBigIntegers ();
+		term_2.setBigIntegers ();
+
 		result.setValue (
-			term_1.toBigDecimal ()
-				.add (term_2.toBigDecimal ())
+			term_1.bigNumerator.multiply (term_2.bigDenominator)
+				.add (term_2.bigNumerator.multiply (term_1.bigDenominator)),
+			term_1.bigDenominator.multiply (term_2.bigDenominator)
 		);
+		result.compact ();
 	}
 
 	/**
@@ -268,10 +271,17 @@ public class KCalculator {
 			return;
 		}
 
+		minuend.setBigIntegers ();
+		subtrahend.setBigIntegers ();
+
 		result.setValue (
-			minuend.toBigDecimal ()
-				.subtract (subtrahend.toBigDecimal ())
+			minuend.bigNumerator.multiply (subtrahend.bigDenominator)
+				.subtract (
+					subtrahend.bigNumerator.multiply (minuend.bigDenominator)
+				),
+			minuend.bigDenominator.multiply (subtrahend.bigDenominator)
 		);
+		result.compact ();
 	}
 
 	/**
@@ -365,10 +375,14 @@ public class KCalculator {
 			return;
 		}
 
+		factor_1.setBigIntegers ();
+		factor_2.setBigIntegers ();
+
 		result.setValue (
-			factor_1.toBigDecimal ()
-				.multiply (factor_2.toBigDecimal ())
+			factor_1.bigNumerator.multiply (factor_2.bigNumerator),
+			factor_1.bigDenominator.multiply (factor_2.bigDenominator)
 		);
+		result.compact ();
 	}
 
 	/**
@@ -467,14 +481,14 @@ public class KCalculator {
 			return;
 		}
 
+		dividend.setBigIntegers ();
+		divisor.setBigIntegers ();
+
 		result.setValue (
-			dividend.toBigDecimal ()
-				.divide (
-					divisor.toBigDecimal (),
-					precision,
-					BigDecimal.ROUND_HALF_UP
-				)
+			dividend.bigNumerator.multiply (divisor.bigDenominator),
+			divisor.bigNumerator.multiply (dividend.bigDenominator)
 		);
+		result.compact ();
 	}
 
 	/**

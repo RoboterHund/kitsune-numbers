@@ -34,10 +34,38 @@ public abstract class CommonTest {
 		long denominator,
 		BigDecimal bigDecimal
 	) {
+		if (bigDecimal != null) {
+			try {
+				assertEquals (
+					"bigDecimal",
+					0,
+					testedNumber.toBigDecimal (bigDecimal.precision ())
+						.compareTo (bigDecimal)
+				);
+
+			} catch (AssertionError error) {
+				assertEquals (
+					"bigDecimal",
+					bigDecimal,
+					testedNumber.toBigDecimal ()
+				);
+			}
+
+		} else {
+			assertEquals ("bigDecimal", null, (BigDecimal) null);
+		}
+
 		assertEquals ("profile", profile, testedNumber.profile);
-		assertEquals ("bigDecimal", bigDecimal, testedNumber.bigDecimal);
+
 		assertEquals ("numerator", numerator, testedNumber.numerator);
 		assertEquals ("denominator", denominator, testedNumber.denominator);
+	}
+
+	public static void validate (BigDecimal expected, KNumber number) {
+		assertEquals (
+			"validate",
+			expected.toPlainString (),
+			number.toBigDecimal ().toPlainString ());
 	}
 
 }

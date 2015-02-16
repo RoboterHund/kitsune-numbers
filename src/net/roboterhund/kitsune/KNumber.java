@@ -16,6 +16,7 @@
 package net.roboterhund.kitsune;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * A mutable rational number container.
@@ -45,6 +46,18 @@ public class KNumber {
 	public static int defaultPrecision = DEFAULT_PRECISION;
 
 	/**
+	 * {@link Long#MAX_VALUE} as {@link java.math.BigInteger}.
+	 */
+	public static final BigInteger MAX_LONG =
+		new BigInteger (String.valueOf (Long.MAX_VALUE));
+
+	/**
+	 * {@link Long#MIN_VALUE} as {@link java.math.BigInteger}.
+	 */
+	public static final BigInteger MIN_LONG =
+		new BigInteger (String.valueOf (Long.MIN_VALUE));
+
+	/**
 	 * Number profile.
 	 * <p>
 	 * Determines how the numeric value is stored internally,
@@ -69,9 +82,14 @@ public class KNumber {
 	long denominator;
 
 	/**
-	 * Big values fallback.
+	 * Big values fallback numerator.
 	 */
-	BigDecimal bigDecimal;
+	BigInteger bigNumerator;
+
+	/**
+	 * Big values fallback denominator.
+	 */
+	BigInteger bigDenominator;
 
 	/**
 	 * Constructor.
@@ -164,7 +182,8 @@ public class KNumber {
 		profile = KProfile.INT_INTEGER;
 		numerator = 0;
 		denominator = 1;
-		bigDecimal = null;
+		bigNumerator = null;
+		bigDenominator = null;
 	}
 
 	/**
@@ -176,7 +195,8 @@ public class KNumber {
 		profile = number.profile;
 		numerator = number.numerator;
 		denominator = number.denominator;
-		bigDecimal = number.bigDecimal;
+		bigNumerator = number.bigNumerator;
+		bigDenominator = number.bigDenominator;
 	}
 
 	/**
@@ -188,25 +208,51 @@ public class KNumber {
 	 * @param denominator denominator, must be positive and non-zero.
 	 */
 	void setValue (long numerator, long denominator) {
+		if (denominator == 1) {
+			// already normalized
+			setNormalizedValue (
+				numerator,
+				denominator
+			);
+
+		} else {
+			// find greatest common divisor
+			// Euclid's algorithm
+			long n = numerator;
+			long d = denominator;
+			long modulo;
+			while (n != 0) {
+				modulo = d % n;
+				d = n;
+				n = modulo;
+			}
+			d = Math.abs (d);
+
+			// normalize result
+			setNormalizedValue (
+				numerator / d,
+				denominator / d
+			);
+		}
+	}
+
+	/**
+	 * Set value.
+	 * <p>
+	 * The numerator and denominator must be already simplified.
+	 *
+	 * @param numerator numerator.
+	 * @param denominator denominator, must be positive and non-zero.
+	 */
+	private void setNormalizedValue (long numerator, long denominator) {
+		if (denominator < 0) {
+			numerator = -numerator;
+			denominator = -denominator;
+		}
+
 		// store initial values
 		this.numerator = numerator;
 		this.denominator = denominator;
-
-		if (denominator != 1) {
-			// find greatest common divisor
-			// Euclid's algorithm
-			long modulo;
-			while (numerator != 0) {
-				modulo = denominator % numerator;
-				denominator = numerator;
-				numerator = modulo;
-			}
-
-			// normalize result
-			this.numerator /= denominator;
-			this.denominator /= denominator;
-
-		}
 
 		// check if fits in int
 		if (this.denominator == 1) {
@@ -230,7 +276,8 @@ public class KNumber {
 		}
 
 		// discard old value, if any
-		bigDecimal = null;
+		bigNumerator = null;
+		bigDenominator = null;
 	}
 
 	/**
@@ -239,9 +286,40 @@ public class KNumber {
 	 * @param bigDecimal new value, assigned directly.
 	 */
 	public void setValue (BigDecimal bigDecimal) {
+		setValue (bigDecimal.toPlainString ());
+	}
+
+	/**
+	 * Set value.
+	 * <p>
+	 * For internal use by {@link KCalculator}.
+	 *
+	 * @param bigNumerator new numerator.
+	 * @param bigDenominator new denominator.
+	 */
+	public void setValue (
+		BigInteger bigNumerator,
+		BigInteger bigDenominator) {
+
+		if (bigDenominator.compareTo (BigInteger.ZERO) < 0) {
+			bigNumerator = bigNumerator.negate ();
+			bigDenominator = bigDenominator.negate ();
+		}
+
+		// find greatest common divisor
+		BigInteger gcd = bigNumerator.gcd (bigDenominator);
+
+		if (gcd.compareTo (BigInteger.ONE) != 0) {
+			// normalize result
+			this.bigNumerator = bigNumerator.divide (gcd);
+			this.bigDenominator = bigDenominator.divide (gcd);
+
+		} else {
+			this.bigNumerator = bigNumerator;
+			this.bigDenominator = bigDenominator;
+		}
+
 		profile = KProfile.BIG;
-		this.bigDecimal = bigDecimal;
-		// other members no longer relevant
 	}
 
 	/**
@@ -263,7 +341,8 @@ public class KNumber {
 			KProfile.LONG_INTEGER;
 
 		// discard old value, if any
-		bigDecimal = null;
+		bigNumerator = null;
+		bigDenominator = null;
 	}
 
 	/**
@@ -290,84 +369,137 @@ public class KNumber {
 	 * @throws NumberFormatException unable to parse string.
 	 */
 	public void setValue (String stringValue) {
-		if (setLongIntValue (stringValue)) {
-			return;
+		String integerValue = stringValue;
+		String decimalValue = null;
+
+		int decPointPos = stringValue.indexOf ('.');
+		if (decPointPos == -1) {
+			// no decimals
+			if (setLongIntValue (stringValue)) {
+				return;
+			}
+
+		} else {
+			// with decimals
+			// store integer part in numerator
+			integerValue = stringValue.substring (0, decPointPos);
+
+			// get decimals
+			// TODO check for invalid decimals substring
+			int lastNonZero;
+			for (lastNonZero = stringValue.length () - 1;
+			     lastNonZero > decPointPos;
+			     lastNonZero--) {
+
+				if (stringValue.charAt (lastNonZero) != '0') {
+					break;
+				}
+			}
+
+			if (lastNonZero == decPointPos) {
+				// decimals = 0
+				if (setLongIntValue (stringValue)) {
+					return;
+				}
+
+			} else {
+				// parse integer and decimal part
+				decimalValue =
+					stringValue.substring (decPointPos + 1, lastNonZero + 1);
+
+				if (setLongIntValue (integerValue, decimalValue)) {
+					return;
+				}
+			}
 		}
-		setValue (new BigDecimal (stringValue));
+
+		if (decimalValue == null) {
+			setValue (new BigInteger (integerValue), BigInteger.ONE);
+
+		} else {
+			BigInteger bigDenominator =
+				BigInteger.TEN.pow (decimalValue.length ());
+
+			BigInteger bigNumerator =
+				new BigInteger (integerValue)
+					.multiply (bigDenominator)
+					.add (new BigInteger (decimalValue));
+
+			setValue (bigNumerator, bigDenominator);
+		}
 	}
 
 	/**
 	 * Try to parse string and
 	 * set the numeric value as a simple fraction.
 	 *
-	 * @param stringValue string to parse.
+	 * @param integerValue string to parse.
 	 * @return <code>true</code> iff successful.
 	 */
-	private boolean setLongIntValue (String stringValue) {
+	private boolean setLongIntValue (String integerValue) {
 		try {
-			int decPointPos = stringValue.indexOf ('.');
-			if (decPointPos == -1) {
-				// no decimals
-				setValue (Long.parseLong (stringValue));
+			setValue (Long.parseLong (integerValue));
+			return true;
 
-			} else {
-				// with decimals
-				// store integer part in numerator
-				long numerator =
-					Long.parseLong (stringValue.substring (0, decPointPos));
-				long denominator = 1;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
 
-				// get decimals
-				// TODO check for invalid decimals substring
-				String decimals = stringValue.substring (decPointPos + 1);
-				int lastNonZero;
-				for (lastNonZero = decimals.length () - 1;
-				     lastNonZero >= 0;
-				     lastNonZero--) {
+	/**
+	 * Try to parse string and
+	 * set the numeric value as a simple fraction.
+	 *
+	 * @param integerValue string to parse.
+	 * @return <code>true</code> iff successful.
+	 */
+	private boolean setLongIntValue (
+		String integerValue,
+		String decimalValue) {
 
-					if (decimals.charAt (lastNonZero) != '0') {
-						break;
-					}
-				}
-				decimals = decimals.substring (0, lastNonZero + 1);
-				if (!decimals.isEmpty ()) {
-					// get denominator as scale of 10
-					long multiplier = 10;
-					int exp = decimals.length ();
-					long maxMultiplier = Long.MAX_VALUE / multiplier;
-					while (exp != 0) {
-						if ((exp & 1) != 0) {
-							if (denominator > maxMultiplier) {
-								return false;
-							}
-							denominator *= multiplier;
-						}
-						if (multiplier > maxMultiplier) {
-							return false;
-						}
-						multiplier *= multiplier;
-						maxMultiplier = Long.MAX_VALUE / multiplier;
-						exp >>= 1;
-					}
+		try {
+			// store integer part in numerator
+			long numerator = Long.parseLong (integerValue);
+			long denominator = 1;
 
-					// multiply numerator by scale of 10
-					if (numerator > Long.MAX_VALUE / denominator) {
+			// get denominator as scale of 10
+			long multiplier = 10;
+			int exp = decimalValue.length ();
+			long maxMultiplier = Long.MAX_VALUE / multiplier;
+			while (exp != 0) {
+				if ((exp & 1) != 0) {
+					if (denominator > maxMultiplier) {
 						return false;
 					}
-					numerator *= denominator;
-
-					// add decimal part to numerator
-					long decimalPart = Long.parseLong (decimals);
-					if (stringValue.charAt (0) == '-') {
-						numerator -= decimalPart;
-					} else {
-						numerator += decimalPart;
-					}
+					denominator *= multiplier;
 				}
-
-				// normalize
-				setValue (numerator, denominator);
+				if (multiplier > maxMultiplier) {
+					return false;
+				}
+				multiplier *= multiplier;
+				maxMultiplier = Long.MAX_VALUE / multiplier;
+				exp >>= 1;
 			}
+
+			// multiply numerator by scale of 10
+			if (numerator > Long.MAX_VALUE / denominator
+				|| numerator < Long.MIN_VALUE / denominator) {
+				//    factor_1 * factor_2 > Long.MAX_VALUE
+				// or factor_1 * factor_2 < Long.MIN_VALUE
+				return false;
+			}
+			numerator *= denominator;
+
+			// add decimal part to numerator
+			long decimalPart = Long.parseLong (decimalValue);
+			if (integerValue.charAt (0) == '-') {
+				numerator -= decimalPart;
+			} else {
+				numerator += decimalPart;
+			}
+
+			// normalize
+			setValue (numerator, denominator);
 			return true;
 
 		} catch (NumberFormatException e) {
@@ -395,25 +527,34 @@ public class KNumber {
 	 * number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal (int precision) {
-		if (bigDecimal != null) {
-			return bigDecimal;
-
-		} else {
-			BigDecimal numeratorBigDecimal = new BigDecimal (numerator);
-			BigDecimal denominatorBigDecimal = new BigDecimal (denominator);
-			try {
-				//noinspection BigDecimalMethodWithoutRoundingCalled
-				return numeratorBigDecimal.divide (denominatorBigDecimal);
-
-			} catch (ArithmeticException e) {
-				// number with infinite decimal expansion
-				// precision lost
-				return numeratorBigDecimal.divide (
-					denominatorBigDecimal,
+		if (profile == KProfile.BIG) {
+			return new BigDecimal (bigNumerator)
+				.divide (
+					new BigDecimal (bigDenominator),
 					precision,
 					BigDecimal.ROUND_HALF_UP
 				);
-			}
+
+		} else {
+			return new BigDecimal (numerator)
+				.divide (
+					new BigDecimal (denominator),
+					precision,
+					BigDecimal.ROUND_HALF_UP
+				);
+		}
+	}
+
+	/**
+	 * Convert current numerator, denominator to
+	 * {@link java.math.BigInteger}.
+	 */
+	void setBigIntegers () {
+		if (bigNumerator == null) {
+			bigNumerator = new BigInteger (String.valueOf (numerator));
+		}
+		if (bigDenominator == null) {
+			bigDenominator = new BigInteger (String.valueOf (denominator));
 		}
 	}
 
@@ -426,9 +567,15 @@ public class KNumber {
 	 * it is estimated that it will be succesful.
 	 */
 	public void compact () {
-		if (bigDecimal != null) {
+		if (bigNumerator.compareTo (MAX_LONG) <= 0
+			&& bigNumerator.compareTo (MIN_LONG) >= 0
+			&& bigDenominator.compareTo (MAX_LONG) <= 0
+			&& bigDenominator.compareTo (MIN_LONG) >= 0) {
 
-			setValue (bigDecimal.toPlainString ());
+			setNormalizedValue (
+				bigNumerator.longValue (),
+				bigDenominator.longValue ()
+			);
 		}
 	}
 
