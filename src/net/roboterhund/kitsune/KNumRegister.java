@@ -15,7 +15,6 @@
 */
 package net.roboterhund.kitsune;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -80,10 +79,10 @@ public class KNumRegister {
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue()} call on existing object.
+	 * Equivalent to a {@link #setZeroValue()} call on existing object.
 	 */
 	public KNumRegister () {
-		setValue ();
+		setZeroValue ();
 	}
 
 	/**
@@ -125,18 +124,6 @@ public class KNumRegister {
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(java.math.BigDecimal)} call on existing
-	 * object.
-	 *
-	 * @param bigDecimal value.
-	 */
-	public KNumRegister (BigDecimal bigDecimal) {
-		setValue (bigDecimal);
-	}
-
-	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(long)} call on existing object.
 	 *
 	 * @param longValue integer value.
@@ -146,37 +133,9 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
-	 * Equivalent to a {@link #setValue(double)} call on existing object.
-	 * <p>
-	 * <b>Note</b>: actual value is subject to the limitations of
-	 * the <code>double</code> data type.
-	 *
-	 * @param doubleValue value,
-	 * not guaranteed to match source code representation.
-	 */
-	public KNumRegister (double doubleValue) {
-		setValue (doubleValue);
-	}
-
-	/**
-	 * Constructor.
-	 * <p>
-	 * Equivalent to a {@link #setValue(double)} call on existing object.
-	 *
-	 * @param stringValue string in format
-	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
-	 * (signed or unsigned integer with optional point followed by decimals).
-	 */
-	public KNumRegister (String stringValue) {
-		setValue (stringValue);
-	}
-
-	/**
 	 * Set value to zero.
 	 */
-	public void setValue () {
+	public void setZeroValue () {
 		profile = KProfile.INT_INTEGER;
 		numerator = 0;
 		denominator = 1;
@@ -205,7 +164,7 @@ public class KNumRegister {
 	 * @param numerator numerator.
 	 * @param denominator denominator, must be positive and non-zero.
 	 */
-	void setValue (long numerator, long denominator) {
+	public void setValue (long numerator, long denominator) {
 		if (denominator == 1) {
 			// already normalized
 			setNormalizedValue (
@@ -279,12 +238,26 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Set value.
+	 * Set integer value.
 	 *
-	 * @param bigDecimal new value, assigned directly.
+	 * @param longValue new value.
 	 */
-	public void setValue (BigDecimal bigDecimal) {
-		setValue (bigDecimal.toPlainString ());
+	public void setValue (long longValue) {
+		// store initial values
+		this.numerator = longValue;
+		this.denominator = 1;
+
+		// check if fits in int
+		profile = ((
+			this.numerator <= Integer.MAX_VALUE
+				&& this.numerator >= Integer.MIN_VALUE
+		)) ?
+			KProfile.INT_INTEGER :
+			KProfile.LONG_INTEGER;
+
+		// discard old value, if any
+		bigNumerator = null;
+		bigDenominator = null;
 	}
 
 	/**
@@ -342,229 +315,6 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Set integer value.
-	 *
-	 * @param longValue new value.
-	 */
-	public void setValue (long longValue) {
-		// store initial values
-		this.numerator = longValue;
-		this.denominator = 1;
-
-		// check if fits in int
-		profile = ((
-			this.numerator <= Integer.MAX_VALUE
-				&& this.numerator >= Integer.MIN_VALUE
-		)) ?
-			KProfile.INT_INTEGER :
-			KProfile.LONG_INTEGER;
-
-		// discard old value, if any
-		bigNumerator = null;
-		bigDenominator = null;
-	}
-
-	/**
-	 * Set value.
-	 * <p>
-	 * <b>Note</b>: this method involves object creation and
-	 * is subject to the limitations of the <code>double</code> data type.
-	 *
-	 * @param doubleValue value,
-	 * not guaranteed to match source code representation.
-	 */
-	public void setValue (double doubleValue) {
-		// TODO move all setValue methods with non-essential data types elsewhere
-		// TODO replace with more efficient method
-		setValue (new BigDecimal (doubleValue).toPlainString ());
-	}
-
-	/**
-	 * Set value from string.
-	 *
-	 * @param stringValue string in format
-	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
-	 * (signed or unsigned integer with optional point followed by decimals).
-	 * @throws NumberFormatException unable to parse string.
-	 */
-	public void setValue (String stringValue) {
-		String integerValue = stringValue;
-		String decimalValue = null;
-
-		int decPointPos = stringValue.indexOf ('.');
-		if (decPointPos == -1) {
-			// no decimals
-			if (setLongIntValue (stringValue)) {
-				return;
-			}
-
-		} else {
-			// with decimals
-			// store integer part in numerator
-			integerValue = stringValue.substring (0, decPointPos);
-
-			// get decimals
-			// TODO check for invalid decimals substring
-			int lastNonZero;
-			for (lastNonZero = stringValue.length () - 1;
-			     lastNonZero > decPointPos;
-			     lastNonZero--) {
-
-				if (stringValue.charAt (lastNonZero) != '0') {
-					break;
-				}
-			}
-
-			if (lastNonZero == decPointPos) {
-				// decimals = 0
-				if (setLongIntValue (stringValue)) {
-					return;
-				}
-
-			} else {
-				// parse integer and decimal part
-				decimalValue =
-					stringValue.substring (decPointPos + 1, lastNonZero + 1);
-
-				if (setLongIntValue (integerValue, decimalValue)) {
-					return;
-				}
-			}
-		}
-
-		if (decimalValue == null) {
-			setValue (new BigInteger (integerValue), BigInteger.ONE);
-
-		} else {
-			BigInteger bigDenominator =
-				BigInteger.TEN.pow (decimalValue.length ());
-
-			BigInteger bigNumerator =
-				new BigInteger (integerValue)
-					.multiply (bigDenominator)
-					.add (new BigInteger (decimalValue));
-
-			setValue (bigNumerator, bigDenominator);
-		}
-	}
-
-	/**
-	 * Try to parse string and
-	 * set the numeric value as a simple fraction.
-	 *
-	 * @param integerValue string to parse.
-	 * @return <code>true</code> iff successful.
-	 */
-	boolean setLongIntValue (String integerValue) {
-		try {
-			setValue (Long.parseLong (integerValue));
-			return true;
-
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
-	/**
-	 * Try to parse string and
-	 * set the numeric value as a simple fraction.
-	 *
-	 * @param integerValue string to parse.
-	 * @return <code>true</code> iff successful.
-	 */
-	boolean setLongIntValue (
-		String integerValue,
-		String decimalValue) {
-
-		try {
-			// store integer part in numerator
-			long numerator = Long.parseLong (integerValue);
-			long denominator = 1;
-
-			// get denominator as scale of 10
-			long multiplier = 10;
-			int exp = decimalValue.length ();
-			long maxMultiplier = Long.MAX_VALUE / multiplier;
-			while (exp != 0) {
-				if ((exp & 1) != 0) {
-					if (denominator > maxMultiplier) {
-						return false;
-					}
-					denominator *= multiplier;
-				}
-				if (multiplier > maxMultiplier) {
-					return false;
-				}
-				multiplier *= multiplier;
-				maxMultiplier = Long.MAX_VALUE / multiplier;
-				exp >>= 1;
-			}
-
-			// multiply numerator by scale of 10
-			if (numerator > Long.MAX_VALUE / denominator
-				|| numerator < Long.MIN_VALUE / denominator) {
-				//    factor_1 * factor_2 > Long.MAX_VALUE
-				// or factor_1 * factor_2 < Long.MIN_VALUE
-				return false;
-			}
-			numerator *= denominator;
-
-			// add decimal part to numerator
-			long decimalPart = Long.parseLong (decimalValue);
-			if (integerValue.charAt (0) == '-') {
-				numerator -= decimalPart;
-			} else {
-				numerator += decimalPart;
-			}
-
-			// normalize
-			setValue (numerator, denominator);
-			return true;
-
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
-	/**
-	 * Convert to BigDecimal.
-	 *
-	 * @return BigDecimal, with
-	 * {@link KConverter#DEFAULT_PRECISION}
-	 * decimals if number has infinite decimal expansion.
-	 */
-	public BigDecimal toBigDecimal () {
-		return toBigDecimal (KConverter.DEFAULT_PRECISION);
-	}
-
-	/**
-	 * Convert to BigDecimal.
-	 *
-	 * @param precision number of decimals to store if the
-	 * number has infinite decimal expansion.
-	 * @return BigDecimal, with specified precision if the
-	 * number has infinite decimal expansion.
-	 */
-	public BigDecimal toBigDecimal (int precision) {
-		if (profile <= KProfile.BIG_INTEGER) {
-			return new BigDecimal (bigNumerator)
-				.divide (
-					new BigDecimal (bigDenominator),
-					precision,
-					BigDecimal.ROUND_HALF_UP
-				);
-
-		} else {
-			return new BigDecimal (numerator)
-				.divide (
-					new BigDecimal (denominator),
-					precision,
-					BigDecimal.ROUND_HALF_UP
-				);
-		}
-	}
-
-	/**
 	 * Convert current numerator, denominator to
 	 * {@link java.math.BigInteger}.
 	 */
@@ -589,7 +339,7 @@ public class KNumRegister {
 	 * The conversion is actually performed only if
 	 * it is estimated that it will be succesful.
 	 */
-	public void compact () {
+	void compact () {
 		if (bigNumerator.compareTo (MAX_LONG) <= 0
 			&& bigNumerator.compareTo (MIN_LONG) >= 0
 			&& bigDenominator.compareTo (MAX_LONG) <= 0

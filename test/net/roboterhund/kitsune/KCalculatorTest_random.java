@@ -195,23 +195,25 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		smallestNumber_abs = Double.POSITIVE_INFINITY;
 		largestNumber_abs = 0;
 
+		KConverter converter = CommonTest.converter;
+
 		for (int i = 0; i < data.numOperations; i++) {
 			String stringValue = getRandomNumber (data, random);
 			if (forceBigDecimal) {
 				if (bigDecimalOperand != null) {
-					a.setValue (bigDecimalOperand);
+					converter.fromBigDecimal (a, bigDecimalOperand);
 				} else {
 					// not valid with this version
-					a.setValue (new BigDecimal (stringValue));
+					converter.fromBigDecimal (a, new BigDecimal (stringValue));
 				}
 			} else {
-				a.setValue (stringValue);
+				converter.fromString (a, stringValue);
 			}
 			if (data.aOperands != null) {
 				data.aOperands.add (new KNumRegister (a));
 			}
 
-			b.setValue (getRandomNumber (data, random));
+			converter.fromString (b, getRandomNumber (data, random));
 			if (data.bOperands != null) {
 				data.bOperands.add (new KNumRegister (b));
 			}
@@ -222,7 +224,8 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
 			validate (
-				a.toBigDecimal ().add (b.toBigDecimal ()),
+				converter.toBigDecimal (a)
+					.add (converter.toBigDecimal (b)),
 				result
 			);
 			if (data.results_add != null) {
@@ -249,7 +252,8 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
 			validate (
-				a.toBigDecimal ().subtract (b.toBigDecimal ()),
+				converter.toBigDecimal (a)
+					.subtract (converter.toBigDecimal (b)),
 				result
 			);
 			if (data.results_subtract != null) {
@@ -301,10 +305,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
 			validate (
-				a.toBigDecimal ().divide (
-					b.toBigDecimal (),
-					KConverter.DEFAULT_PRECISION,
-					BigDecimal.ROUND_HALF_UP),
+				converter.toBigDecimal (a)
+					.divide (
+						converter.toBigDecimal (b),
+						KConverter.DEFAULT_PRECISION,
+						BigDecimal.ROUND_HALF_UP
+					),
 				result
 			);
 			if (data.results_divide != null) {

@@ -29,8 +29,8 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 
 		/* * * * * */
 
-		a.setValue ("100.1");
-		b.setValue ("0.2");
+		converter.fromString (a, "100.1");
+		converter.fromString (b, "0.2");
 		calculator.subtract (result, a, b);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,
@@ -41,8 +41,8 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 
 		/* * * * * */
 
-		a.setValue ("1000000000000.1");
-		b.setValue ("9999999999999.9");
+		converter.fromString (a, "1000000000000.1");
+		converter.fromString (b, "9999999999999.9");
 		calculator.subtract (result, a, b);
 		assertResultEquals (
 			KProfile.LONG_RATIONAL,
@@ -57,8 +57,8 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 
 		aString = "1000000000000.1111";
 		bString = "9999999999999.9999";
-		a.setValue (aString);
-		b.setValue (bString);
+		converter.fromString (a, aString);
+		converter.fromString (b, bString);
 		assertEquals (a.profile, KProfile.LONG_RATIONAL);
 		assertEquals (b.profile, KProfile.LONG_RATIONAL);
 		calculator.subtract (result, a, b);
@@ -73,8 +73,8 @@ public class KCalculatorTest_subtract extends KCalculatorTest {
 		/* * * * * */
 		aString = "-1.000000000000111";
 		bString = "69999999999999.99999";
-		a.setValue (aString);
-		b.setValue (bString);
+		converter.fromString (a, aString);
+		converter.fromString (b, bString);
 		assertEquals (KProfile.LONG_RATIONAL, a.profile);
 		assertEquals (KProfile.LONG_RATIONAL, b.profile);
 		calculator.subtract (result, a, b);

@@ -60,8 +60,8 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		/* * * * * */
 		String aString = "0.0000000023";
 		String bString = "100000000";
-		a.setValue (aString);
-		b.setValue (bString);
+		converter.fromString (a, aString);
+		converter.fromString (b, bString);
 		calculator.add (result, a, b);
 		assertResultEquals (
 			KProfile.LONG_RATIONAL,
@@ -91,8 +91,8 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 
 		/* * * * * */
-		a.setValue ("12341234.25");
-		b.setValue ("67867867.89");
+		converter.fromString (a, "12341234.25");
+		converter.fromString (b, "67867867.89");
 		calculator.add (result, a, b);
 		assertResultEquals (
 			KProfile.LONG_RATIONAL,
@@ -104,7 +104,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 
 		/* * * * * */
 		result.setValue (0);
-		a.setValue (0.5);
+		converter.fromDouble (a, 0.5);
 		calculator.add (result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,

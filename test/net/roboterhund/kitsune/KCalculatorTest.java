@@ -26,6 +26,7 @@ public abstract class KCalculatorTest {
 	protected KNumRegister a;
 	protected KNumRegister b;
 	protected KCalculator calculator;
+	protected KConverter converter;
 
 	// reset objects
 	protected void reset () {
@@ -34,6 +35,8 @@ public abstract class KCalculatorTest {
 		result = new KNumRegister ();
 		a = new KNumRegister ();
 		b = new KNumRegister ();
+
+		converter = CommonTest.converter;
 	}
 
 	// check internal values of number

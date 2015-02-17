@@ -23,6 +23,9 @@ import static org.junit.Assert.assertEquals;
 // common test functions, constants, etc.
 public abstract class CommonTest {
 
+	// converter
+	static KConverter converter = new KConverter ();
+
 	// output print stream
 	public static final PrintStream out = System.out;
 
@@ -35,21 +38,11 @@ public abstract class CommonTest {
 		BigDecimal bigDecimal
 	) {
 		if (bigDecimal != null) {
-			try {
-				assertEquals (
-					"bigDecimal",
-					0,
-					testedNumber.toBigDecimal (bigDecimal.precision ())
-						.compareTo (bigDecimal)
-				);
-
-			} catch (AssertionError error) {
-				assertEquals (
-					"bigDecimal",
-					bigDecimal,
-					testedNumber.toBigDecimal ()
-				);
-			}
+			assertEquals (
+				"bigDecimal",
+				bigDecimal,
+				converter.toBigDecimal (testedNumber)
+			);
 
 		} else {
 			assertEquals ("bigDecimal", null, (BigDecimal) null);
@@ -64,8 +57,8 @@ public abstract class CommonTest {
 	public static void validate (BigDecimal expected, KNumRegister number) {
 		assertEquals (
 			"validate",
-			expected.toPlainString (),
-			number.toBigDecimal ().toPlainString ());
+			expected.stripTrailingZeros ().toPlainString (),
+			converter.toBigDecimal (number).toPlainString ());
 	}
 
 }

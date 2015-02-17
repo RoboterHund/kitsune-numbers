@@ -485,7 +485,7 @@ public class KConverter {
 		int decPointPos = value.indexOf ('.');
 		if (decPointPos == -1) {
 			// no decimals
-			if (toRegister.setLongIntValue (value)) {
+			if (setLongIntValue (toRegister, value)) {
 				return;
 			}
 
@@ -508,7 +508,7 @@ public class KConverter {
 
 			if (lastNonZero == decPointPos) {
 				// decimals = 0
-				if (toRegister.setLongIntValue (value)) {
+				if (setLongIntValue (toRegister, value)) {
 					return;
 				}
 
@@ -517,7 +517,7 @@ public class KConverter {
 				decimalValue =
 					value.substring (decPointPos + 1, lastNonZero + 1);
 
-				if (toRegister.setLongIntValue (integerValue, decimalValue)) {
+				if (setLongIntValue (toRegister, integerValue, decimalValue)) {
 					return;
 				}
 			}
@@ -547,6 +547,88 @@ public class KConverter {
 			}
 
 			toRegister.setValue (bigNumerator, bigDenominator);
+		}
+	}
+
+	/**
+	 * Try to parse string and
+	 * set the numeric value as a simple fraction.
+	 *
+	 * @param integerValue string to parse.
+	 * @return <code>true</code> iff successful.
+	 */
+	private boolean setLongIntValue (
+		KNumRegister toRegister,
+		String integerValue) {
+
+		try {
+			toRegister.setValue (Long.parseLong (integerValue));
+			return true;
+
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Try to parse string and
+	 * set the numeric value as a simple fraction.
+	 *
+	 * @param integerValue string to parse.
+	 * @return <code>true</code> iff successful.
+	 */
+	private boolean setLongIntValue (
+		KNumRegister toRegister,
+		String integerValue,
+		String decimalValue) {
+
+		try {
+			// store integer part in numerator
+			long numerator = Long.parseLong (integerValue);
+			long denominator = 1;
+
+			// get denominator as scale of 10
+			long multiplier = 10;
+			int exp = decimalValue.length ();
+			long maxMultiplier = Long.MAX_VALUE / multiplier;
+			while (exp != 0) {
+				if ((exp & 1) != 0) {
+					if (denominator > maxMultiplier) {
+						return false;
+					}
+					denominator *= multiplier;
+				}
+				if (multiplier > maxMultiplier) {
+					return false;
+				}
+				multiplier *= multiplier;
+				maxMultiplier = Long.MAX_VALUE / multiplier;
+				exp >>= 1;
+			}
+
+			// multiply numerator by scale of 10
+			if (numerator > Long.MAX_VALUE / denominator
+				|| numerator < Long.MIN_VALUE / denominator) {
+				//    factor_1 * factor_2 > Long.MAX_VALUE
+				// or factor_1 * factor_2 < Long.MIN_VALUE
+				return false;
+			}
+			numerator *= denominator;
+
+			// add decimal part to numerator
+			long decimalPart = Long.parseLong (decimalValue);
+			if (integerValue.charAt (0) == '-') {
+				numerator -= decimalPart;
+			} else {
+				numerator += decimalPart;
+			}
+
+			// normalize
+			toRegister.setValue (numerator, denominator);
+			return true;
+
+		} catch (NumberFormatException e) {
+			return false;
 		}
 	}
 

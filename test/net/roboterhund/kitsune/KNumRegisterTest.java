@@ -18,10 +18,8 @@ package net.roboterhund.kitsune;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
-import static org.junit.Assert.assertEquals;
 
 // test KNumber in isolation
 public class KNumRegisterTest {
@@ -139,42 +137,14 @@ public class KNumRegisterTest {
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (-2),
 				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP)
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
 		);
 
-		/* * * * * */
-		testedNumber = new KNumRegister (new BigDecimal ("-4.200"));
-		assertTestedNumberEquals (
-			KProfile.INT_RATIONAL,
-			-21,
-			5,
-			null
-		);
-
-		/* * * * * */
-		// "Works on my machine."
-		testedNumber = new KNumRegister (0.125);
-		assertTestedNumberEquals (
-			KProfile.INT_RATIONAL,
-			1,
-			8,
-			null
-		);
-
-		/* * * * * */
-		testedNumber = new KNumRegister ("1.01");
-		assertTestedNumberEquals (
-			KProfile.INT_RATIONAL,
-			101,
-			100,
-			null
-		);
 	}
 
 	@Test
 	public void testSetValue () throws Exception {
 		testedNumber = new KNumRegister ();
-		String stringValue;
 
 		/* * * * * */
 		testedNumber.setValue (1, 2);
@@ -205,98 +175,6 @@ public class KNumRegisterTest {
 			null
 		);
 
-		/* * * * * */
-		stringValue = String.valueOf (Long.MAX_VALUE);
-		testedNumber.setValue (stringValue);
-		assertTestedNumberEquals (
-			KProfile.LONG_INTEGER,
-			Long.MAX_VALUE,
-			1,
-			null
-		);
-
-		/* * * * * */
-		stringValue = "0";
-		BigDecimal maxValue = new BigDecimal (stringValue);
-		testedNumber.setValue (maxValue);
-		assertTestedNumberEquals (
-			KProfile.INT_INTEGER,
-			0,
-			1,
-			null
-		);
-
-		/* * * * * */
-		BigInteger maxValuePlusOne =
-			new BigInteger (String.valueOf (Long.MAX_VALUE))
-				.add (BigInteger.ONE);
-		stringValue = maxValuePlusOne.toString ();
-		testedNumber.setValue (stringValue);
-		assertTestedNumberEquals (
-			KProfile.BIG_INTEGER,
-			testedNumber.numerator,
-			testedNumber.denominator,
-			new BigDecimal (maxValuePlusOne)
-		);
-
-		/* * * * * */
-		double minValue = Long.MIN_VALUE;
-		testedNumber.setValue (minValue);
-		assertTestedNumberEquals (
-			KProfile.LONG_INTEGER,
-			Long.MIN_VALUE,
-			1,
-			null
-		);
-
-		/* * * * * */
-		BigInteger minValueMinusOne =
-			new BigInteger (String.valueOf (Long.MIN_VALUE))
-				.subtract (BigInteger.ONE);
-		stringValue = minValueMinusOne.toString ();
-		testedNumber.setValue (stringValue);
-		assertTestedNumberEquals (
-			KProfile.BIG_INTEGER,
-			testedNumber.numerator,
-			testedNumber.denominator,
-			new BigDecimal (minValueMinusOne)
-		);
-
-		/* * * * * */
-		testedNumber.setValue ("0.2");
-		assertTestedNumberEquals (
-			KProfile.INT_RATIONAL,
-			1,
-			5,
-			null
-		);
-
-		/* * * * * */
-		// demonstration of problems with precision of 'double'
-		boolean preciseValueSet;
-		testedNumber = new KNumRegister ();
-		testedNumber.setValue (0.2);
-		try {
-			assertTestedNumberEquals (
-				KProfile.INT_RATIONAL,
-				1,
-				5,
-				null
-			);
-			// this cannot happen
-			preciseValueSet = true;
-
-		} catch (AssertionError error) {
-			assertTestedNumberEquals (
-				KProfile.BIG_RATIONAL,
-				0,
-				1,
-				new BigDecimal (0.2)
-			);
-			// this is what should happen
-			preciseValueSet = false;
-		}
-		assertEquals (false, preciseValueSet);
 	}
 
 	// check internal values of number

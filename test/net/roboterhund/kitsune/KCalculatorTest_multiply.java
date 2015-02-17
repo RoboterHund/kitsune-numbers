@@ -26,7 +26,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		reset ();
 
 		/* * * * * */
-		a.setValue ("12.34");
+		converter.fromString (a, "12.34");
 		b.setValue (10);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
@@ -37,7 +37,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		);
 
 		/* * * * * */
-		a.setValue (-2.5);
+		converter.fromDouble (a, -2.5);
 		b.setValue (4);
 		calculator.multiply (result, a, b);
 		assertResultEquals (
@@ -71,7 +71,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 					new BigDecimal (2),
 					KConverter.DEFAULT_PRECISION,
 					BigDecimal.ROUND_HALF_UP
-				)
+				).stripTrailingZeros ()
 		);
 	}
 
