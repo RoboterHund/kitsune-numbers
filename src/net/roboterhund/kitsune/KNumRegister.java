@@ -29,24 +29,6 @@ import java.math.BigInteger;
 public class KNumRegister {
 
 	/**
-	 * {@link Long#MAX_VALUE} as {@link java.math.BigInteger}.
-	 */
-	public static final BigInteger MAX_LONG =
-		new BigInteger (String.valueOf (Long.MAX_VALUE));
-
-	/**
-	 * {@link Long#MIN_VALUE} as {@link java.math.BigInteger}.
-	 */
-	public static final BigInteger MIN_LONG =
-		new BigInteger (String.valueOf (Long.MIN_VALUE));
-
-	/**
-	 * <code>(-{@link Long#MIN_VALUE})</code> as {@link java.math.BigInteger}
-	 * (lazily initialized).
-	 */
-	private static BigInteger MIN_LONG_NEGATED;
-
-	/**
 	 * Number profile.
 	 * <p>
 	 * Determines how the numeric value is stored internally,
@@ -265,15 +247,13 @@ public class KNumRegister {
 				// without overflowing either the numerator or the denominator
 				// and the fraction cannot be simplified
 
-				if (MIN_LONG_NEGATED == null) {
-					MIN_LONG_NEGATED = MIN_LONG.negate ();
-				}
+
 
 				if (numerator == Long.MIN_VALUE) {
 					// denominator != Long.MIN_VALUE
 					denominator = -denominator;
 
-					bigNumerator = MIN_LONG_NEGATED;
+					bigNumerator = KEdges.MIN_LONG_NEGATED;
 					bigDenominator = BigInteger.valueOf (denominator);
 
 					profile =
@@ -284,7 +264,7 @@ public class KNumRegister {
 				} else {
 					// denominator == Long.MIN_VALUE
 					bigNumerator = BigInteger.valueOf (-numerator);
-					bigDenominator = MIN_LONG_NEGATED;
+					bigDenominator = KEdges.MIN_LONG_NEGATED;
 
 					profile = KProfile.BIG_RATIONAL;
 				}
@@ -331,8 +311,8 @@ public class KNumRegister {
 		this.bigNumerator = bigValue;
 		this.bigDenominator = BigInteger.ONE;
 
-		if (bigValue.compareTo (MAX_LONG) <= 0
-			&& bigValue.compareTo (MIN_LONG) >= 0) {
+		if (bigValue.compareTo (KEdges.MAX_LONG) <= 0
+			&& bigValue.compareTo (KEdges.MIN_LONG) >= 0) {
 			// compact
 			setInteger (bigValue.longValue ());
 
@@ -374,8 +354,8 @@ public class KNumRegister {
 			// integer
 			bigDenominator = BigInteger.ONE;
 
-			if (bigNumerator.compareTo (MAX_LONG) <= 0
-				&& bigNumerator.compareTo (MIN_LONG) >= 0) {
+			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
+				&& bigNumerator.compareTo (KEdges.MIN_LONG) >= 0) {
 				// compact
 				setInteger (bigNumerator.longValue ());
 
@@ -388,9 +368,9 @@ public class KNumRegister {
 			// rational
 
 			// denominator must be positive at this point
-			if (bigNumerator.compareTo (MAX_LONG) <= 0
-				&& bigNumerator.compareTo (MIN_LONG) >= 0
-				&& bigDenominator.compareTo (MAX_LONG) <= 0) {
+			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
+				&& bigNumerator.compareTo (KEdges.MIN_LONG) >= 0
+				&& bigDenominator.compareTo (KEdges.MAX_LONG) <= 0) {
 				// compact
 				setIrreducibleFraction (
 					bigNumerator.longValue (),

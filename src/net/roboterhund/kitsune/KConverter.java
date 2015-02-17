@@ -12,18 +12,6 @@ import java.math.RoundingMode;
 public class KConverter {
 
 	/**
-	 * {@link Integer#MAX_VALUE} as {@link java.math.BigInteger}.
-	 */
-	public static final BigInteger MAX_INT =
-		new BigInteger (String.valueOf (Integer.MAX_VALUE));
-
-	/**
-	 * {@link Integer#MIN_VALUE} as {@link java.math.BigInteger}.
-	 */
-	public static final BigInteger MIN_INT =
-		new BigInteger (String.valueOf (Integer.MIN_VALUE));
-
-	/**
 	 *
 	 */
 	public static abstract class KConversionStatus {
@@ -81,8 +69,8 @@ public class KConverter {
 				fromRegister.bigNumerator
 					.divide (fromRegister.bigDenominator);
 
-			if (bigValue.compareTo (KConverter.MAX_INT) <= 0
-				&& bigValue.compareTo (KConverter.MIN_INT) >= 0) {
+			if (bigValue.compareTo (KEdges.MAX_INT) <= 0
+				&& bigValue.compareTo (KEdges.MIN_INT) >= 0) {
 
 				lastOperationStatus = KConversionStatus.INEXACT;
 				return bigValue.intValue ();
@@ -139,8 +127,8 @@ public class KConverter {
 				fromRegister.bigNumerator
 					.divide (fromRegister.bigDenominator);
 
-			if (bigValue.compareTo (KNumRegister.MAX_LONG) <= 0
-				&& bigValue.compareTo (KNumRegister.MIN_LONG) >= 0) {
+			if (bigValue.compareTo (KEdges.MAX_LONG) <= 0
+				&& bigValue.compareTo (KEdges.MIN_LONG) >= 0) {
 
 				lastOperationStatus = KConversionStatus.INEXACT;
 				return bigValue.longValue ();
@@ -416,14 +404,8 @@ public class KConverter {
 		KNumRegister toRegister,
 		BigInteger value) {
 
-		if (value.compareTo (MAX_INT) <= 0
-			&& value.compareTo (MIN_INT) >= 0) {
-
-			toRegister.setValue (value.intValue ());
-			toRegister.bigNumerator = value;
-
-		} else if (value.compareTo (KNumRegister.MAX_LONG) <= 0
-			&& value.compareTo (KNumRegister.MIN_LONG) >= 0) {
+		if (value.compareTo (KEdges.MAX_LONG) <= 0
+			&& value.compareTo (KEdges.MIN_LONG) >= 0) {
 
 			toRegister.setValue (value.longValue ());
 			toRegister.bigNumerator = value;
