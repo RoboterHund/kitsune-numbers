@@ -37,7 +37,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		a.setValue (result);
+		a.copy (result);
 		calculator.add (result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,

@@ -195,8 +195,6 @@ public class KCalculator {
 			);
 			break;
 		}
-
-		result.compact ();
 	}
 
 	/**
@@ -350,8 +348,6 @@ public class KCalculator {
 			);
 			break;
 		}
-
-		result.compact ();
 	}
 
 	/**
@@ -484,8 +480,6 @@ public class KCalculator {
 			);
 			break;
 		}
-
-		result.compact ();
 	}
 
 	/**
@@ -623,8 +617,6 @@ public class KCalculator {
 			);
 			break;
 		}
-		
-		result.compact ();
 	}
 
 	/**

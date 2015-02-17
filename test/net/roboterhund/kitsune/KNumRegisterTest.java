@@ -18,6 +18,7 @@ package net.roboterhund.kitsune;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
 
@@ -140,6 +141,25 @@ public class KNumRegisterTest {
 				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
 		);
 
+		/* * * * * */
+		testedNumber = new KNumRegister (BigInteger.valueOf (42));
+		assertTestedNumberEquals (
+			KProfile.INT_INTEGER,
+			42,
+			1,
+			BigDecimal.valueOf (42)
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (
+			BigInteger.valueOf (42),
+			BigInteger.valueOf (-2));
+		assertTestedNumberEquals (
+			KProfile.INT_INTEGER,
+			-21,
+			1,
+			BigDecimal.valueOf (-21)
+		);
 	}
 
 	@Test

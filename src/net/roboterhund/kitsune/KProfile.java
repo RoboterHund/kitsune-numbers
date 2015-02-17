@@ -103,9 +103,14 @@ abstract class KProfile {
 	/* */
 
 	// routing table
+	// it is *almost* symmetrical
+	// (symmetry is due to requirement to use the widest data type)
+	// (non-symmetry is due to non-commutativity of operations)
+	// routes for narrow data types towards bottom right corner
+	// routes for wider data types towards left and top sides
 	static final int[][] route = {
-		// \2
-		// 1\
+		// columns: operand 2
+		// rows: operand 1
 		// big rat.   big int.  long rat.  long int.   int rat.   int int.
 		// big rat.
 		{BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2},

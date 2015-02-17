@@ -369,13 +369,7 @@ public class KConverter {
 		KNumRegister toRegister,
 		int value) {
 
-		toRegister.profile = KProfile.INT_INTEGER;
-
-		toRegister.numerator = value;
-		toRegister.denominator = 1;
-
-		toRegister.bigNumerator = null;
-		toRegister.bigDenominator = null;
+		toRegister.setValue (value);
 	}
 
 	/**
@@ -386,18 +380,7 @@ public class KConverter {
 		KNumRegister toRegister,
 		long value) {
 
-		toRegister.profile = ((
-			value <= Integer.MAX_VALUE
-				&& value >= Integer.MIN_VALUE
-		)) ?
-			KProfile.INT_INTEGER :
-			KProfile.LONG_INTEGER;
-
-		toRegister.numerator = value;
-		toRegister.denominator = 1;
-
-		toRegister.bigNumerator = null;
-		toRegister.bigDenominator = null;
+		toRegister.setValue (value);
 	}
 
 	/**
@@ -436,10 +419,7 @@ public class KConverter {
 		if (value.compareTo (MAX_INT) <= 0
 			&& value.compareTo (MIN_INT) >= 0) {
 
-			toRegister.profile = KProfile.INT_INTEGER;
-
-			toRegister.numerator = value.intValue ();
-			toRegister.denominator = 1;
+			toRegister.setValue (value.intValue ());
 
 		} else if (value.compareTo (KNumRegister.MAX_LONG) <= 0
 			&& value.compareTo (KNumRegister.MIN_LONG) >= 0) {
@@ -636,8 +616,9 @@ public class KConverter {
 	 * @param register number with invalid profile.
 	 * @return New {@link IllegalArgumentException}.
 	 */
-	private static IllegalArgumentException
-	newIllegalProfileException (KNumRegister register) {
+	private static IllegalArgumentException newIllegalProfileException (
+		KNumRegister register) {
+
 		return new IllegalArgumentException (
 			"Invalid KRegister profile: "
 				+ register.profile

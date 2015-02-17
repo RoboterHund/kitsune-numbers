@@ -17,6 +17,8 @@ package net.roboterhund.kitsune;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class KCalculatorTest_divide extends KCalculatorTest {
 
 	@Test
@@ -43,6 +45,27 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 			1,
 			null
 		);
+
+		/* * * * * */
+		String divisionByZeroMessage = "???";
+		try {
+			//noinspection NumericOverflow,UnusedDeclaration
+			int x = 1 / 0;
+		} catch (ArithmeticException e) {
+			divisionByZeroMessage = e.getMessage ();
+		}
+		try {
+			a.setValue (1);
+			b.setValue (0);
+			calculator.divide (result, a, b);
+
+		} catch (ArithmeticException e) {
+			assertEquals (
+				"division by zero exception",
+				divisionByZeroMessage,
+				e.getMessage ()
+			);
+		}
 	}
 
 }

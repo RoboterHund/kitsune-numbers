@@ -41,6 +41,12 @@ public class KNumRegister {
 		new BigInteger (String.valueOf (Long.MIN_VALUE));
 
 	/**
+	 * <code>(-{@link Long#MIN_VALUE})</code> as {@link java.math.BigInteger}
+	 * (lazily initialized).
+	 */
+	static BigInteger MIN_LONG_NEGATED;
+
+	/**
 	 * Number profile.
 	 * <p>
 	 * Determines how the numeric value is stored internally,
@@ -74,12 +80,11 @@ public class KNumRegister {
 	 */
 	BigInteger bigDenominator;
 
-	// TODO redesign construction to increase robustness
-
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setZeroValue()} call on existing object.
+	 * Equivalent to a {@link #setZeroValue()}
+	 * call on existing object.
 	 */
 	public KNumRegister () {
 		setZeroValue ();
@@ -88,48 +93,83 @@ public class KNumRegister {
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(KNumRegister)} call on existing object.
+	 * Equivalent to a {@link #copy(KNumRegister)}
+	 * call on existing object.
 	 *
 	 * @param number number copied to <code>this</code>.
 	 */
 	public KNumRegister (KNumRegister number) {
-		setValue (number);
+		copy (number);
 	}
 
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(long, long)} call on existing object.
+	 * Equivalent to a {@link #setValue(int)}
+	 * call on existing object.
+	 *
+	 * @param intValue integer value.
+	 */
+	public KNumRegister (int intValue) {
+		setValue (intValue);
+	}
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(long)}
+	 * call on existing object.
+	 *
+	 * @param longValue integer value.
+	 */
+	public KNumRegister (long longValue) {
+		setValue (longValue);
+	}
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(long, long)}
+	 * call on existing object.
 	 *
 	 * @param numerator numerator.
 	 * @param denominator denominator.
+	 * @throws ArithmeticException denominator is zero.
 	 */
-	public KNumRegister (long numerator, long denominator) {
-		if (denominator < 0) {
-			if (numerator == Long.MIN_VALUE
-				|| denominator == Long.MIN_VALUE) {
-				setValue (
-					new BigInteger (String.valueOf (numerator)),
-					new BigInteger (String.valueOf (denominator))
-				);
-				compact ();
-				return;
-			}
-			numerator = -numerator;
-			denominator = -denominator;
-		}
+	public KNumRegister (
+		long numerator,
+		long denominator) {
+
 		setValue (numerator, denominator);
 	}
 
 	/**
 	 * Constructor.
 	 * <p>
-	 * Equivalent to a {@link #setValue(long)} call on existing object.
+	 * Equivalent to a {@link #setValue(BigInteger)}
+	 * call on existing object.
 	 *
-	 * @param longValue integer value.
+	 * @param bigValue integer value.
 	 */
-	public KNumRegister (long longValue) {
-		setValue (longValue);
+	public KNumRegister (BigInteger bigValue) {
+		setValue (bigValue);
+	}
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * Equivalent to a {@link #setValue(BigInteger, BigInteger)}
+	 * call on existing object.
+	 *
+	 * @param bigNumerator new numerator.
+	 * @param bigDenominator new denominator.
+	 * @throws ArithmeticException denominator is zero.
+	 */
+	public KNumRegister (
+		BigInteger bigNumerator,
+		BigInteger bigDenominator) {
+
+		setValue (bigNumerator, bigDenominator);
 	}
 
 	/**
@@ -139,8 +179,8 @@ public class KNumRegister {
 		profile = KProfile.INT_INTEGER;
 		numerator = 0;
 		denominator = 1;
-		bigNumerator = null;
-		bigDenominator = null;
+		bigNumerator = BigInteger.ZERO;
+		bigDenominator = BigInteger.ONE;
 	}
 
 	/**
@@ -148,7 +188,7 @@ public class KNumRegister {
 	 *
 	 * @param number copied number.
 	 */
-	public void setValue (KNumRegister number) {
+	public void copy (KNumRegister number) {
 		profile = number.profile;
 		numerator = number.numerator;
 		denominator = number.denominator;
@@ -157,94 +197,250 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Set value.
-	 * <p>
-	 * The resulting fraction is automatically simplified.
+	 * Set <code>int</code> integer value.
 	 *
-	 * @param numerator numerator.
-	 * @param denominator denominator, must be positive and non-zero.
+	 * @param intValue new value.
 	 */
-	public void setValue (long numerator, long denominator) {
-		if (denominator == 1) {
-			// already normalized
-			setNormalizedValue (
-				numerator,
-				denominator
-			);
+	public void setValue (int intValue) {
+		numerator = intValue;
+		denominator = 1;
 
-		} else {
-			// find greatest common divisor
-			// Euclid's algorithm
-			long n = numerator;
-			long d = denominator;
-			long modulo;
-			while (n != 0) {
-				modulo = d % n;
-				d = n;
-				n = modulo;
-			}
-			d = Math.abs (d);
+		profile = KProfile.INT_INTEGER;
 
-			// normalize result
-			setNormalizedValue (
-				numerator / d,
-				denominator / d
-			);
-		}
-	}
-
-	/**
-	 * Set value.
-	 * <p>
-	 * The numerator and denominator must be already simplified.
-	 *
-	 * @param numerator numerator.
-	 * @param denominator denominator, must be positive and non-zero.
-	 */
-	private void setNormalizedValue (long numerator, long denominator) {
-		if (denominator < 0) {
-			numerator = -numerator;
-			denominator = -denominator;
-		}
-
-		// store initial values
-		this.numerator = numerator;
-		this.denominator = denominator;
-
-		// check if fits in int
-		if (this.denominator == 1) {
-			profile = ((
-				this.numerator <= Integer.MAX_VALUE
-					&& this.numerator >= Integer.MIN_VALUE
-			)) ?
-				KProfile.INT_INTEGER :
-				KProfile.LONG_INTEGER;
-
-		} else {
-			profile = ((
-				this.numerator <= Integer.MAX_VALUE
-					&& this.numerator >= Integer.MIN_VALUE
-			) && (
-				this.denominator <= Integer.MAX_VALUE
-					&& this.denominator >= Integer.MIN_VALUE
-			)) ?
-				KProfile.INT_RATIONAL :
-				KProfile.LONG_RATIONAL;
-		}
-
-		// discard old value, if any
+		// invalidated
 		bigNumerator = null;
-		bigDenominator = null;
+
+		bigDenominator = BigInteger.ONE;
 	}
 
 	/**
-	 * Set integer value.
+	 * Set <code>long</code> integer value.
 	 *
 	 * @param longValue new value.
 	 */
 	public void setValue (long longValue) {
-		// store initial values
-		this.numerator = longValue;
+		setInteger (longValue);
+
+		// invalidated
+		bigNumerator = null;
+
+		bigDenominator = BigInteger.ONE;
+	}
+
+	/**
+	 * Set fractional value.
+	 * <p>
+	 * Fraction is automatically normalized.
+	 *
+	 * @param numerator numerator.
+	 * @param denominator denominator.
+	 * @throws ArithmeticException denominator is zero.
+	 */
+	public void setValue (
+		long numerator,
+		long denominator) {
+
+		// BigIntegers invalidated
+		bigNumerator = null;
+		bigDenominator = null;
+
+		if (denominator < 0) {
+			// negative denominator
+
+			if (numerator == Long.MIN_VALUE
+				|| denominator == Long.MIN_VALUE) {
+				// negation would overflow
+				// unable to normalize signs
+
+				// try to simplify
+				long gcd = gcd (numerator, denominator);
+				// don't use Math.abs (gcd), it might overflow
+				if (gcd == 1 || gcd == -1) {
+					// unable to simplify
+					// unable to normalize signs
+
+					// use fallback
+
+					if (MIN_LONG_NEGATED == null) {
+						MIN_LONG_NEGATED = MIN_LONG.negate ();
+					}
+
+					// only one is true:
+					// (numerator == Long.MIN_VALUE)
+					// or
+					// (denominator == Long.MIN_VALUE)
+					// it can't be both (otherwise: abs(gcd) == Long.MIN_VALUE)
+					// so, the other number can be negated safely
+					if (numerator == Long.MIN_VALUE) {
+						bigNumerator = MIN_LONG_NEGATED;
+						bigDenominator = BigInteger.valueOf (-denominator);
+
+					} else {
+						bigNumerator = BigInteger.valueOf (-numerator);
+						bigDenominator = MIN_LONG_NEGATED;
+					}
+
+					// denominator cannot be positive
+					if (denominator == -1) {
+						// integer
+						profile = KProfile.BIG_INTEGER;
+						// if you get here you get a cookie
+						// TODO replace this whole branch with something simpler
+						// (I didn't know it could get this complex)
+
+					} else {
+						// rational
+						profile = KProfile.BIG_RATIONAL;
+					}
+					return;
+
+				} else {
+					// simplify fraction
+					numerator /= gcd;
+					denominator /= gcd;
+
+					// normalize signs
+					if (denominator < 0) {
+						numerator = -numerator;
+						denominator = -denominator;
+					}
+
+					// set value and profile
+					setIrreducibleFraction (
+						numerator,
+						denominator
+					);
+					return;
+				}
+
+			} else {
+				// normalize signs
+				numerator = -numerator;
+				denominator = -denominator;
+			}
+		}
+
+		// denominator must be positive at this point
+
+		long gcd = gcd (numerator, denominator);
+		// prevent denominator from becoming negative
+		gcd = Math.abs (gcd);
+		// the previous operation cannot overflow:
+		// it would overflow if gcd == Long.MIN_VALUE
+		// but that would imply that
+		// the denominator is a multiple of Long.MIN_VALUE
+		// the only multiple of Long.MIN_VALUE that fits in Long
+		// is Long.MIN_VALUE itself
+		// and it is negative
+		// but denominator must be positive
+		// which is a contradiction
+
+		// simplify fraction
+		numerator /= gcd;
+		denominator /= gcd;
+
+		// set value and profile
+		setIrreducibleFraction (
+			numerator,
+			denominator
+		);
+	}
+
+	/**
+	 * Set <code>BigInteger</code> value.
+	 *
+	 * @param bigValue new value.
+	 */
+	public void setValue (BigInteger bigValue) {
+		this.bigNumerator = bigValue;
+		this.bigDenominator = null;
+
+		if (bigValue.compareTo (MAX_LONG) <= 0
+			&& bigValue.compareTo (MIN_LONG) >= 0) {
+			// compact
+			setInteger (bigValue.longValue ());
+
+		} else {
+			// unable to compact
+			profile = KProfile.BIG_INTEGER;
+		}
+	}
+
+	/**
+	 * Set fractional value.
+	 * <p>
+	 * Fraction is automatically normalized.
+	 *
+	 * @param bigNumerator new numerator.
+	 * @param bigDenominator new denominator.
+	 * @throws ArithmeticException denominator is zero.
+	 */
+	public void setValue (
+		BigInteger bigNumerator,
+		BigInteger bigDenominator) {
+
+		// find greatest common divisor
+		BigInteger gcd = bigNumerator.gcd (bigDenominator);
+
+		if (gcd.equals (BigInteger.ONE)) {
+			// no need to divide
+			this.bigNumerator = bigNumerator;
+			this.bigDenominator = bigDenominator;
+
+		} else {
+			// simplify to irreducible fraction
+			this.bigNumerator = bigNumerator.divide (gcd);
+			this.bigDenominator = bigDenominator.divide (gcd);
+		}
+
+		if (this.bigDenominator.signum () < 0) {
+			// negative denominator
+			this.bigNumerator = this.bigNumerator.negate ();
+			this.bigDenominator = this.bigDenominator.negate ();
+		}
+
+		if (this.bigDenominator.equals (BigInteger.ONE)) {
+			// integer
+			this.bigDenominator = null;
+
+			if (this.bigNumerator.compareTo (MAX_LONG) <= 0
+				&& this.bigNumerator.compareTo (MIN_LONG) >= 0) {
+				// compact
+				setInteger (this.bigNumerator.longValue ());
+
+			} else {
+				// unable to compact
+				profile = KProfile.BIG_INTEGER;
+			}
+
+		} else {
+			// rational
+
+			// denominator must be positive at this point
+			if (this.bigNumerator.compareTo (MAX_LONG) <= 0
+				&& this.bigNumerator.compareTo (MIN_LONG) >= 0
+				&& this.bigDenominator.compareTo (MAX_LONG) <= 0) {
+				// compact
+				setIrreducibleRationalFraction (
+					this.bigNumerator.longValue (),
+					this.bigDenominator.longValue ()
+				);
+
+			} else {
+				// unable to compact
+				profile = KProfile.BIG_RATIONAL;
+			}
+		}
+	}
+
+	/**
+	 * Set numerator and denominator, where
+	 * <code>denominator = 1</code>
+	 *
+	 * @param numerator new numerator.
+	 */
+	private void setInteger (long numerator) {
+		this.numerator = numerator;
 		this.denominator = 1;
 
 		// check if fits in int
@@ -254,64 +450,80 @@ public class KNumRegister {
 		)) ?
 			KProfile.INT_INTEGER :
 			KProfile.LONG_INTEGER;
-
-		// discard old value, if any
-		bigNumerator = null;
-		bigDenominator = null;
 	}
 
 	/**
 	 * Set value.
 	 * <p>
-	 * For internal use by {@link KCalculator}.
+	 * The numerator and denominator must form an irreducible fraction.
 	 *
-	 * @param bigNumerator new numerator.
-	 * @param bigDenominator new denominator.
+	 * @param numerator numerator, must be coprime with the denominator.
+	 * @param denominator denominator, must be positive and non-zero.
 	 */
-	public void setValue (
-		BigInteger bigNumerator,
-		BigInteger bigDenominator) {
+	private void setIrreducibleFraction (
+		long numerator,
+		long denominator) {
 
-		// find greatest common divisor
-		BigInteger gcd = bigNumerator.gcd (bigDenominator);
+		// denominator must be positive at this point
+		if (denominator == 1) {
+			// integer
+			this.numerator = numerator;
+			this.denominator = 1;
 
-		if (gcd.compareTo (BigInteger.ONE) == 0) {
-			// no need to divide
-			this.bigNumerator = bigNumerator;
-			this.bigDenominator = bigDenominator;
-
-		} else {
-			// normalize result
-			this.bigNumerator = bigNumerator.divide (gcd);
-			this.bigDenominator = bigDenominator.divide (gcd);
-		}
-
-		if (this.bigDenominator.compareTo (BigInteger.ZERO) < 0) {
-			this.bigNumerator = this.bigNumerator.negate ();
-			this.bigDenominator = this.bigDenominator.negate ();
-		}
-
-		if (this.bigDenominator.equals (BigInteger.ONE)) {
-			// make sure that the already existing BigInteger.ONE is reused
-			this.bigDenominator = BigInteger.ONE;
-			profile = KProfile.BIG_INTEGER;
+			// check if fits in int
+			// denominator must be positive at this point
+			profile = ((
+				numerator <= Integer.MAX_VALUE
+					&& numerator >= Integer.MIN_VALUE
+			)) ?
+				KProfile.INT_INTEGER :
+				KProfile.LONG_INTEGER;
 
 		} else {
-			profile = KProfile.BIG_RATIONAL;
+			// rational
+			setIrreducibleRationalFraction (numerator, denominator);
 		}
 	}
 
 	/**
-	 * Set integer value.
+	 * Set value, which must not be integer.
 	 * <p>
-	 * For internal use by {@link KCalculator}.
+	 * The numerator and denominator must form an irreducible fraction.
 	 *
-	 * @param bigNumerator new numerator.
+	 * @param numerator numerator, must be coprime with the denominator.
+	 * @param denominator denominator, must be greater than 1.
 	 */
-	public void setValue (BigInteger bigNumerator) {
-		this.bigNumerator = bigNumerator;
-		this.bigDenominator = BigInteger.ONE;
-		profile = KProfile.BIG_INTEGER;
+	private void setIrreducibleRationalFraction (
+		long numerator,
+		long denominator) {
+
+		this.numerator = numerator;
+		this.denominator = denominator;
+
+		// check if fits in int
+		// denominator must be positive at this point
+		profile = ((
+			numerator <= Integer.MAX_VALUE
+				&& numerator >= Integer.MIN_VALUE
+		) && (
+			denominator <= Integer.MAX_VALUE
+		)) ?
+			KProfile.INT_RATIONAL :
+			KProfile.LONG_RATIONAL;
+	}
+
+	/**
+	 * Find greatest common divisor.
+	 */
+	private static long gcd (long a, long b) {
+		// Euclid's algorithm
+		long modulo;
+		while (b != 0) {
+			modulo = a % b;
+			a = b;
+			b = modulo;
+		}
+		return a;
 	}
 
 	/**
@@ -320,35 +532,10 @@ public class KNumRegister {
 	 */
 	void setBigIntegers () {
 		if (bigNumerator == null) {
-			bigNumerator = new BigInteger (String.valueOf (numerator));
+			bigNumerator = BigInteger.valueOf (numerator);
 		}
 		if (bigDenominator == null) {
-			if (denominator == 1) {
-				bigDenominator = BigInteger.ONE;
-			} else {
-				bigDenominator = new BigInteger (String.valueOf (denominator));
-			}
-		}
-	}
-
-	/**
-	 * If the number is stored as
-	 * {@link java.math.BigDecimal},
-	 * try to revert to a simple fraction representation.
-	 * <p>
-	 * The conversion is actually performed only if
-	 * it is estimated that it will be succesful.
-	 */
-	void compact () {
-		if (bigNumerator.compareTo (MAX_LONG) <= 0
-			&& bigNumerator.compareTo (MIN_LONG) >= 0
-			&& bigDenominator.compareTo (MAX_LONG) <= 0
-			&& bigDenominator.compareTo (MIN_LONG) >= 0) {
-
-			setNormalizedValue (
-				bigNumerator.longValue (),
-				bigDenominator.longValue ()
-			);
+			bigDenominator = BigInteger.valueOf (denominator);
 		}
 	}
 
