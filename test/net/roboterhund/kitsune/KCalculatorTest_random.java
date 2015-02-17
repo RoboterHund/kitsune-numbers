@@ -303,7 +303,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			validate (
 				a.toBigDecimal ().divide (
 					b.toBigDecimal (),
-					KNumRegister.defaultPrecision,
+					KConverter.DEFAULT_PRECISION,
 					BigDecimal.ROUND_HALF_UP),
 				result
 			);

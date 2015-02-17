@@ -138,7 +138,7 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (-2),
-				KNumRegister.defaultPrecision,
+				KConverter.DEFAULT_PRECISION,
 				BigDecimal.ROUND_HALF_UP)
 		);
 

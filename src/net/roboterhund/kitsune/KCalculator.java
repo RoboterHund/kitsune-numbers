@@ -33,7 +33,7 @@ public class KCalculator {
 	 * and they must be converted to {@link java.math.BigDecimal},
 	 * this setting determines the number of decimals stored.
 	 */
-	public int precision = KNumRegister.DEFAULT_PRECISION;
+	public int precision = KConverter.DEFAULT_PRECISION;
 
 	/**
 	 * Result of last primitive calculation.

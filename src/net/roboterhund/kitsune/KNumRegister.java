@@ -30,22 +30,6 @@ import java.math.BigInteger;
 public class KNumRegister {
 
 	/**
-	 * Default precision of numbers with infinite decimal expansion,
-	 * unless overridden by
-	 * {@link KNumRegister#defaultPrecision}.
-	 */
-	public static final int DEFAULT_PRECISION = 24;
-
-	/**
-	 * Global setting of default precision
-	 * of numbers with infinite decimal expansion.
-	 * <p>
-	 * The default value is
-	 * {@link KNumRegister#DEFAULT_PRECISION}.
-	 */
-	public static int defaultPrecision = DEFAULT_PRECISION;
-
-	/**
 	 * {@link Long#MAX_VALUE} as {@link java.math.BigInteger}.
 	 */
 	public static final BigInteger MAX_LONG =
@@ -471,7 +455,7 @@ public class KNumRegister {
 	 * @param integerValue string to parse.
 	 * @return <code>true</code> iff successful.
 	 */
-	private boolean setLongIntValue (String integerValue) {
+	boolean setLongIntValue (String integerValue) {
 		try {
 			setValue (Long.parseLong (integerValue));
 			return true;
@@ -488,7 +472,7 @@ public class KNumRegister {
 	 * @param integerValue string to parse.
 	 * @return <code>true</code> iff successful.
 	 */
-	private boolean setLongIntValue (
+	boolean setLongIntValue (
 		String integerValue,
 		String decimalValue) {
 
@@ -546,11 +530,11 @@ public class KNumRegister {
 	 * Convert to BigDecimal.
 	 *
 	 * @return BigDecimal, with
-	 * {@link KNumRegister#defaultPrecision}
+	 * {@link KConverter#DEFAULT_PRECISION}
 	 * decimals if number has infinite decimal expansion.
 	 */
 	public BigDecimal toBigDecimal () {
-		return toBigDecimal (defaultPrecision);
+		return toBigDecimal (KConverter.DEFAULT_PRECISION);
 	}
 
 	/**

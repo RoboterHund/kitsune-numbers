@@ -69,7 +69,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 				.add (BigDecimal.ONE)
 				.divide (
 					new BigDecimal (2),
-					KNumRegister.defaultPrecision,
+					KConverter.DEFAULT_PRECISION,
 					BigDecimal.ROUND_HALF_UP
 				)
 		);
