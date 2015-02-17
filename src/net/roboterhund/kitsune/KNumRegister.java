@@ -247,8 +247,6 @@ public class KNumRegister {
 				// without overflowing either the numerator or the denominator
 				// and the fraction cannot be simplified
 
-
-
 				if (numerator == Long.MIN_VALUE) {
 					// denominator != Long.MIN_VALUE
 					denominator = -denominator;
@@ -289,8 +287,10 @@ public class KNumRegister {
 			numerator /= gcd;
 			denominator /= gcd;
 		}
-		// apparently, the last two branches can be merged into one
+		// apparently, the last 'else' can be removed
+		// and the previous one moved here
 		// but that would be a hack
+		// (it would require a long overflow to produce the correct result)
 
 		if (denominator == 1) {
 			// integer
