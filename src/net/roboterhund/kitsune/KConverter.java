@@ -420,21 +420,17 @@ public class KConverter {
 			&& value.compareTo (MIN_INT) >= 0) {
 
 			toRegister.setValue (value.intValue ());
+			toRegister.bigNumerator = value;
 
 		} else if (value.compareTo (KNumRegister.MAX_LONG) <= 0
 			&& value.compareTo (KNumRegister.MIN_LONG) >= 0) {
 
-			toRegister.profile = KProfile.LONG_INTEGER;
-
-			toRegister.numerator = value.longValue ();
-			toRegister.denominator = 1;
+			toRegister.setValue (value.longValue ());
+			toRegister.bigNumerator = value;
 
 		} else {
-			toRegister.profile = KProfile.BIG_INTEGER;
+			toRegister.setValue (value);
 		}
-
-		toRegister.bigNumerator = value;
-		toRegister.bigDenominator = null;
 	}
 
 	/**
