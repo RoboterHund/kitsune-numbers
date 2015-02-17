@@ -43,9 +43,6 @@ public abstract class CommonTest {
 				bigDecimal,
 				converter.toBigDecimal (testedNumber)
 			);
-
-		} else {
-			assertEquals ("bigDecimal", null, (BigDecimal) null);
 		}
 
 		assertEquals ("profile", profile, testedNumber.profile);
@@ -55,9 +52,15 @@ public abstract class CommonTest {
 	}
 
 	public static void validate (BigDecimal expected, KNumRegister number) {
+		// TODO deal with the BigDecimal.stripTrailingZeros () bug in other places
+		if (expected.compareTo (BigDecimal.ZERO) == 0) {
+			expected = BigDecimal.ZERO;
+		} else {
+			expected = expected.stripTrailingZeros ();
+		}
 		assertEquals (
 			"validate",
-			expected.stripTrailingZeros ().toPlainString (),
+			expected.toPlainString (),
 			converter.toBigDecimal (number).toPlainString ());
 	}
 

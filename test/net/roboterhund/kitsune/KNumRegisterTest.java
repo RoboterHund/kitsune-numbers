@@ -128,8 +128,6 @@ public class KNumRegisterTest {
 		);
 
 		/* * * * * */
-		// proof that the number of the correct profile is generated
-		// even if there is overflow during its construction
 		testedNumber = new KNumRegister (Long.MIN_VALUE, -2);
 		assertTestedNumberEquals (
 			KProfile.LONG_INTEGER,
@@ -139,6 +137,110 @@ public class KNumRegisterTest {
 				new BigDecimal (-2),
 				KConverter.DEFAULT_PRECISION,
 				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (Long.MIN_VALUE, -3);
+		assertTestedNumberEquals (
+			KProfile.BIG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			new BigDecimal (Long.MIN_VALUE).divide (
+				new BigDecimal (-3),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		int d = 5;
+		testedNumber = new KNumRegister (Long.MIN_VALUE, d);
+		assertTestedNumberEquals (
+			KProfile.LONG_RATIONAL,
+			Long.MIN_VALUE,
+			d,
+			new BigDecimal (Long.MIN_VALUE).divide (
+				new BigDecimal (d),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (-3, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.BIG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.valueOf (-3).divide (
+				new BigDecimal (Long.MIN_VALUE),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+
+		/* * * * * */
+		testedNumber = new KNumRegister (-2, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.LONG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.valueOf (-2).divide (
+				new BigDecimal (Long.MIN_VALUE),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (-1, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.BIG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.valueOf (-1).divide (
+				new BigDecimal (Long.MIN_VALUE),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (0, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.INT_INTEGER,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.ZERO
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (1, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.BIG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.ONE.divide (
+				new BigDecimal (Long.MIN_VALUE),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (2, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.LONG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			new BigDecimal (2).divide (
+				new BigDecimal (Long.MIN_VALUE),
+				KConverter.DEFAULT_PRECISION,
+				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+		);
+
+		/* * * * * */
+		testedNumber = new KNumRegister (Long.MIN_VALUE, Long.MIN_VALUE);
+		assertTestedNumberEquals (
+			KProfile.INT_INTEGER,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.ONE
 		);
 
 		/* * * * * */

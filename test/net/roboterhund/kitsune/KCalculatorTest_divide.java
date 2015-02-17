@@ -17,6 +17,8 @@ package net.roboterhund.kitsune;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.assertEquals;
 
 public class KCalculatorTest_divide extends KCalculatorTest {
@@ -45,6 +47,29 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 			1,
 			null
 		);
+
+		/* * * * * */
+		a.setValue (Long.MIN_VALUE);
+		b.setValue (-1);
+		calculator.divide (result, a, b);
+		assertResultEquals (
+			KProfile.BIG_INTEGER,
+			result.numerator,
+			result.denominator,
+			BigDecimal.valueOf (Long.MIN_VALUE).negate ()
+		);
+
+		/* * * * * */
+		a.setValue (Long.MIN_VALUE);
+		b.setValue (1);
+		calculator.divide (result, a, b);
+		assertResultEquals (
+			KProfile.LONG_INTEGER,
+			Long.MIN_VALUE,
+			1,
+			BigDecimal.valueOf (Long.MIN_VALUE)
+		);
+
 
 		/* * * * * */
 		String divisionByZeroMessage = "???";
