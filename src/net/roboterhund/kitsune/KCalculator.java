@@ -18,13 +18,6 @@ package net.roboterhund.kitsune;
 /**
  * Singleton object to perform calculations with
  * {@link KNumRegister} objects.
- * <p>
- * Calculations try to produce, whenever possible,
- * exact, rational results.
- * <p>
- * <code>BigDecimal</code> is used as fallback,
- * but methods in this package try to avoid
- * unnecessary allocation.
  */
 public class KCalculator {
 
@@ -495,10 +488,6 @@ public class KCalculator {
 
 	/**
 	 * Divide two numbers.
-	 * <p>
-	 * <b>Note</b>: precision is lost if
-	 * the calculation cannot be performed with primitive data types,
-	 * and the result has infinite decimal expansion.
 	 *
 	 * @param result overwritten with the result.
 	 * @param dividend number that is divided.
