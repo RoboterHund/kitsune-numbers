@@ -253,10 +253,9 @@ public class KConverter {
 		case KProfile.INT_RATIONAL:
 			lastConversionStatus = KConversionStatus.INEXACT;
 
-			long longValue =
-				fromRegister.numerator / fromRegister.denominator;
-
-			return new BigInteger (String.valueOf (longValue));
+			return BigInteger.valueOf (
+				fromRegister.numerator / fromRegister.denominator
+			);
 
 		case KProfile.BIG_INTEGER:
 			lastConversionStatus = KConversionStatus.OK;
@@ -268,7 +267,7 @@ public class KConverter {
 
 			if (fromRegister.bigNumerator != null) {
 				fromRegister.bigNumerator =
-					new BigInteger (String.valueOf (fromRegister.numerator));
+					BigInteger.valueOf (fromRegister.numerator);
 			}
 			return fromRegister.bigNumerator;
 
@@ -283,30 +282,24 @@ public class KConverter {
 	 * <code>fromRegister</code> as possible.
 	 */
 	public BigDecimal toBigDecimal (KNumRegister fromRegister) {
+		BigDecimal bigNumerator;
+		BigDecimal bigDenominator;
+
 		switch (fromRegister.profile) {
 		case KProfile.BIG_RATIONAL:
-		case KProfile.LONG_RATIONAL:
-		case KProfile.INT_RATIONAL:
 			fromRegister.setBigIntegers ();
 
-			BigDecimal bigDecimal;
-			try {
-				lastConversionStatus = KConversionStatus.OK;
-				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
-					.divide (
-						new BigDecimal (fromRegister.bigDenominator),
-						exactMathContext
-					);
+			bigNumerator = new BigDecimal (fromRegister.bigNumerator);
+			bigDenominator = new BigDecimal (fromRegister.bigDenominator);
 
-			} catch (ArithmeticException e) {
-				lastConversionStatus = KConversionStatus.INEXACT;
-				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
-					.divide (
-						new BigDecimal (fromRegister.bigDenominator),
-						inexactMathContext
-					);
-			}
-			return bigDecimal.stripTrailingZeros ();
+			return divideFraction (bigNumerator, bigDenominator);
+
+		case KProfile.LONG_RATIONAL:
+		case KProfile.INT_RATIONAL:
+			bigNumerator = new BigDecimal (fromRegister.numerator);
+			bigDenominator = new BigDecimal (fromRegister.denominator);
+
+			return divideFraction (bigNumerator, bigDenominator);
 
 		case KProfile.BIG_INTEGER:
 			lastConversionStatus = KConversionStatus.OK;
@@ -317,16 +310,41 @@ public class KConverter {
 		case KProfile.INT_INTEGER:
 			lastConversionStatus = KConversionStatus.OK;
 
-			if (fromRegister.bigNumerator != null) {
-				return new BigDecimal (fromRegister.bigNumerator);
-
-			} else {
-				return new BigDecimal (fromRegister.numerator);
-			}
+			return new BigDecimal (fromRegister.numerator);
 
 		default:
 			throw newIllegalProfileException (fromRegister);
 		}
+	}
+
+	/**
+	 * Divide numerator and denominator
+	 * to get a single {@code BigDecimal}.
+	 * <p>
+	 * Set {@link #lastConversionStatus}.
+	 */
+	private BigDecimal divideFraction (
+		BigDecimal bigNumerator,
+		BigDecimal bigDenominator) {
+
+		BigDecimal bigDecimal;
+		try {
+			lastConversionStatus = KConversionStatus.OK;
+			bigDecimal =
+				bigNumerator.divide (
+					bigDenominator,
+					exactMathContext
+				);
+
+		} catch (ArithmeticException e) {
+			lastConversionStatus = KConversionStatus.INEXACT;
+			bigDecimal =
+				bigNumerator.divide (
+					bigDenominator,
+					inexactMathContext
+				);
+		}
+		return bigDecimal.stripTrailingZeros ();
 	}
 
 	/**
@@ -394,9 +412,8 @@ public class KConverter {
 
 		if (Double.isInfinite (value)
 			|| Double.isNaN (value)) {
-
-			lastConversionStatus = KConversionStatus.OVERFLOW;
-			return;
+			// TODO actually handle this values
+			throw new IllegalArgumentException ("value not supported");
 		}
 
 		BigDecimal bigDecimalValue;
@@ -406,6 +423,7 @@ public class KConverter {
 		} catch (ArithmeticException e) {
 			bigDecimalValue = new BigDecimal (value, inexactMathContext);
 		}
+
 		fromBigDecimal (
 			toRegister,
 			bigDecimalValue
@@ -420,15 +438,7 @@ public class KConverter {
 		KNumRegister toRegister,
 		BigInteger value) {
 
-		if (value.compareTo (KEdges.MAX_LONG) <= 0
-			&& value.compareTo (KEdges.MIN_LONG) >= 0) {
-
-			toRegister.setValue (value.longValue ());
-			toRegister.bigNumerator = value;
-
-		} else {
-			toRegister.setValue (value);
-		}
+		toRegister.setValue (value);
 	}
 
 	/**
@@ -445,7 +455,7 @@ public class KConverter {
 	/**
 	 * @param toRegister register where to write number value.
 	 * @param value string in format
-	 * <code>['+'|'-']{0..9}+['.'{0..9}+]</code>
+	 * <code> ['+'|'-'] {0..9}+ ['.' {0..9}+] </code>
 	 * (signed or unsigned integer with optional point followed by decimals).
 	 * @throws NumberFormatException unable to parse string.
 	 */
@@ -465,10 +475,11 @@ public class KConverter {
 
 		} else {
 			// with decimals
-			// store integer part in numerator
+
+			// get integer part
 			integerValue = value.substring (0, decPointPos);
 
-			// get decimals
+			// locate trailing zero digits
 			int lastNonZero;
 			for (lastNonZero = value.length () - 1;
 			     lastNonZero > decPointPos;
@@ -480,13 +491,13 @@ public class KConverter {
 			}
 
 			if (lastNonZero == decPointPos) {
-				// decimals = 0
+				// all decimal digits are zero
 				if (setLongIntValue (toRegister, integerValue)) {
 					return;
 				}
 
 			} else {
-				// parse integer and decimal part
+				// get decimal part
 				decimalValue =
 					value.substring (decPointPos + 1, lastNonZero + 1);
 
@@ -496,35 +507,38 @@ public class KConverter {
 					throw new NumberFormatException ();
 				}
 
+				// parse integer and decimal part
 				if (setLongIntValue (toRegister, integerValue, decimalValue)) {
 					return;
 				}
 			}
 		}
 
+		BigInteger bigIntegerValue = new BigInteger (integerValue);
+
 		if (decimalValue == null) {
-			toRegister.setValue (
-				new BigInteger (integerValue),
-				BigInteger.ONE
-			);
+			// set integer value
+			toRegister.setValue (bigIntegerValue);
 
 		} else {
+			BigInteger bigDecimalValue = new BigInteger (decimalValue);
+
+			// get denominator as power of 10
 			BigInteger bigDenominator =
 				BigInteger.TEN.pow (decimalValue.length ());
 
+			// multiply numerator by power of 10
 			BigInteger bigNumerator =
-				new BigInteger (integerValue)
-					.multiply (bigDenominator);
+				bigIntegerValue.multiply (bigDenominator);
 
+			// add decimal part to numerator
 			if (integerValue.charAt (0) == '-') {
-				bigNumerator =
-					bigNumerator.subtract (new BigInteger (decimalValue));
-
+				bigNumerator = bigNumerator.subtract (bigDecimalValue);
 			} else {
-				bigNumerator =
-					bigNumerator.add (new BigInteger (decimalValue));
+				bigNumerator = bigNumerator.add (bigDecimalValue);
 			}
 
+			// normalize fraction
 			toRegister.setValue (bigNumerator, bigDenominator);
 		}
 	}
