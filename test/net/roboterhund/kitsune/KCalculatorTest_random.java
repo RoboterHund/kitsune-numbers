@@ -69,9 +69,9 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		useBigDecimal = true;
 
 		if (useBigDecimal) {
-			bigDecimalOperand = new BigDecimal (Long.MAX_VALUE);
-			bigDecimalOperand =
-				bigDecimalOperand.multiply (bigDecimalOperand)
+			bigDecimalOperand = new BigDecimal (Long.MAX_VALUE)
+//			bigDecimalOperand =
+//				bigDecimalOperand.multiply (bigDecimalOperand)
 					.add (BigDecimal.ONE);
 		}
 
@@ -82,7 +82,8 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			false,
 			bigDecimalOperand,
 			true,
-			out
+			out,
+			false
 		);
 
 		out.printf ("\n");
@@ -167,6 +168,8 @@ public class KCalculatorTest_random extends KCalculatorTest {
 	 * TODO better control other tests
 	 * TODO improve statistics
 	 * @param out if not null, print info while in progress here
+	 * @param validate if {@code true}, repeat calculations with
+	 * {@code BigDecimal} and assert that results are equal.
 	 * @return elapsed thread time, in nanoseconds.
 	 */
 	@SuppressWarnings ("SameParameterValue")
@@ -175,7 +178,8 @@ public class KCalculatorTest_random extends KCalculatorTest {
 		boolean forceBigDecimal,
 		BigDecimal bigDecimalOperand,
 		boolean performMultiplications,
-		PrintStream out) {
+		PrintStream out,
+		boolean validate) {
 
 		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean ();
 		long threadId = Thread.currentThread ().getId ();
@@ -218,16 +222,26 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				data.bOperands.add (new KNumRegister (b));
 			}
 
+			BigDecimal expectedResult;
+			BigDecimal bigDecimalA = null;
+			BigDecimal bigDecimalB = null;
+
+			if (validate) {
+				bigDecimalA = converter.toBigDecimal (a);
+				bigDecimalB = converter.toBigDecimal (b);
+			}
+
 			startMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			calculator.add (result, a, b);
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
-			validate (
-				converter.toBigDecimal (a)
-					.add (converter.toBigDecimal (b)),
-				result
-			);
+			if (validate) {
+				validate (
+					bigDecimalA.add (bigDecimalB),
+					result
+				);
+			}
 			if (data.results_add != null) {
 				data.results_add.add (new KNumRegister (result));
 			}
@@ -251,11 +265,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
-			validate (
-				converter.toBigDecimal (a)
-					.subtract (converter.toBigDecimal (b)),
-				result
-			);
+			if (validate) {
+				validate (
+					bigDecimalA.subtract (bigDecimalB),
+					result
+				);
+			}
 			if (data.results_subtract != null) {
 				data.results_subtract.add (new KNumRegister (result));
 			}
@@ -280,6 +295,12 @@ public class KCalculatorTest_random extends KCalculatorTest {
 				endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 				elapsedTime += endMeasureTime - startMeasureTime;
 				operationsPerformed++;
+				if (validate) {
+					validate (
+						bigDecimalA.multiply (bigDecimalB),
+						result
+					);
+				}
 				if (data.results_multiply != null) {
 					data.results_multiply.add (new KNumRegister (result));
 				}
@@ -304,15 +325,23 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			endMeasureTime = threadMXBean.getThreadCpuTime (threadId);
 			elapsedTime += endMeasureTime - startMeasureTime;
 			operationsPerformed++;
-			validate (
-				converter.toBigDecimal (a)
-					.divide (
-						converter.toBigDecimal (b),
-						KConverter.DEFAULT_PRECISION,
-						BigDecimal.ROUND_HALF_UP
-					),
-				result
-			);
+			if (validate) {
+				try {
+					expectedResult = bigDecimalA.divide (
+						bigDecimalB,
+						converter.exactMathContext
+					);
+				} catch (ArithmeticException e) {
+					expectedResult = bigDecimalA.divide (
+						bigDecimalB,
+						converter.inexactMathContext
+					);
+				}
+				validate (
+					expectedResult,
+					result
+				);
+			}
 			if (data.results_divide != null) {
 				data.results_divide.add (new KNumRegister (result));
 			}

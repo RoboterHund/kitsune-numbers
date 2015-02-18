@@ -29,13 +29,6 @@ package net.roboterhund.kitsune;
 public class KCalculator {
 
 	/**
-	 * If a calculation produces numbers with infinite decimal expansion,
-	 * and they must be converted to {@link java.math.BigDecimal},
-	 * this setting determines the number of decimals stored.
-	 */
-	public int precision = KConverter.DEFAULT_PRECISION;
-
-	/**
 	 * Result of last primitive calculation.
 	 *
 	 * @see net.roboterhund.kitsune.KCalculator#add(long, long)

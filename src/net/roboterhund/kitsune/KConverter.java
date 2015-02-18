@@ -36,19 +36,19 @@ public class KConverter {
 	}
 
 	/**
-	 * Default precision of numbers with infinite decimal expansion,
-	 * unless overridden by
-	 * {@link net.roboterhund.kitsune.KConverter#precision}.
+	 * Default precision of numbers with infinite decimal expansion.
 	 */
 	public static final int DEFAULT_PRECISION = 24;
 
 	/**
-	 * Precision of numbers with infinite decimal expansion.
-	 * <p>
-	 * The default value is
-	 * {@link net.roboterhund.kitsune.KConverter#DEFAULT_PRECISION}.
+	 * Settings for calculations with infinite precision.
 	 */
-	public int precision = DEFAULT_PRECISION;
+	public final MathContext exactMathContext;
+
+	/**
+	 * Settings for rounding of infinite decimal expansions.
+	 */
+	public final MathContext inexactMathContext;
 
 	/**
 	 * Status of last conversion.
@@ -56,6 +56,40 @@ public class KConverter {
 	 * @see KConversionStatus
 	 */
 	public int lastOperationStatus;
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * Set to {@link #DEFAULT_PRECISION}
+	 * and {@link RoundingMode#HALF_UP}.
+	 */
+	public KConverter () {
+		this (DEFAULT_PRECISION);
+	}
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * Set to {@link RoundingMode#HALF_UP}.
+	 *
+	 * @param precision {@link MathContext} {@code precision} setting.
+	 */
+	public KConverter (int precision) {
+		this (new MathContext (precision));
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param mathContext {@link #inexactMathContext}.
+	 */
+	public KConverter (MathContext mathContext) {
+		this.inexactMathContext = mathContext;
+		this.exactMathContext = new MathContext (
+			0,
+			mathContext.getRoundingMode ()
+		);
+	}
 
 	/**
 	 * @param fromRegister number to convert.
@@ -258,14 +292,14 @@ public class KConverter {
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
 			fromRegister.setBigIntegers ();
+
 			BigDecimal bigDecimal;
 			try {
 				lastOperationStatus = KConversionStatus.OK;
 				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
 					.divide (
 						new BigDecimal (fromRegister.bigDenominator),
-						precision,
-						RoundingMode.UNNECESSARY
+						exactMathContext
 					);
 
 			} catch (ArithmeticException e) {
@@ -273,8 +307,7 @@ public class KConverter {
 				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
 					.divide (
 						new BigDecimal (fromRegister.bigDenominator),
-						precision,
-						RoundingMode.HALF_UP
+						inexactMathContext
 					);
 			}
 			return bigDecimal.stripTrailingZeros ();
@@ -309,29 +342,9 @@ public class KConverter {
 		case KProfile.BIG_RATIONAL:
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			fromRegister.setBigIntegers ();
-
-			BigDecimal bigValue;
-			try {
-				lastOperationStatus = KConversionStatus.OK;
-				bigValue = new BigDecimal (fromRegister.bigNumerator)
-					.divide (
-						new BigDecimal (fromRegister.bigDenominator),
-						precision,
-						RoundingMode.UNNECESSARY
-					);
-
-			} catch (ArithmeticException e) {
-				lastOperationStatus = KConversionStatus.INEXACT;
-				bigValue = new BigDecimal (fromRegister.bigNumerator)
-					.divide (
-						new BigDecimal (fromRegister.bigDenominator),
-						precision,
-						RoundingMode.HALF_UP
-					);
-			}
-
-			return bigValue.stripTrailingZeros ().toPlainString ();
+			return toBigDecimal (fromRegister)
+				.stripTrailingZeros ()
+				.toPlainString ();
 
 		case KProfile.BIG_INTEGER:
 			lastOperationStatus = KConversionStatus.OK;
@@ -390,9 +403,16 @@ public class KConverter {
 			return;
 		}
 
+		BigDecimal bigDecimalValue;
+		try {
+			bigDecimalValue = new BigDecimal (value, exactMathContext);
+
+		} catch (ArithmeticException e) {
+			bigDecimalValue = new BigDecimal (value, inexactMathContext);
+		}
 		fromBigDecimal (
 			toRegister,
-			new BigDecimal (value, new MathContext (precision))
+			bigDecimalValue
 		);
 	}
 
@@ -466,7 +486,7 @@ public class KConverter {
 
 			if (lastNonZero == decPointPos) {
 				// decimals = 0
-				if (setLongIntValue (toRegister, value)) {
+				if (setLongIntValue (toRegister, integerValue)) {
 					return;
 				}
 

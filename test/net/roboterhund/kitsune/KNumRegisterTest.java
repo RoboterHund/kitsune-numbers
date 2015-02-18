@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
+import static net.roboterhund.kitsune.CommonTest.converter;
 
 // test KNumber in isolation
 public class KNumRegisterTest {
@@ -135,8 +136,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (-2),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -147,8 +148,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (-3),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.inexactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -160,8 +161,8 @@ public class KNumRegisterTest {
 			d,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (d),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -172,8 +173,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			BigDecimal.valueOf (-3).divide (
 				new BigDecimal (Long.MIN_VALUE),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 
@@ -185,8 +186,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			BigDecimal.valueOf (-2).divide (
 				new BigDecimal (Long.MIN_VALUE),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -197,8 +198,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			BigDecimal.valueOf (-1).divide (
 				new BigDecimal (Long.MIN_VALUE),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -218,8 +219,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			BigDecimal.ONE.divide (
 				new BigDecimal (Long.MIN_VALUE),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */
@@ -230,8 +231,8 @@ public class KNumRegisterTest {
 			testedNumber.denominator,
 			new BigDecimal (2).divide (
 				new BigDecimal (Long.MIN_VALUE),
-				KConverter.DEFAULT_PRECISION,
-				BigDecimal.ROUND_HALF_UP).stripTrailingZeros ()
+				converter.exactMathContext
+			)
 		);
 
 		/* * * * * */

@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 
 import static net.roboterhund.kitsune.CommonTest.assertNumberEquals;
 import static org.junit.Assert.assertEquals;
@@ -41,8 +40,8 @@ public class KConverterTest {
 
 		converter.fromDouble (register, -0.1);
 		assertRegisterEquals (
-			KProfile.BIG_RATIONAL,
-			new BigDecimal (-0.1, new MathContext (converter.precision))
+			KProfile.LONG_RATIONAL,
+			new BigDecimal (-0.1, converter.exactMathContext)
 		);
 
 		converter.fromBigInteger (

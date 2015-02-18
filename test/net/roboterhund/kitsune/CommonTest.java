@@ -40,8 +40,8 @@ public abstract class CommonTest {
 		if (bigDecimal != null) {
 			assertEquals (
 				"bigDecimal",
-				bigDecimal,
-				converter.toBigDecimal (testedNumber)
+				bigDecimal.toPlainString (),
+				converter.toBigDecimal (testedNumber).toPlainString ()
 			);
 		}
 
