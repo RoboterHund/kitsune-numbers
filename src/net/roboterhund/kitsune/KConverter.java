@@ -89,6 +89,12 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code int}.
+	 * <p>
+	 * Rounded.
+	 * <p>
+	 * May overflow.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return <code>int</code> with value as close to
 	 * <code>fromRegister</code> as possible.
@@ -147,6 +153,12 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code long}.
+	 * <p>
+	 * Rounded.
+	 * <p>
+	 * May overflow.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return <code>long</code> with value as close to
 	 * <code>fromRegister</code> as possible.
@@ -192,6 +204,11 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code double}.
+	 * <p>
+	 * This method
+	 * is subject to the limitations of the {@code double} data type.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return <code>double</code> with value as close to
 	 * <code>fromRegister</code> as possible.
@@ -237,6 +254,10 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code BigInteger}.
+	 * <p>
+	 * Rounded.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return {@link BigInteger} with value as close to
 	 * <code>fromRegister</code> as possible.
@@ -277,6 +298,12 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code BigDecimal}.
+	 * <p>
+	 * Will fail to produce exact result
+	 * if {@code fromRegister} contains a number
+	 * with infinite decimal expansion.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return {@link BigDecimal} with value as close to
 	 * <code>fromRegister</code> as possible.
@@ -348,6 +375,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Convert to {@code String}.
+	 *
 	 * @param fromRegister number to convert.
 	 * @return new numeric value.
 	 */
@@ -377,6 +406,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code int}.
+	 *
 	 * @param toRegister register where to write number value.
 	 * @param value new numeric value.
 	 */
@@ -388,6 +419,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code long}.
+	 *
 	 * @param toRegister register where to write number value.
 	 * @param value new numeric value.
 	 */
@@ -399,6 +432,7 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code double}.
 	 * <p>
 	 * <b>Note</b>: this method involves object creation and
 	 * is subject to the limitations of the <code>double</code> data type.
@@ -431,6 +465,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code BigInteger}.
+	 *
 	 * @param toRegister register where to write number value.
 	 * @param value new numeric value.
 	 */
@@ -442,6 +478,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code BigDecimal}.
+	 *
 	 * @param toRegister register where to write number value.
 	 * @param value new numeric value.
 	 */
@@ -453,10 +491,12 @@ public class KConverter {
 	}
 
 	/**
+	 * Read value from {@code String}.
+	 *
 	 * @param toRegister register where to write number value.
 	 * @param value string in format
 	 * <code> ['+'|'-'] {0..9}+ ['.' {0..9}+] </code>
-	 * (signed or unsigned integer with optional point followed by decimals).
+	 * (signed or unsigned integer, may be followed by point and decimals).
 	 * @throws NumberFormatException unable to parse string.
 	 */
 	public void fromString (
@@ -544,10 +584,10 @@ public class KConverter {
 	}
 
 	/**
-	 * Try to parse string and
-	 * set the numeric value as a simple fraction.
+	 * Try to parse string as
+	 * an integer numeric value.
 	 *
-	 * @param integerValue string to parse.
+	 * @param integerValue integer part of number.
 	 * @return <code>true</code> iff successful.
 	 */
 	private boolean setLongIntValue (
@@ -564,10 +604,12 @@ public class KConverter {
 	}
 
 	/**
-	 * Try to parse string and
-	 * set the numeric value as a simple fraction.
+	 * Try to parse strings
+	 * as the integer part
+	 * and the decimals.
 	 *
-	 * @param integerValue string to parse.
+	 * @param integerValue integer part of number.
+	 * @param decimalValue decimals of number.
 	 * @return <code>true</code> iff successful.
 	 */
 	private boolean setLongIntValue (
@@ -614,6 +656,8 @@ public class KConverter {
 	}
 
 	/**
+	 * Convenience method to throw exception.
+	 *
 	 * @param register number with invalid profile.
 	 * @return New {@link IllegalArgumentException}.
 	 */
@@ -652,7 +696,7 @@ public class KConverter {
 	}
 
 	/**
-	 * Check the status of last conversion.
+	 * Convenience method to check last conversion.
 	 * <p>
 	 * This is the inverse of {@link #lastConversionValid()}.
 	 *
@@ -663,7 +707,7 @@ public class KConverter {
 	}
 
 	/**
-	 * Check the status of last conversion.
+	 * Convenience method to check last conversion.
 	 * <p>
 	 * This is a weaker version of {@link #lastConversionExact()}.
 	 *
@@ -675,7 +719,7 @@ public class KConverter {
 	}
 
 	/**
-	 * Check the status of last conversion.
+	 * Convenience method to check last conversion.
 	 * <p>
 	 * This is a stronger version of {@link #lastConversionValid()}.
 	 *
