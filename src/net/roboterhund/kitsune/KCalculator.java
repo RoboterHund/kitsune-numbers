@@ -66,7 +66,7 @@ public class KCalculator {
 			// go to end
 			break;
 
-		case KProfile.LONG_RAT_:
+		case KProfile._LONG_RAT_:
 			if (multiply (term_1.numerator, term_2.denominator)) {
 				long n1_mul_d2 = intResult;
 
@@ -86,10 +86,10 @@ public class KCalculator {
 					}
 				}
 			}
-			route = KProfile.BIG__RAT_;
+			route = KProfile._BIG__RAT_;
 			break;
 
-		case KProfile.LONG_INT1:
+		case KProfile._LONG_INT1:
 			if (multiply (term_1.numerator, term_2.denominator)) {
 				long n1_mul_d2 = intResult;
 
@@ -101,10 +101,10 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__INT1;
+			route = KProfile._BIG__INT1;
 			break;
 
-		case KProfile.LONG_INT2:
+		case KProfile._LONG_INT2:
 			if (multiply (term_2.numerator, term_1.denominator)) {
 				long n2_mul_d1 = intResult;
 
@@ -116,20 +116,20 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__INT2;
+			route = KProfile._BIG__INT2;
 			break;
 
-		case KProfile.LONG_INT_:
+		case KProfile._LONG_INT_:
 			if (add (term_1.numerator, term_2.numerator)) {
 				result.setValue (
 					intResult
 				);
 				return;
 			}
-			route = KProfile.BIG__INT_;
+			route = KProfile._BIG__INT_;
 			break;
 
-		case KProfile.INT__RAT_:
+		case KProfile._INT__RAT_:
 			result.setValue (
 				term_1.numerator * term_2.denominator
 					+ term_2.numerator * term_1.denominator,
@@ -137,7 +137,7 @@ public class KCalculator {
 			);
 			return;
 
-		case KProfile.INT__INT_:
+		case KProfile._INT__INT_:
 			result.setValue (
 				term_1.numerator + term_2.numerator
 			);
@@ -150,7 +150,7 @@ public class KCalculator {
 		term_2.setBigIntegers ();
 
 		switch (route) {
-		case KProfile.BIG__RAT_:
+		case KProfile._BIG__RAT_:
 			result.setValue (
 				term_1.bigNumerator.multiply (term_2.bigDenominator)
 					.add (term_2.bigNumerator.multiply (term_1.bigDenominator)),
@@ -158,7 +158,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT1:
+		case KProfile._BIG__INT1:
 			result.setValue (
 				term_1.bigNumerator.multiply (term_2.bigDenominator)
 					.add (term_2.bigNumerator),
@@ -166,7 +166,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT2:
+		case KProfile._BIG__INT2:
 			result.setValue (
 				term_1.bigNumerator
 					.add (term_2.bigNumerator.multiply (term_1.bigDenominator)),
@@ -174,7 +174,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT_:
+		case KProfile._BIG__INT_:
 			result.setValue (
 				term_1.bigNumerator
 					.add (term_2.bigNumerator)
@@ -204,7 +204,7 @@ public class KCalculator {
 	 * Subtract two numbers.
 	 *
 	 * @param result overwritten with the result.
-	 * @param minuend number subtracted from.
+	 * @param minuend number subtracted from (does not change).
 	 * @param subtrahend number to subtract.
 	 */
 	public void subtract (
@@ -219,7 +219,7 @@ public class KCalculator {
 			// go to end
 			break;
 
-		case KProfile.LONG_RAT_:
+		case KProfile._LONG_RAT_:
 			if (multiply (minuend.numerator, subtrahend.denominator)) {
 				long n1_mul_d2 = intResult;
 
@@ -239,10 +239,10 @@ public class KCalculator {
 					}
 				}
 			}
-			route = KProfile.BIG__RAT_;
+			route = KProfile._BIG__RAT_;
 			break;
 
-		case KProfile.LONG_INT1:
+		case KProfile._LONG_INT1:
 			if (multiply (minuend.numerator, subtrahend.denominator)) {
 				long n1_mul_d2 = intResult;
 
@@ -254,10 +254,10 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__INT1;
+			route = KProfile._BIG__INT1;
 			break;
 
-		case KProfile.LONG_INT2:
+		case KProfile._LONG_INT2:
 			if (multiply (subtrahend.numerator, minuend.denominator)) {
 				long n2_mul_d1 = intResult;
 
@@ -269,20 +269,20 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__INT2;
+			route = KProfile._BIG__INT2;
 			break;
 
-		case KProfile.LONG_INT_:
+		case KProfile._LONG_INT_:
 			if (subtract (minuend.numerator, subtrahend.numerator)) {
 				result.setValue (
 					intResult
 				);
 				return;
 			}
-			route = KProfile.BIG__INT_;
+			route = KProfile._BIG__INT_;
 			break;
 
-		case KProfile.INT__RAT_:
+		case KProfile._INT__RAT_:
 			result.setValue (
 				minuend.numerator * subtrahend.denominator
 					- subtrahend.numerator * minuend.denominator,
@@ -290,7 +290,7 @@ public class KCalculator {
 			);
 			return;
 
-		case KProfile.INT__INT_:
+		case KProfile._INT__INT_:
 			result.setValue (
 				minuend.numerator - subtrahend.numerator
 			);
@@ -303,7 +303,7 @@ public class KCalculator {
 		subtrahend.setBigIntegers ();
 
 		switch (route) {
-		case KProfile.BIG__RAT_:
+		case KProfile._BIG__RAT_:
 			result.setValue (
 				minuend.bigNumerator.multiply (subtrahend.bigDenominator)
 					.subtract (subtrahend.bigNumerator.multiply (minuend.bigDenominator)),
@@ -311,7 +311,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT1:
+		case KProfile._BIG__INT1:
 			result.setValue (
 				minuend.bigNumerator.multiply (subtrahend.bigDenominator)
 					.subtract (subtrahend.bigNumerator),
@@ -319,7 +319,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT2:
+		case KProfile._BIG__INT2:
 			result.setValue (
 				minuend.bigNumerator
 					.subtract (subtrahend.bigNumerator.multiply (minuend.bigDenominator)),
@@ -327,7 +327,7 @@ public class KCalculator {
 			);
 			break;
 
-		case KProfile.BIG__INT_:
+		case KProfile._BIG__INT_:
 			result.setValue (
 				minuend.bigNumerator
 					.subtract (subtrahend.bigNumerator)
@@ -372,7 +372,7 @@ public class KCalculator {
 			// go to end
 			break;
 
-		case KProfile.LONG_RAT_:
+		case KProfile._LONG_RAT_:
 			if (multiply (factor_1.numerator, factor_2.numerator)) {
 				long numerator = intResult;
 
@@ -384,10 +384,10 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__RAT_;
+			route = KProfile._BIG__RAT_;
 			break;
 
-		case KProfile.LONG_INT1:
+		case KProfile._LONG_INT1:
 			if (multiply (factor_1.numerator, factor_2.numerator)) {
 				result.setValue (
 					intResult,
@@ -395,10 +395,10 @@ public class KCalculator {
 				);
 				return;
 			}
-			route = KProfile.BIG__INT1;
+			route = KProfile._BIG__INT1;
 			break;
 
-		case KProfile.LONG_INT2:
+		case KProfile._LONG_INT2:
 			if (multiply (factor_1.numerator, factor_2.numerator)) {
 				result.setValue (
 					intResult,
@@ -406,27 +406,27 @@ public class KCalculator {
 				);
 				return;
 			}
-			route = KProfile.BIG__INT2;
+			route = KProfile._BIG__INT2;
 			break;
 
-		case KProfile.LONG_INT_:
+		case KProfile._LONG_INT_:
 			if (multiply (factor_1.numerator, factor_2.numerator)) {
 				result.setValue (
 					intResult
 				);
 				return;
 			}
-			route = KProfile.BIG__INT_;
+			route = KProfile._BIG__INT_;
 			break;
 
-		case KProfile.INT__RAT_:
+		case KProfile._INT__RAT_:
 			result.setValue (
 				factor_1.numerator * factor_2.numerator,
 				factor_1.denominator * factor_2.denominator
 			);
 			return;
 
-		case KProfile.INT__INT_:
+		case KProfile._INT__INT_:
 			result.setValue (
 				factor_1.numerator * factor_2.numerator
 			);
@@ -439,28 +439,28 @@ public class KCalculator {
 		factor_2.setBigIntegers ();
 
 		switch (route) {
-		case KProfile.BIG__RAT_:
+		case KProfile._BIG__RAT_:
 			result.setValue (
 				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
 				factor_1.bigDenominator.multiply (factor_2.bigDenominator)
 			);
 			break;
 
-		case KProfile.BIG__INT1:
+		case KProfile._BIG__INT1:
 			result.setValue (
 				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
 				factor_2.bigDenominator
 			);
 			break;
 
-		case KProfile.BIG__INT2:
+		case KProfile._BIG__INT2:
 			result.setValue (
 				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
 				factor_1.bigDenominator
 			);
 			break;
 
-		case KProfile.BIG__INT_:
+		case KProfile._BIG__INT_:
 			result.setValue (
 				factor_1.bigNumerator.multiply (factor_2.bigNumerator)
 			);
@@ -490,7 +490,7 @@ public class KCalculator {
 	 * Divide two numbers.
 	 *
 	 * @param result overwritten with the result.
-	 * @param dividend number that is divided.
+	 * @param dividend number that is divided (does not change).
 	 * @param divisor number by which to divide.
 	 * @throws java.lang.ArithmeticException division by zero.
 	 */
@@ -506,7 +506,7 @@ public class KCalculator {
 			// go to end
 			break;
 
-		case KProfile.LONG_RAT_:
+		case KProfile._LONG_RAT_:
 			if (multiply (dividend.numerator, divisor.denominator)) {
 				long numerator = intResult;
 
@@ -518,10 +518,10 @@ public class KCalculator {
 					return;
 				}
 			}
-			route = KProfile.BIG__RAT_;
+			route = KProfile._BIG__RAT_;
 			break;
 
-		case KProfile.LONG_INT1:
+		case KProfile._LONG_INT1:
 			if (multiply (dividend.numerator, divisor.denominator)) {
 				result.setValue (
 					intResult,
@@ -529,10 +529,10 @@ public class KCalculator {
 				);
 				return;
 			}
-			route = KProfile.BIG__INT1;
+			route = KProfile._BIG__INT1;
 			break;
 
-		case KProfile.LONG_INT2:
+		case KProfile._LONG_INT2:
 			if (multiply (divisor.numerator, dividend.denominator)) {
 				result.setValue (
 					dividend.numerator,
@@ -540,24 +540,24 @@ public class KCalculator {
 				);
 				return;
 			}
-			route = KProfile.BIG__INT2;
+			route = KProfile._BIG__INT2;
 			break;
 
-		case KProfile.LONG_INT_:
+		case KProfile._LONG_INT_:
 			result.setValue (
 				dividend.numerator,
 				divisor.numerator
 			);
 			return;
 
-		case KProfile.INT__RAT_:
+		case KProfile._INT__RAT_:
 			result.setValue (
 				dividend.numerator * divisor.denominator,
 				divisor.numerator * dividend.denominator
 			);
 			return;
 
-		case KProfile.INT__INT_:
+		case KProfile._INT__INT_:
 			result.setValue (
 				dividend.numerator,
 				divisor.numerator
@@ -571,28 +571,28 @@ public class KCalculator {
 		divisor.setBigIntegers ();
 
 		switch (route) {
-		case KProfile.BIG__RAT_:
+		case KProfile._BIG__RAT_:
 			result.setValue (
 				dividend.bigNumerator.multiply (divisor.bigDenominator),
 				divisor.bigNumerator.multiply (dividend.bigDenominator)
 			);
 			break;
 
-		case KProfile.BIG__INT1:
+		case KProfile._BIG__INT1:
 			result.setValue (
 				dividend.bigNumerator.multiply (divisor.bigDenominator),
 				divisor.bigNumerator
 			);
 			break;
 
-		case KProfile.BIG__INT2:
+		case KProfile._BIG__INT2:
 			result.setValue (
 				dividend.bigNumerator,
 				divisor.bigNumerator.multiply (dividend.bigDenominator)
 			);
 			break;
 
-		case KProfile.BIG__INT_:
+		case KProfile._BIG__INT_:
 			result.setValue (
 				dividend.bigNumerator,
 				divisor.bigNumerator
@@ -602,13 +602,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * Primitive addition, guarded against <code>long</code> overflow.
+	 * Primitive addition, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
 	 *
 	 * @param term_1 first operand.
 	 * @param term_2 second operand.
-	 * @return <code>true</code> iff operation completed without overflow.
+	 * @return {@code true} iff operation completed without overflow.
 	 */
 	private boolean add (long term_1, long term_2) {
 		if (term_1 >= 0) {
@@ -632,13 +632,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * Primitive subtraction, guarded against <code>long</code> overflow.
+	 * Primitive subtraction, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
 	 *
 	 * @param minuend first operand.
 	 * @param subtrahend second operand.
-	 * @return <code>true</code> iff operation completed without overflow.
+	 * @return {@code true} iff operation completed without overflow.
 	 */
 	private boolean subtract (long minuend, long subtrahend) {
 		if (minuend >= 0) {
@@ -663,13 +663,13 @@ public class KCalculator {
 	}
 
 	/**
-	 * Primitive multiplication, guarded against <code>long</code> overflow.
+	 * Primitive multiplication, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
 	 *
 	 * @param factor_1 first operand.
 	 * @param factor_2 second operand.
-	 * @return <code>true</code> iff operation completed without overflow.
+	 * @return {@code true} iff operation completed without overflow.
 	 */
 	private boolean multiply (long factor_1, long factor_2) {
 		if (factor_2 > 0) {

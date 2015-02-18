@@ -21,10 +21,19 @@ import java.math.BigInteger;
  * A mutable rational number container.
  * <p>
  * Values are stored in primitive data types.
- * <p>
- * <code>BigDecimal</code> is used as fallback,
+ * A pair of {@link BigInteger} objects are used as fallback,
  * but methods in this package try to avoid
  * unnecessary allocation.
+ * However, the references to the {@code BigInteger} objects
+ * are retained until the {@code KNumRegister} is overwritten.
+ * <p>
+ * Use {@link KConverter} for input and output,
+ * and {@link KCalculator} for operations.
+ * <p>
+ * <b>Note</b>: {@code KNumRegister} instances are mutable,
+ * and therefore must be tightly controlled.
+ * Allocate enough {@code KNumRegister} instances for all operations,
+ * and keep their visibility to a minimum.
  */
 public class KNumRegister {
 
@@ -63,8 +72,6 @@ public class KNumRegister {
 	BigInteger bigDenominator;
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setZeroValue()}
 	 * call on existing object.
 	 */
@@ -73,20 +80,17 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #copy(KNumRegister)}
 	 * call on existing object.
 	 *
-	 * @param number number copied to <code>this</code>.
+	 * @param register register, from where the number
+	 * is copied to {@code this}.
 	 */
-	public KNumRegister (KNumRegister number) {
-		copy (number);
+	public KNumRegister (KNumRegister register) {
+		copy (register);
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(int)}
 	 * call on existing object.
 	 *
@@ -97,8 +101,6 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(long)}
 	 * call on existing object.
 	 *
@@ -109,8 +111,6 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(long, long)}
 	 * call on existing object.
 	 *
@@ -126,8 +126,6 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(BigInteger)}
 	 * call on existing object.
 	 *
@@ -138,8 +136,6 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
 	 * Equivalent to a {@link #setValue(BigInteger, BigInteger)}
 	 * call on existing object.
 	 *
@@ -168,18 +164,18 @@ public class KNumRegister {
 	/**
 	 * Copy value.
 	 *
-	 * @param number copied number.
+	 * @param register register from where the number is copied.
 	 */
-	public void copy (KNumRegister number) {
-		profile = number.profile;
-		numerator = number.numerator;
-		denominator = number.denominator;
-		bigNumerator = number.bigNumerator;
-		bigDenominator = number.bigDenominator;
+	public void copy (KNumRegister register) {
+		profile = register.profile;
+		numerator = register.numerator;
+		denominator = register.denominator;
+		bigNumerator = register.bigNumerator;
+		bigDenominator = register.bigDenominator;
 	}
 
 	/**
-	 * Set <code>int</code> integer value.
+	 * Set {@code int} integer value.
 	 *
 	 * @param intValue new value.
 	 */
@@ -196,7 +192,7 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Set <code>long</code> integer value.
+	 * Set {@code long} integer value.
 	 *
 	 * @param longValue new value.
 	 */
@@ -214,8 +210,8 @@ public class KNumRegister {
 	 * <p>
 	 * Fraction is automatically normalized.
 	 *
-	 * @param numerator numerator.
-	 * @param denominator denominator.
+	 * @param numerator new numerator.
+	 * @param denominator new denominator.
 	 * @throws ArithmeticException denominator is zero.
 	 */
 	public void setValue (
@@ -303,7 +299,7 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Set <code>BigInteger</code> value.
+	 * Set {@code BigInteger} value.
 	 *
 	 * @param bigValue new value.
 	 */
@@ -389,7 +385,7 @@ public class KNumRegister {
 
 	/**
 	 * Set numerator and denominator, where
-	 * {@code denominator = 1}
+	 * {@code denominator = 1}.
 	 */
 	private void setInteger (long numerator) {
 		this.numerator = numerator;
@@ -431,7 +427,7 @@ public class KNumRegister {
 
 	/**
 	 * Convert current numerator, denominator to
-	 * {@link java.math.BigInteger}.
+	 * a pair of {@link BigInteger} instances.
 	 */
 	void setBigIntegers () {
 		if (bigNumerator == null) {

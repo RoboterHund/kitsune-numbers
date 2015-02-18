@@ -1,3 +1,18 @@
+/*
+ Copyright 2015 RoboterHund87
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package net.roboterhund.kitsune;
 
 import java.math.BigDecimal;
@@ -8,6 +23,12 @@ import java.math.RoundingMode;
 /**
  * Conversion of other data types to and from
  * {@link KNumRegister}.
+ * <p>
+ * The converter will always try to produce exact results.
+ * However, it can have various degrees of success, which should be checked
+ * by examining {@link #lastConversionStatus},
+ * or the return value of
+ * {@link #lastConversionValid()} and/or related methods.
  */
 public class KConverter {
 
@@ -38,7 +59,7 @@ public class KConverter {
 	public static final int DEFAULT_PRECISION = 24;
 
 	/**
-	 * Settings for calculations with infinite precision.
+	 * Settings for exact conversions.
 	 */
 	public final MathContext exactMathContext;
 
@@ -49,34 +70,45 @@ public class KConverter {
 
 	/**
 	 * Status of last conversion.
-	 *
-	 * @see KConversionStatus
+	 * Set to one of the constants defined in {@link KConversionStatus}.
+	 * <p>
+	 * Several methods, like {@link #lastConversionValid()},
+	 * are provided for convenience.
 	 */
 	public int lastConversionStatus;
 
 	/**
-	 * Constructor.
-	 * <p>
-	 * Set to {@link #DEFAULT_PRECISION}
-	 * and {@link RoundingMode#HALF_UP}.
+	 * Converter with {@link #DEFAULT_PRECISION} for inexact results
+	 * and {@link RoundingMode#HALF_UP HALF_UP} rounding mode.
+	 *
+	 * @see MathContext#precision
+	 * @see #KConverter(MathContext)
 	 */
 	public KConverter () {
 		this (DEFAULT_PRECISION);
 	}
 
 	/**
-	 * Constructor.
-	 * <p>
-	 * Set to {@link RoundingMode#HALF_UP}.
+	 * Converter with specified precision for inexact results
+	 * and {@link RoundingMode#HALF_UP HALF_UP} rounding mode.
 	 *
 	 * @param precision {@link MathContext} {@code precision} setting.
+	 * @see MathContext#precision
+	 * @see #KConverter(MathContext)
 	 */
 	public KConverter (int precision) {
 		this (new MathContext (precision));
 	}
 
 	/**
-	 * Constructor.
+	 * Converter with specified precision and rounding mode.
+	 * <p>
+	 * The specified rounding mode is used for all conversions.
+	 * <p>
+	 * The specified precision is only used when a value with finite number
+	 * of digits cannot be produced
+	 * (the converter will generally try to use
+	 * {@link #exactMathContext}).
 	 *
 	 * @param mathContext {@link #inexactMathContext}.
 	 */
@@ -96,8 +128,8 @@ public class KConverter {
 	 * May overflow.
 	 *
 	 * @param fromRegister number to convert.
-	 * @return <code>int</code> with value as close to
-	 * <code>fromRegister</code> as possible.
+	 * @return {@code int} with value as close to
+	 * {@code fromRegister} as possible.
 	 */
 	public int toInt (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
@@ -160,8 +192,8 @@ public class KConverter {
 	 * May overflow.
 	 *
 	 * @param fromRegister number to convert.
-	 * @return <code>long</code> with value as close to
-	 * <code>fromRegister</code> as possible.
+	 * @return {@code long} with value as close to
+	 * {@code fromRegister} as possible.
 	 */
 	public long toLong (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
@@ -210,8 +242,8 @@ public class KConverter {
 	 * is subject to the limitations of the {@code double} data type.
 	 *
 	 * @param fromRegister number to convert.
-	 * @return <code>double</code> with value as close to
-	 * <code>fromRegister</code> as possible.
+	 * @return {@code double} with value as close to
+	 * {@code fromRegister} as possible.
 	 */
 	public double toDouble (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
@@ -260,7 +292,7 @@ public class KConverter {
 	 *
 	 * @param fromRegister number to convert.
 	 * @return {@link BigInteger} with value as close to
-	 * <code>fromRegister</code> as possible.
+	 * {@code fromRegister} as possible.
 	 */
 	public BigInteger toBigInteger (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
@@ -306,7 +338,7 @@ public class KConverter {
 	 *
 	 * @param fromRegister number to convert.
 	 * @return {@link BigDecimal} with value as close to
-	 * <code>fromRegister</code> as possible.
+	 * {@code fromRegister} as possible.
 	 */
 	public BigDecimal toBigDecimal (KNumRegister fromRegister) {
 		BigDecimal bigNumerator;
@@ -378,7 +410,9 @@ public class KConverter {
 	 * Convert to {@code String}.
 	 *
 	 * @param fromRegister number to convert.
-	 * @return new numeric value.
+	 * @return String in format
+	 * {@code ['+'|'-'] {0..9}+ ['.' {0..9}+] }
+	 * (signed or unsigned integer, may be followed by point and decimals).
 	 */
 	public String toString (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
@@ -435,7 +469,7 @@ public class KConverter {
 	 * Read value from {@code double}.
 	 * <p>
 	 * <b>Note</b>: this method involves object creation and
-	 * is subject to the limitations of the <code>double</code> data type.
+	 * is subject to the limitations of the {@code double} data type.
 	 *
 	 * @param toRegister register where to write number value.
 	 * @param value new numeric value.
@@ -495,7 +529,7 @@ public class KConverter {
 	 *
 	 * @param toRegister register where to write number value.
 	 * @param value string in format
-	 * <code> ['+'|'-'] {0..9}+ ['.' {0..9}+] </code>
+	 * {@code ['+'|'-'] {0..9}+ ['.' {0..9}+] }
 	 * (signed or unsigned integer, may be followed by point and decimals).
 	 * @throws NumberFormatException unable to parse string.
 	 */
@@ -588,7 +622,7 @@ public class KConverter {
 	 * an integer numeric value.
 	 *
 	 * @param integerValue integer part of number.
-	 * @return <code>true</code> iff successful.
+	 * @return {@code true} iff successful.
 	 */
 	private boolean setLongIntValue (
 		KNumRegister toRegister,
@@ -610,7 +644,7 @@ public class KConverter {
 	 *
 	 * @param integerValue integer part of number.
 	 * @param decimalValue decimals of number.
-	 * @return <code>true</code> iff successful.
+	 * @return {@code true} iff successful.
 	 */
 	private boolean setLongIntValue (
 		KNumRegister toRegister,
@@ -709,10 +743,11 @@ public class KConverter {
 	/**
 	 * Convenience method to check last conversion.
 	 * <p>
-	 * This is a weaker version of {@link #lastConversionExact()}.
+	 * This is a weaker version of {@link #lastConversionExact()}
+	 * and the inverse of {@link #lastConversionFailed()}.
 	 *
-	 * @return {@code true} iffthe last conversion yielded a valid value
-	 * (but possibly inexact).
+	 * @return {@code true} iff the last conversion yielded
+	 * an exact <b>or</b> approximate value.
 	 */
 	public boolean lastConversionValid () {
 		return lastConversionStatus >= KConversionStatus.OK;

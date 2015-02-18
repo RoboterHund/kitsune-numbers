@@ -25,6 +25,10 @@ package net.roboterhund.kitsune;
  * <li>2-dimensional table mapping operand profiles
  * to calculator routes.</li>
  * </ul>
+ * <p>
+ * <b>Note</b>: 'fit' or 'stored' in a data type means
+ * that both the numerator and denominator can be stored
+ * in two separate variables of that type.
  *
  * @see KNumRegister#profile
  */
@@ -32,98 +36,155 @@ abstract class KProfile {
 
 	// number profiles
 
-	// rational
-	// stored in BigInteger
+	/**
+	 * Number profile:
+	 * rational
+	 * stored in BigInteger.
+	 */
 	static final int BIG_RATIONAL = 0;
 
-	// integer
-	// stored in BigInteger
+	/**
+	 * Number profile:
+	 * integer
+	 * stored in BigInteger.
+	 */
 	static final int BIG_INTEGER = 1;
 
-	// rational
-	// stored in long
+	/**
+	 * Number profile:
+	 * rational
+	 * stored in long.
+	 */
 	static final int LONG_RATIONAL = 2;
 
-	// integer
-	// stored in long
+	/**
+	 * Number profile:
+	 * integer
+	 * stored in long.
+	 */
 	static final int LONG_INTEGER = 3;
 
-	// rational
-	// stored in int
+	/**
+	 * Number profile:
+	 * rational
+	 * stored in int.
+	 */
 	static final int INT_RATIONAL = 4;
 
-	// integer
-	// stored in int
+	/**
+	 * Number profile:
+	 * integer
+	 * stored in int.
+	 */
 	static final int INT_INTEGER = 5;
 
 	/* */
 
 	// calculator routes
 
-	// rational operands
-	// use BigInteger
-	static final int BIG__RAT_ = 0;
+	/**
+	 * Calculator route:
+	 * rational operands,
+	 * use BigInteger.
+	 */
+	static final int _BIG__RAT_ = 0;
 
-	// operand 1 integer, operand 2 rational
-	// use BigInteger
-	static final int BIG__INT1 = 1;
+	/**
+	 * Calculator route:
+	 * operand 1 integer, operand 2 rational,
+	 * use BigInteger.
+	 */
+	static final int _BIG__INT1 = 1;
 
-	// operand 1 rational, operand 2 integer
-	// use BigInteger
-	static final int BIG__INT2 = 2;
+	/**
+	 * Calculator route:
+	 * operand 1 rational, operand 2 integer,
+	 * use BigInteger.
+	 */
+	static final int _BIG__INT2 = 2;
 
-	// integer operands
-	// use BigInteger
-	static final int BIG__INT_ = 3;
+	/**
+	 * Calculator route:
+	 * integer operands,
+	 * use BigInteger.
+	 */
+	static final int _BIG__INT_ = 3;
 
-	// rational operands
-	// check long overflow before each step
-	static final int LONG_RAT_ = 4;
+	/**
+	 * Calculator route:
+	 * rational operands,
+	 * check long overflow before each step.
+	 */
+	static final int _LONG_RAT_ = 4;
 
-	// operand 1 integer, operand 2 rational
-	// check long overflow before each step
-	static final int LONG_INT1 = 5;
+	/**
+	 * Calculator route:
+	 * operand 1 integer, operand 2 rational,
+	 * check long overflow before each step.
+	 */
+	static final int _LONG_INT1 = 5;
 
-	// operand 1 rational, operand 2 integer
-	// check long overflow before each step
-	static final int LONG_INT2 = 6;
+	/**
+	 * Calculator route:
+	 * operand 1 rational, operand 2 integer,
+	 * check long overflow before each step.
+	 */
+	static final int _LONG_INT2 = 6;
 
-	// integer operands
-	// check long overflow before each step
-	static final int LONG_INT_ = 7;
+	/**
+	 * Calculator route:
+	 * integer operands,
+	 * check long overflow before each step.
+	 */
+	static final int _LONG_INT_ = 7;
 
-	// rational operands
-	// check int overflow after operation
-	static final int INT__RAT_ = 8;
+	/**
+	 * Calculator route:
+	 * one or both operands is rational,
+	 * both fit in int.
+	 */
+	static final int _INT__RAT_ = 8;
 
-	// integer operands
-	// check int overflow after operation
-	static final int INT__INT_ = 9;
+	/**
+	 * Calculator route:
+	 * integer operands that fit in int.
+	 */
+	static final int _INT__INT_ = 9;
 
 	/* */
 
-	// routing table
-	// it is *almost* symmetrical
-	// (symmetry is due to requirement to use the widest data type)
-	// (non-symmetry is due to non-commutativity of operations)
-	// routes for narrow data types towards bottom right corner
-	// routes for wider data types towards left and top sides
+	/**
+	 * Routing table.
+	 * Profiles are used as indices.
+	 * Values are calculator routes.
+	 * <p>
+	 * It is *almost* symmetrical
+	 * (symmetry is due to requirement to use the widest data type)
+	 * (non-symmetry is due to non-commutativity of operations).
+	 * <p>
+	 * Routes for narrow data types towards bottom right corner.
+	 * <p>
+	 * Routes for wider data types towards left and top sides.
+	 * <p>
+	 * <i>Don't expect it to show up <b>here</b>.</i>
+	 * <!-- browser users will understand -->
+	 */
 	static final int[][] route = {
 		// columns: operand 2
 		// rows: operand 1
 		// big rat.   big int.  long rat.  long int.   int rat.   int int.
 		// big rat.
-		{BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2, BIG__RAT_, BIG__INT2},
+		{_BIG__RAT_, _BIG__INT2, _BIG__RAT_, _BIG__INT2, _BIG__RAT_, _BIG__INT2},
 		// big int.
-		{BIG__INT1, BIG__INT_, BIG__INT1, BIG__INT_, BIG__INT1, BIG__INT_},
+		{_BIG__INT1, _BIG__INT_, _BIG__INT1, _BIG__INT_, _BIG__INT1, _BIG__INT_},
 		// long rat.
-		{BIG__RAT_, BIG__INT2, LONG_RAT_, LONG_INT2, LONG_RAT_, LONG_INT2},
+		{_BIG__RAT_, _BIG__INT2, _LONG_RAT_, _LONG_INT2, _LONG_RAT_, _LONG_INT2},
 		// long int.
-		{BIG__INT1, BIG__INT_, LONG_INT1, LONG_INT_, LONG_INT1, LONG_INT_},
+		{_BIG__INT1, _BIG__INT_, _LONG_INT1, _LONG_INT_, _LONG_INT1, _LONG_INT_},
 		// int rat.
-		{BIG__RAT_, BIG__INT2, LONG_RAT_, LONG_INT2, INT__RAT_, INT__RAT_},
+		{_BIG__RAT_, _BIG__INT2, _LONG_RAT_, _LONG_INT2, _INT__RAT_, _INT__RAT_},
 		// int int.
-		{BIG__INT1, BIG__INT_, LONG_INT1, LONG_INT_, INT__RAT_, INT__INT_}
+		{_BIG__INT1, _BIG__INT_, _LONG_INT1, _LONG_INT_, _INT__RAT_, _INT__INT_}
 	};
 
 }
