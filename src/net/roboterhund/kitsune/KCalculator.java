@@ -602,6 +602,98 @@ public class KCalculator {
 	}
 
 	/**
+	 * Get {@code dividend % divisor}.
+	 *
+	 * @param result overwritten with the result.
+	 * @param dividend number that is divided (does not change).
+	 * @param divisor number by which to divide.
+	 * @throws java.lang.ArithmeticException divisor is zero.
+	 */
+	public void modulo (
+		KNumRegister result,
+		KNumRegister dividend,
+		KNumRegister divisor) {
+
+		int route = KProfile.route[dividend.profile][divisor.profile];
+
+		switch (route) {
+		default:
+			// go to end
+			break;
+
+		case KProfile._BIG__INT_:
+			dividend.setBigIntegers ();
+			divisor.setBigIntegers ();
+			result.setValue (
+				dividend.bigNumerator.mod (divisor.bigNumerator)
+			);
+			break;
+
+		case KProfile._LONG_INT_:
+		case KProfile._INT__INT_:
+			result.setValue (
+				dividend.numerator % divisor.numerator
+			);
+			return;
+		}
+
+		// fallback
+
+		// a % b =
+		// a - (b * int (a / b))
+		divide (result, dividend, divisor);
+		integer (result);
+		multiply (result, divisor);
+
+		subtract (result, dividend, result);
+	}
+
+	/**
+	 * Leave only the integer part of a number.
+	 *
+	 * @param number the number.
+	 * Overwritten, decimal part is discarded.
+	 */
+	public void integer (
+		KNumRegister number) {
+
+		integer (number, number);
+	}
+
+	/**
+	 * Get the integer part of a number.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void integer (
+		KNumRegister result,
+		KNumRegister number) {
+
+		switch (number.profile) {
+		case KProfile.BIG_RATIONAL:
+			number.setBigIntegers ();
+			result.setValue (
+				number.bigNumerator.divide (number.bigDenominator)
+			);
+			break;
+
+		case KProfile.LONG_RATIONAL:
+		case KProfile.INT_RATIONAL:
+			result.setValue (
+				number.numerator / number.denominator
+			);
+			break;
+
+		default:
+			if (result != number) {
+				result.copy (number);
+			}
+			break;
+		}
+	}
+
+	/**
 	 * Primitive addition, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
