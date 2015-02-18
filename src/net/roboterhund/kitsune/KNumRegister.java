@@ -162,7 +162,7 @@ public class KNumRegister {
 	}
 
 	/**
-	 * Copy value.
+	 * Copy value to {@code this} register.
 	 *
 	 * @param register register from where the number is copied.
 	 */
