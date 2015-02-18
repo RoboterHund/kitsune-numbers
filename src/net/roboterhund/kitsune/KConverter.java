@@ -12,7 +12,7 @@ import java.math.RoundingMode;
 public class KConverter {
 
 	/**
-	 *
+	 * Possible results of a conversion (whether it was exact or not, etc.)
 	 */
 	public static abstract class KConversionStatus {
 
@@ -33,6 +33,27 @@ public class KConverter {
 		 */
 		public static final int OVERFLOW = 2;
 
+	}
+
+	/**
+	 * Maximum number of decimals accepted in a string to convert.
+	 */
+	private static final int MAX_DECIMALS = 18;
+
+	/**
+	 * Denominator corresponding to each number of decimals.
+	 */
+	private static final long[] DENOMINATORS;
+
+	// compute denominator for each number of decimals
+	static {
+		int numDenominators = MAX_DECIMALS + 1;
+		DENOMINATORS = new long[numDenominators];
+		long exponent = 1;
+		for (int i = 1; i < numDenominators; i++) {
+			exponent *= 10;
+			DENOMINATORS[i] = exponent;
+		}
 	}
 
 	/**
@@ -568,28 +589,16 @@ public class KConverter {
 		try {
 			// store integer part in numerator
 			long numerator = Long.parseLong (integerValue);
-			long denominator = 1;
 
-			// get denominator as scale of 10
-			long multiplier = 10;
-			int exp = decimalValue.length ();
-			long maxMultiplier = Long.MAX_VALUE / multiplier;
-			while (exp != 0) {
-				if ((exp & 1) != 0) {
-					if (denominator > maxMultiplier) {
-						return false;
-					}
-					denominator *= multiplier;
-				}
-				if (multiplier > maxMultiplier) {
-					return false;
-				}
-				multiplier *= multiplier;
-				maxMultiplier = Long.MAX_VALUE / multiplier;
-				exp >>= 1;
+			// get denominator as power of 10
+			int numDecimals = decimalValue.length ();
+			if (numDecimals > 18) {
+				// too many decimals
+				return false;
 			}
+			long denominator = DENOMINATORS[numDecimals];
 
-			// multiply numerator by scale of 10
+			// multiply numerator by power of 10
 			if (numerator > Long.MAX_VALUE / denominator
 				|| numerator < Long.MIN_VALUE / denominator) {
 				//    factor_1 * factor_2 > Long.MAX_VALUE
@@ -606,7 +615,7 @@ public class KConverter {
 				numerator += decimalPart;
 			}
 
-			// normalize
+			// normalize fraction
 			toRegister.setValue (numerator, denominator);
 			return true;
 
