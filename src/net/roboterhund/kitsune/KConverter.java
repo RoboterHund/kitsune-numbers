@@ -12,30 +12,6 @@ import java.math.RoundingMode;
 public class KConverter {
 
 	/**
-	 * Possible results of a conversion (whether it was exact or not, etc.)
-	 */
-	public static abstract class KConversionStatus {
-
-		/**
-		 * Last conversion produced the exact value.
-		 */
-		public static final int OK = 0;
-
-		/**
-		 * Last conversion produced an inexact value.
-		 */
-		public static final int INEXACT = 1;
-
-		/**
-		 * Last conversion was unsuccessful, because
-		 * the numeric value is outside of the range
-		 * of the destination data type.
-		 */
-		public static final int OVERFLOW = 2;
-
-	}
-
-	/**
 	 * Maximum number of decimals accepted in a string to convert.
 	 */
 	private static final int MAX_DECIMALS = 18;
@@ -47,7 +23,7 @@ public class KConverter {
 
 	// compute denominator for each number of decimals
 	static {
-		int numDenominators = MAX_DECIMALS + 1;
+		final int numDenominators = MAX_DECIMALS + 1;
 		DENOMINATORS = new long[numDenominators];
 		long exponent = 1;
 		for (int i = 1; i < numDenominators; i++) {
@@ -76,7 +52,7 @@ public class KConverter {
 	 *
 	 * @see KConversionStatus
 	 */
-	public int lastOperationStatus;
+	public int lastConversionStatus;
 
 	/**
 	 * Constructor.
@@ -127,11 +103,11 @@ public class KConverter {
 			if (bigValue.compareTo (KEdges.MAX_INT) <= 0
 				&& bigValue.compareTo (KEdges.MIN_INT) >= 0) {
 
-				lastOperationStatus = KConversionStatus.INEXACT;
+				lastConversionStatus = KConversionStatus.INEXACT;
 				return bigValue.intValue ();
 
 			} else {
-				lastOperationStatus = KConversionStatus.OVERFLOW;
+				lastConversionStatus = KConversionStatus.OVERFLOW;
 			}
 			break;
 
@@ -142,25 +118,25 @@ public class KConverter {
 			if (longValue <= Integer.MAX_VALUE
 				&& longValue >= Integer.MIN_VALUE) {
 
-				lastOperationStatus = KConversionStatus.INEXACT;
+				lastConversionStatus = KConversionStatus.INEXACT;
 				return (int) longValue;
 
 			} else {
-				lastOperationStatus = KConversionStatus.OVERFLOW;
+				lastConversionStatus = KConversionStatus.OVERFLOW;
 			}
 			break;
 
 		case KProfile.INT_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 			return (int) (fromRegister.numerator / fromRegister.denominator);
 
 		case KProfile.BIG_INTEGER:
 		case KProfile.LONG_INTEGER:
-			lastOperationStatus = KConversionStatus.OVERFLOW;
+			lastConversionStatus = KConversionStatus.OVERFLOW;
 			break;
 
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 			return (int) fromRegister.numerator;
 
 		default:
@@ -185,27 +161,27 @@ public class KConverter {
 			if (bigValue.compareTo (KEdges.MAX_LONG) <= 0
 				&& bigValue.compareTo (KEdges.MIN_LONG) >= 0) {
 
-				lastOperationStatus = KConversionStatus.INEXACT;
+				lastConversionStatus = KConversionStatus.INEXACT;
 				return bigValue.longValue ();
 
 			} else {
-				lastOperationStatus = KConversionStatus.OVERFLOW;
+				lastConversionStatus = KConversionStatus.OVERFLOW;
 			}
 			break;
 
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 			return
 				fromRegister.numerator / fromRegister.denominator;
 
 		case KProfile.BIG_INTEGER:
-			lastOperationStatus = KConversionStatus.OVERFLOW;
+			lastConversionStatus = KConversionStatus.OVERFLOW;
 			break;
 
 		case KProfile.LONG_INTEGER:
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 			return fromRegister.numerator;
 
 		default:
@@ -223,7 +199,7 @@ public class KConverter {
 	public double toDouble (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
 		case KProfile.BIG_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 
 			return fromRegister.bigNumerator
 				.divide (fromRegister.bigDenominator)
@@ -231,29 +207,28 @@ public class KConverter {
 
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 			return
 				(double) fromRegister.numerator / fromRegister.denominator;
 
 		case KProfile.BIG_INTEGER:
 			double doubleValue = fromRegister.bigNumerator.doubleValue ();
 
-			if (doubleValue != Double.POSITIVE_INFINITY
-				&& doubleValue != Double.NEGATIVE_INFINITY) {
-
-				lastOperationStatus = KConversionStatus.INEXACT;
+			if (doubleValue == Double.POSITIVE_INFINITY
+				|| doubleValue == Double.NEGATIVE_INFINITY) {
+				lastConversionStatus = KConversionStatus.OVERFLOW;
 
 			} else {
-				lastOperationStatus = KConversionStatus.OVERFLOW;
+				lastConversionStatus = KConversionStatus.INEXACT;
 			}
 			return doubleValue;
 
 		case KProfile.LONG_INTEGER:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 			return fromRegister.numerator;
 
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 			return fromRegister.numerator;
 
 		default:
@@ -269,14 +244,14 @@ public class KConverter {
 	public BigInteger toBigInteger (KNumRegister fromRegister) {
 		switch (fromRegister.profile) {
 		case KProfile.BIG_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 
 			return fromRegister.bigNumerator
 				.divide (fromRegister.bigDenominator);
 
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			lastOperationStatus = KConversionStatus.INEXACT;
+			lastConversionStatus = KConversionStatus.INEXACT;
 
 			long longValue =
 				fromRegister.numerator / fromRegister.denominator;
@@ -284,12 +259,12 @@ public class KConverter {
 			return new BigInteger (String.valueOf (longValue));
 
 		case KProfile.BIG_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 			return fromRegister.bigNumerator;
 
 		case KProfile.LONG_INTEGER:
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 
 			if (fromRegister.bigNumerator != null) {
 				fromRegister.bigNumerator =
@@ -316,7 +291,7 @@ public class KConverter {
 
 			BigDecimal bigDecimal;
 			try {
-				lastOperationStatus = KConversionStatus.OK;
+				lastConversionStatus = KConversionStatus.OK;
 				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
 					.divide (
 						new BigDecimal (fromRegister.bigDenominator),
@@ -324,7 +299,7 @@ public class KConverter {
 					);
 
 			} catch (ArithmeticException e) {
-				lastOperationStatus = KConversionStatus.INEXACT;
+				lastConversionStatus = KConversionStatus.INEXACT;
 				bigDecimal = new BigDecimal (fromRegister.bigNumerator)
 					.divide (
 						new BigDecimal (fromRegister.bigDenominator),
@@ -334,13 +309,13 @@ public class KConverter {
 			return bigDecimal.stripTrailingZeros ();
 
 		case KProfile.BIG_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 
 			return new BigDecimal (fromRegister.bigNumerator);
 
 		case KProfile.LONG_INTEGER:
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 
 			if (fromRegister.bigNumerator != null) {
 				return new BigDecimal (fromRegister.bigNumerator);
@@ -368,13 +343,13 @@ public class KConverter {
 				.toPlainString ();
 
 		case KProfile.BIG_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 
 			return fromRegister.bigNumerator.toString ();
 
 		case KProfile.LONG_INTEGER:
 		case KProfile.INT_INTEGER:
-			lastOperationStatus = KConversionStatus.OK;
+			lastConversionStatus = KConversionStatus.OK;
 
 			return String.valueOf (fromRegister.numerator);
 
@@ -420,7 +395,7 @@ public class KConverter {
 		if (Double.isInfinite (value)
 			|| Double.isNaN (value)) {
 
-			lastOperationStatus = KConversionStatus.OVERFLOW;
+			lastConversionStatus = KConversionStatus.OVERFLOW;
 			return;
 		}
 
@@ -635,6 +610,65 @@ public class KConverter {
 			"Invalid KRegister profile: "
 				+ register.profile
 				+ ".");
+	}
+
+	/**
+	 * Possible results of a conversion (whether it was exact or not, etc.)
+	 */
+	public static abstract class KConversionStatus {
+
+		/**
+		 * Last conversion was unsuccessful, because
+		 * the numeric value is outside of the range
+		 * of the destination data type.
+		 */
+		public static final int OVERFLOW = -1;
+
+		/**
+		 * Last conversion produced the exact value, guaranteed.
+		 */
+		public static final int OK = 0;
+
+		/**
+		 * Last conversion produced an value
+		 * that is not guaranteed to be exact.
+		 */
+		public static final int INEXACT = 1;
+
+	}
+
+	/**
+	 * Check the status of last conversion.
+	 * <p>
+	 * This is the inverse of {@link #lastConversionValid()}.
+	 *
+	 * @return {@code true} iff the last conversion was impossible.
+	 */
+	public boolean lastConversionFailed () {
+		return lastConversionStatus == KConversionStatus.OVERFLOW;
+	}
+
+	/**
+	 * Check the status of last conversion.
+	 * <p>
+	 * This is a weaker version of {@link #lastConversionExact()}.
+	 *
+	 * @return {@code true} iffthe last conversion yielded a valid value
+	 * (but possibly inexact).
+	 */
+	public boolean lastConversionValid () {
+		return lastConversionStatus >= KConversionStatus.OK;
+	}
+
+	/**
+	 * Check the status of last conversion.
+	 * <p>
+	 * This is a stronger version of {@link #lastConversionValid()}.
+	 *
+	 * @return {@code true} iff the last conversion yielded the exact value.
+	 */
+	public boolean lastConversionExact () {
+		return lastConversionStatus == KConversionStatus.OK;
 	}
 
 }

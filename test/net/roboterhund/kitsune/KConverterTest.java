@@ -103,7 +103,10 @@ public class KConverterTest {
 
 		intValue = converter.toInt (register);
 		assertEquals (4, intValue);
-		assertConversionStatusEquals (KConversionStatus.INEXACT);
+		assertTrue (
+			converter.lastConversionValid ()
+				&& !converter.lastConversionExact ()
+		);
 
 		longValue = converter.toLong (register);
 		assertEquals (4, longValue);
@@ -122,11 +125,24 @@ public class KConverterTest {
 		assertEquals (
 			new BigDecimal ("4.5").stripTrailingZeros (),
 			bigDecimalValue);
-		assertConversionStatusEquals (KConversionStatus.OK);
+		assertTrue (
+			converter.lastConversionValid ()
+				&& converter.lastConversionExact ()
+				&& !converter.lastConversionFailed ()
+		);
 
 		stringValue = converter.toString (register);
 		assertEquals ("4.5", stringValue);
 		assertConversionStatusEquals (KConversionStatus.OK);
+
+		register.setValue ((long) Integer.MAX_VALUE + 1);
+		// int overflow
+		converter.toInt (register);
+		assertTrue (
+			converter.lastConversionFailed ()
+				&& !converter.lastConversionValid ()
+				&& !converter.lastConversionExact ()
+		);
 	}
 
 	// test register value
@@ -164,7 +180,7 @@ public class KConverterTest {
 
 		assertEquals (
 			conversionStatus,
-			converter.lastOperationStatus
+			converter.lastConversionStatus
 		);
 	}
 
