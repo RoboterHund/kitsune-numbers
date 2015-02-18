@@ -70,6 +70,21 @@ public class KConverterTest {
 			2,
 			null
 		);
+
+		NumberFormatException thrownException = null;
+		try {
+			// this is expected to fail
+			converter.fromString (register, "4.+5");
+			assertRegisterEquals (
+				register.profile,
+				register.numerator,
+				register.denominator,
+				null
+			);
+		} catch (NumberFormatException e) {
+			thrownException = e;
+		}
+		assertTrue (thrownException != null);
 	}
 
 	// conversion from KNumRegister to other data types

@@ -473,7 +473,6 @@ public class KConverter {
 			integerValue = value.substring (0, decPointPos);
 
 			// get decimals
-			// TODO check for invalid decimals substring
 			int lastNonZero;
 			for (lastNonZero = value.length () - 1;
 			     lastNonZero > decPointPos;
@@ -494,6 +493,12 @@ public class KConverter {
 				// parse integer and decimal part
 				decimalValue =
 					value.substring (decPointPos + 1, lastNonZero + 1);
+
+				// without this check,
+				// a sign can be prepended to the decimal part
+				if (!Character.isDigit (decimalValue.charAt (0))) {
+					throw new NumberFormatException ();
+				}
 
 				if (setLongIntValue (toRegister, integerValue, decimalValue)) {
 					return;
