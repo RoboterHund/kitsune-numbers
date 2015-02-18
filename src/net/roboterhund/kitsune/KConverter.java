@@ -296,8 +296,8 @@ public class KConverter {
 
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			bigNumerator = new BigDecimal (fromRegister.numerator);
-			bigDenominator = new BigDecimal (fromRegister.denominator);
+			bigNumerator = BigDecimal.valueOf (fromRegister.numerator);
+			bigDenominator = BigDecimal.valueOf (fromRegister.denominator);
 
 			return divideFraction (bigNumerator, bigDenominator);
 
@@ -310,7 +310,7 @@ public class KConverter {
 		case KProfile.INT_INTEGER:
 			lastConversionStatus = KConversionStatus.OK;
 
-			return new BigDecimal (fromRegister.numerator);
+			return BigDecimal.valueOf (fromRegister.numerator);
 
 		default:
 			throw newIllegalProfileException (fromRegister);
