@@ -28,7 +28,7 @@ public class KCalculator {
 	 * @see net.roboterhund.kitsune.KCalculator#subtract(long, long)
 	 * @see net.roboterhund.kitsune.KCalculator#multiply(long, long)
 	 */
-	private long intResult;
+	long intResult;
 
 	/**
 	 * Add two numbers.
@@ -41,10 +41,7 @@ public class KCalculator {
 		KNumRegister add_to,
 		KNumRegister term_2) {
 
-		add (
-			add_to,
-			add_to,
-			term_2);
+		add (add_to, add_to, term_2);
 	}
 
 	/**
@@ -59,128 +56,7 @@ public class KCalculator {
 		KNumRegister term_1,
 		KNumRegister term_2) {
 
-		int route = KProfile.route[term_1.profile][term_2.profile];
-
-		switch (route) {
-		default:
-			// go to end
-			break;
-
-		case KProfile._LONG_RAT_:
-			if (multiply (term_1.numerator, term_2.denominator)) {
-				long n1_mul_d2 = intResult;
-
-				if (multiply (term_2.numerator, term_1.denominator)) {
-					long n2_mul_d1 = intResult;
-
-					if (add (n1_mul_d2, n2_mul_d1)) {
-						long numerator = intResult;
-
-						if (multiply (term_1.denominator, term_2.denominator)) {
-							result.setValue (
-								numerator,
-								intResult
-							);
-							return;
-						}
-					}
-				}
-			}
-			route = KProfile._BIG__RAT_;
-			break;
-
-		case KProfile._LONG_INT1:
-			if (multiply (term_1.numerator, term_2.denominator)) {
-				long n1_mul_d2 = intResult;
-
-				if (add (n1_mul_d2, term_2.numerator)) {
-					result.setValue (
-						intResult,
-						term_2.denominator
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__INT1;
-			break;
-
-		case KProfile._LONG_INT2:
-			if (multiply (term_2.numerator, term_1.denominator)) {
-				long n2_mul_d1 = intResult;
-
-				if (add (term_1.numerator, n2_mul_d1)) {
-					result.setValue (
-						intResult,
-						term_1.denominator
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__INT2;
-			break;
-
-		case KProfile._LONG_INT_:
-			if (add (term_1.numerator, term_2.numerator)) {
-				result.setValue (
-					intResult
-				);
-				return;
-			}
-			route = KProfile._BIG__INT_;
-			break;
-
-		case KProfile._INT__RAT_:
-			result.setValue (
-				term_1.numerator * term_2.denominator
-					+ term_2.numerator * term_1.denominator,
-				term_1.denominator * term_2.denominator
-			);
-			return;
-
-		case KProfile._INT__INT_:
-			result.setValue (
-				term_1.numerator + term_2.numerator
-			);
-			return;
-		}
-
-		// fallback
-
-		term_1.setBigIntegers ();
-		term_2.setBigIntegers ();
-
-		switch (route) {
-		case KProfile._BIG__RAT_:
-			result.setValue (
-				term_1.bigNumerator.multiply (term_2.bigDenominator)
-					.add (term_2.bigNumerator.multiply (term_1.bigDenominator)),
-				term_1.bigDenominator.multiply (term_2.bigDenominator)
-			);
-			break;
-
-		case KProfile._BIG__INT1:
-			result.setValue (
-				term_1.bigNumerator.multiply (term_2.bigDenominator)
-					.add (term_2.bigNumerator),
-				term_2.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT2:
-			result.setValue (
-				term_1.bigNumerator
-					.add (term_2.bigNumerator.multiply (term_1.bigDenominator)),
-				term_1.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT_:
-			result.setValue (
-				term_1.bigNumerator
-					.add (term_2.bigNumerator)
-			);
-			break;
-		}
+		KCalcAdd.add (this, result, term_1, term_2);
 	}
 
 	/**
@@ -194,10 +70,7 @@ public class KCalculator {
 		KNumRegister subtract_from,
 		KNumRegister subtrahend) {
 
-		subtract (
-			subtract_from,
-			subtract_from,
-			subtrahend);
+		subtract (subtract_from, subtract_from, subtrahend);
 	}
 
 	/**
@@ -212,128 +85,7 @@ public class KCalculator {
 		KNumRegister minuend,
 		KNumRegister subtrahend) {
 
-		int route = KProfile.route[minuend.profile][subtrahend.profile];
-
-		switch (route) {
-		default:
-			// go to end
-			break;
-
-		case KProfile._LONG_RAT_:
-			if (multiply (minuend.numerator, subtrahend.denominator)) {
-				long n1_mul_d2 = intResult;
-
-				if (multiply (subtrahend.numerator, minuend.denominator)) {
-					long n2_mul_d1 = intResult;
-
-					if (subtract (n1_mul_d2, n2_mul_d1)) {
-						long numerator = intResult;
-
-						if (multiply (minuend.denominator, subtrahend.denominator)) {
-							result.setValue (
-								numerator,
-								intResult
-							);
-							return;
-						}
-					}
-				}
-			}
-			route = KProfile._BIG__RAT_;
-			break;
-
-		case KProfile._LONG_INT1:
-			if (multiply (minuend.numerator, subtrahend.denominator)) {
-				long n1_mul_d2 = intResult;
-
-				if (subtract (n1_mul_d2, subtrahend.numerator)) {
-					result.setValue (
-						intResult,
-						subtrahend.denominator
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__INT1;
-			break;
-
-		case KProfile._LONG_INT2:
-			if (multiply (subtrahend.numerator, minuend.denominator)) {
-				long n2_mul_d1 = intResult;
-
-				if (subtract (minuend.numerator, n2_mul_d1)) {
-					result.setValue (
-						intResult,
-						minuend.denominator
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__INT2;
-			break;
-
-		case KProfile._LONG_INT_:
-			if (subtract (minuend.numerator, subtrahend.numerator)) {
-				result.setValue (
-					intResult
-				);
-				return;
-			}
-			route = KProfile._BIG__INT_;
-			break;
-
-		case KProfile._INT__RAT_:
-			result.setValue (
-				minuend.numerator * subtrahend.denominator
-					- subtrahend.numerator * minuend.denominator,
-				minuend.denominator * subtrahend.denominator
-			);
-			return;
-
-		case KProfile._INT__INT_:
-			result.setValue (
-				minuend.numerator - subtrahend.numerator
-			);
-			return;
-		}
-
-		// fallback
-
-		minuend.setBigIntegers ();
-		subtrahend.setBigIntegers ();
-
-		switch (route) {
-		case KProfile._BIG__RAT_:
-			result.setValue (
-				minuend.bigNumerator.multiply (subtrahend.bigDenominator)
-					.subtract (subtrahend.bigNumerator.multiply (minuend.bigDenominator)),
-				minuend.bigDenominator.multiply (subtrahend.bigDenominator)
-			);
-			break;
-
-		case KProfile._BIG__INT1:
-			result.setValue (
-				minuend.bigNumerator.multiply (subtrahend.bigDenominator)
-					.subtract (subtrahend.bigNumerator),
-				subtrahend.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT2:
-			result.setValue (
-				minuend.bigNumerator
-					.subtract (subtrahend.bigNumerator.multiply (minuend.bigDenominator)),
-				minuend.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT_:
-			result.setValue (
-				minuend.bigNumerator
-					.subtract (subtrahend.bigNumerator)
-			);
-			break;
-		}
+		KCalcSubtract.subtract (this, result, minuend, subtrahend);
 	}
 
 	/**
@@ -347,10 +99,7 @@ public class KCalculator {
 		KNumRegister multiplied,
 		KNumRegister factor_2) {
 
-		multiply (
-			multiplied,
-			multiplied,
-			factor_2);
+		multiply (multiplied, multiplied, factor_2);
 	}
 
 	/**
@@ -365,107 +114,7 @@ public class KCalculator {
 		KNumRegister factor_1,
 		KNumRegister factor_2) {
 
-		int route = KProfile.route[factor_1.profile][factor_2.profile];
-
-		switch (route) {
-		default:
-			// go to end
-			break;
-
-		case KProfile._LONG_RAT_:
-			if (multiply (factor_1.numerator, factor_2.numerator)) {
-				long numerator = intResult;
-
-				if (multiply (factor_1.denominator, factor_2.denominator)) {
-					result.setValue (
-						numerator,
-						intResult
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__RAT_;
-			break;
-
-		case KProfile._LONG_INT1:
-			if (multiply (factor_1.numerator, factor_2.numerator)) {
-				result.setValue (
-					intResult,
-					factor_2.denominator
-				);
-				return;
-			}
-			route = KProfile._BIG__INT1;
-			break;
-
-		case KProfile._LONG_INT2:
-			if (multiply (factor_1.numerator, factor_2.numerator)) {
-				result.setValue (
-					intResult,
-					factor_1.denominator
-				);
-				return;
-			}
-			route = KProfile._BIG__INT2;
-			break;
-
-		case KProfile._LONG_INT_:
-			if (multiply (factor_1.numerator, factor_2.numerator)) {
-				result.setValue (
-					intResult
-				);
-				return;
-			}
-			route = KProfile._BIG__INT_;
-			break;
-
-		case KProfile._INT__RAT_:
-			result.setValue (
-				factor_1.numerator * factor_2.numerator,
-				factor_1.denominator * factor_2.denominator
-			);
-			return;
-
-		case KProfile._INT__INT_:
-			result.setValue (
-				factor_1.numerator * factor_2.numerator
-			);
-			return;
-		}
-
-		// fallback
-
-		factor_1.setBigIntegers ();
-		factor_2.setBigIntegers ();
-
-		switch (route) {
-		case KProfile._BIG__RAT_:
-			result.setValue (
-				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
-				factor_1.bigDenominator.multiply (factor_2.bigDenominator)
-			);
-			break;
-
-		case KProfile._BIG__INT1:
-			result.setValue (
-				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
-				factor_2.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT2:
-			result.setValue (
-				factor_1.bigNumerator.multiply (factor_2.bigNumerator),
-				factor_1.bigDenominator
-			);
-			break;
-
-		case KProfile._BIG__INT_:
-			result.setValue (
-				factor_1.bigNumerator.multiply (factor_2.bigNumerator)
-			);
-			break;
-		}
+		KCalcMultiply.multiply (this, result, factor_1, factor_2);
 	}
 
 	/**
@@ -480,10 +129,7 @@ public class KCalculator {
 		KNumRegister divided,
 		KNumRegister divisor) {
 
-		divide (
-			divided,
-			divided,
-			divisor);
+		divide (divided, divided, divisor);
 	}
 
 	/**
@@ -499,106 +145,7 @@ public class KCalculator {
 		KNumRegister dividend,
 		KNumRegister divisor) {
 
-		int route = KProfile.route[dividend.profile][divisor.profile];
-
-		switch (route) {
-		default:
-			// go to end
-			break;
-
-		case KProfile._LONG_RAT_:
-			if (multiply (dividend.numerator, divisor.denominator)) {
-				long numerator = intResult;
-
-				if (multiply (divisor.numerator, dividend.denominator)) {
-					result.setValue (
-						numerator,
-						intResult
-					);
-					return;
-				}
-			}
-			route = KProfile._BIG__RAT_;
-			break;
-
-		case KProfile._LONG_INT1:
-			if (multiply (dividend.numerator, divisor.denominator)) {
-				result.setValue (
-					intResult,
-					divisor.numerator
-				);
-				return;
-			}
-			route = KProfile._BIG__INT1;
-			break;
-
-		case KProfile._LONG_INT2:
-			if (multiply (divisor.numerator, dividend.denominator)) {
-				result.setValue (
-					dividend.numerator,
-					intResult
-				);
-				return;
-			}
-			route = KProfile._BIG__INT2;
-			break;
-
-		case KProfile._LONG_INT_:
-			result.setValue (
-				dividend.numerator,
-				divisor.numerator
-			);
-			return;
-
-		case KProfile._INT__RAT_:
-			result.setValue (
-				dividend.numerator * divisor.denominator,
-				divisor.numerator * dividend.denominator
-			);
-			return;
-
-		case KProfile._INT__INT_:
-			result.setValue (
-				dividend.numerator,
-				divisor.numerator
-			);
-			return;
-		}
-
-		// fallback
-
-		dividend.setBigIntegers ();
-		divisor.setBigIntegers ();
-
-		switch (route) {
-		case KProfile._BIG__RAT_:
-			result.setValue (
-				dividend.bigNumerator.multiply (divisor.bigDenominator),
-				divisor.bigNumerator.multiply (dividend.bigDenominator)
-			);
-			break;
-
-		case KProfile._BIG__INT1:
-			result.setValue (
-				dividend.bigNumerator.multiply (divisor.bigDenominator),
-				divisor.bigNumerator
-			);
-			break;
-
-		case KProfile._BIG__INT2:
-			result.setValue (
-				dividend.bigNumerator,
-				divisor.bigNumerator.multiply (dividend.bigDenominator)
-			);
-			break;
-
-		case KProfile._BIG__INT_:
-			result.setValue (
-				dividend.bigNumerator,
-				divisor.bigNumerator
-			);
-			break;
-		}
+		KCalcDivide.divide (this, result, dividend, divisor);
 	}
 
 	/**
@@ -614,38 +161,7 @@ public class KCalculator {
 		KNumRegister dividend,
 		KNumRegister divisor) {
 
-		int route = KProfile.route[dividend.profile][divisor.profile];
-
-		switch (route) {
-		default:
-			// go to end
-			break;
-
-		case KProfile._BIG__INT_:
-			dividend.setBigIntegers ();
-			divisor.setBigIntegers ();
-			result.setValue (
-				dividend.bigNumerator.mod (divisor.bigNumerator)
-			);
-			break;
-
-		case KProfile._LONG_INT_:
-		case KProfile._INT__INT_:
-			result.setValue (
-				dividend.numerator % divisor.numerator
-			);
-			return;
-		}
-
-		// fallback
-
-		// a % b =
-		// a - (b * int (a / b))
-		divide (result, dividend, divisor);
-		integer (result);
-		multiply (result, divisor);
-
-		subtract (result, dividend, result);
+		KCalcDivide.modulo (this, result, dividend, divisor);
 	}
 
 	/**
@@ -670,27 +186,7 @@ public class KCalculator {
 		KNumRegister result,
 		KNumRegister number) {
 
-		switch (number.profile) {
-		case KProfile.BIG_RATIONAL:
-			number.setBigIntegers ();
-			result.setValue (
-				number.bigNumerator.divide (number.bigDenominator)
-			);
-			break;
-
-		case KProfile.LONG_RATIONAL:
-		case KProfile.INT_RATIONAL:
-			result.setValue (
-				number.numerator / number.denominator
-			);
-			break;
-
-		default:
-			if (result != number) {
-				result.copy (number);
-			}
-			break;
-		}
+		KCalcRound.integer (result, number);
 	}
 
 	/**
@@ -702,7 +198,7 @@ public class KCalculator {
 	 * @param term_2 second operand.
 	 * @return {@code true} iff operation completed without overflow.
 	 */
-	private boolean add (long term_1, long term_2) {
+	boolean add (long term_1, long term_2) {
 		if (term_1 >= 0) {
 			if (term_2 > 0
 				&& term_1 > Long.MAX_VALUE - term_2) {
@@ -732,7 +228,7 @@ public class KCalculator {
 	 * @param subtrahend second operand.
 	 * @return {@code true} iff operation completed without overflow.
 	 */
-	private boolean subtract (long minuend, long subtrahend) {
+	boolean subtract (long minuend, long subtrahend) {
 		if (minuend >= 0) {
 			if (subtrahend < 0
 				&& minuend > Long.MAX_VALUE + subtrahend) {
@@ -763,7 +259,7 @@ public class KCalculator {
 	 * @param factor_2 second operand.
 	 * @return {@code true} iff operation completed without overflow.
 	 */
-	private boolean multiply (long factor_1, long factor_2) {
+	boolean multiply (long factor_1, long factor_2) {
 		if (factor_2 > 0) {
 			if (factor_1 > Long.MAX_VALUE / factor_2
 				|| factor_1 < Long.MIN_VALUE / factor_2) {
