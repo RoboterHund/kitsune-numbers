@@ -170,10 +170,10 @@ public class KCalculator {
 	 * @param number the number.
 	 * Overwritten, decimal part is discarded.
 	 */
-	public void integer (
+	public void truncate (
 		KNumRegister number) {
 
-		integer (number, number);
+		truncate (number, number);
 	}
 
 	/**
@@ -182,11 +182,61 @@ public class KCalculator {
 	 * @param result overwritten with the result.
 	 * @param number the number.
 	 */
-	public void integer (
+	public void truncate (
 		KNumRegister result,
 		KNumRegister number) {
 
-		KCalcRound.integer (result, number);
+		KCalcRound.truncate (result, number);
+	}
+
+	/**
+	 * Get {@code floor (number)}.
+	 *
+	 * @param number the number.
+	 * Overwritten, decimal part is discarded.
+	 */
+	public void floor (
+		KNumRegister number) {
+
+		floor (number, number);
+	}
+
+	/**
+	 * Get {@code floor (number)}.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void floor (
+		KNumRegister result,
+		KNumRegister number) {
+
+		KCalcRound.floor (result, number);
+	}
+
+	/**
+	 * Get {@code ceiling (number)}.
+	 *
+	 * @param number the number.
+	 * Overwritten, decimal part is discarded.
+	 */
+	public void ceiling (
+		KNumRegister number) {
+
+		ceiling (number, number);
+	}
+
+	/**
+	 * Get {@code ceiling (number)}.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void ceiling (
+		KNumRegister result,
+		KNumRegister number) {
+
+		KCalcRound.ceiling (result, number);
 	}
 
 	/**

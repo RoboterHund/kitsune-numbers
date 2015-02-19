@@ -87,4 +87,118 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 	}
 
+	@Test
+	public void testRound () throws Exception {
+		reset ();
+
+		String aString;
+		BigDecimal bigA;
+
+		/* * * * * */
+		aString = "-2.5";
+		converter.fromString (result, aString);
+		calculator.truncate (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			-2,
+			1,
+			null
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.floor (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			-3,
+			1,
+			null
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.ceiling (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			-2,
+			1,
+			null
+		);
+
+/* * * * * */
+		aString = "+2.5";
+		converter.fromString (result, aString);
+		calculator.truncate (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			2,
+			1,
+			null
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.floor (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			2,
+			1,
+			null
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.ceiling (result);
+		assertResultEquals (
+			KProfile.INT_INTEGER,
+			3,
+			1,
+			null
+		);
+
+		/* * * * * */
+		aString = "-2000000000000000000000000000.5";
+		converter.fromString (result, aString);
+		calculator.truncate (result);
+		bigA = new BigDecimal (aString);
+		assertResultEquals (
+			KProfile.BIG_INTEGER,
+			result.numerator,
+			result.denominator,
+			bigA.divide (
+				BigDecimal.ONE,
+				0,
+				BigDecimal.ROUND_DOWN
+			)
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.floor (result);
+		assertResultEquals (
+			KProfile.BIG_INTEGER,
+			result.numerator,
+			result.denominator,
+			bigA.divide (
+				BigDecimal.ONE,
+				0,
+				BigDecimal.ROUND_FLOOR
+			)
+		);
+		// continue
+
+		converter.fromString (result, aString);
+		calculator.ceiling (result);
+		assertResultEquals (
+			KProfile.BIG_INTEGER,
+			result.numerator,
+			result.denominator,
+			bigA.divide (
+				BigDecimal.ONE,
+				0,
+				BigDecimal.ROUND_CEILING
+			)
+		);
+	}
+
 }

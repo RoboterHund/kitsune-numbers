@@ -157,7 +157,7 @@ abstract class KCalcDivide {
 		// a % b =
 		// a - (b * int (a / b))
 		KCalcDivide.divide (calc, result, dividend, divisor);
-		KCalcRound.integer (result, result);
+		KCalcRound.truncate (result, result);
 		KCalcMultiply.multiply (calc, result, result, divisor);
 
 		KCalcSubtract.subtract (calc, result, dividend, result);
