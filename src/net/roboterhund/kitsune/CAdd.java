@@ -6,7 +6,7 @@ package net.roboterhund.kitsune;
  * <li>Addition.</li>
  * </ul>
  */
-abstract class KCalcAdd {
+abstract class CAdd {
 
 	/**
 	 * Add two numbers.

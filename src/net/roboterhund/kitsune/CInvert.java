@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * <li>Inverse (reciprocal).</li>
  * </ul>
  */
-abstract class KCalcInvert {
+abstract class CInvert {
 
 	/**
 	 * Get absolute value.

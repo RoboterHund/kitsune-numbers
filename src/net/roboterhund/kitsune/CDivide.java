@@ -7,7 +7,7 @@ package net.roboterhund.kitsune;
  * <li>Modulo.</li>
  * </ul>
  */
-abstract class KCalcDivide {
+abstract class CDivide {
 
 	/**
 	 * Divide two numbers.
@@ -156,11 +156,11 @@ abstract class KCalcDivide {
 
 		// a % b =
 		// a - (b * int (a / b))
-		KCalcDivide.divide (calc, result, dividend, divisor);
-		KCalcRound.truncate (result, result);
-		KCalcMultiply.multiply (calc, result, result, divisor);
+		CDivide.divide (calc, result, dividend, divisor);
+		CRound.truncate (result, result);
+		CMultiply.multiply (calc, result, result, divisor);
 
-		KCalcSubtract.subtract (calc, result, dividend, result);
+		CSubtract.subtract (calc, result, dividend, result);
 	}
 
 }

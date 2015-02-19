@@ -6,7 +6,7 @@ package net.roboterhund.kitsune;
  * <li>Multiplication.</li>
  * </ul>
  */
-abstract class KCalcMultiply {
+abstract class CMultiply {
 
 	/**
 	 * Multiply two numbers.

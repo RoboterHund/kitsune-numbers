@@ -6,7 +6,7 @@ package net.roboterhund.kitsune;
  * <li>Subtraction.</li>
  * </ul>
  */
-abstract class KCalcSubtract {
+abstract class CSubtract {
 
 	/**
 	 * Subtract two numbers.

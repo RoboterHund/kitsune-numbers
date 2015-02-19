@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * <li>Ceiling.</li>
  * </ul>
  */
-public abstract class KCalcRound {
+abstract class CRound {
 
 	/**
 	 * Get the integer part of a number.

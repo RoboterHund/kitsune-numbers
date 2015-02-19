@@ -56,7 +56,7 @@ public class KCalculator {
 		KNumRegister term_1,
 		KNumRegister term_2) {
 
-		KCalcAdd.add (this, result, term_1, term_2);
+		CAdd.add (this, result, term_1, term_2);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class KCalculator {
 		KNumRegister minuend,
 		KNumRegister subtrahend) {
 
-		KCalcSubtract.subtract (this, result, minuend, subtrahend);
+		CSubtract.subtract (this, result, minuend, subtrahend);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class KCalculator {
 		KNumRegister factor_1,
 		KNumRegister factor_2) {
 
-		KCalcMultiply.multiply (this, result, factor_1, factor_2);
+		CMultiply.multiply (this, result, factor_1, factor_2);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class KCalculator {
 		KNumRegister dividend,
 		KNumRegister divisor) {
 
-		KCalcDivide.divide (this, result, dividend, divisor);
+		CDivide.divide (this, result, dividend, divisor);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class KCalculator {
 		KNumRegister dividend,
 		KNumRegister divisor) {
 
-		KCalcDivide.modulo (this, result, dividend, divisor);
+		CDivide.modulo (this, result, dividend, divisor);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class KCalculator {
 		KNumRegister result,
 		KNumRegister number) {
 
-		KCalcRound.truncate (result, number);
+		CRound.truncate (result, number);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class KCalculator {
 		KNumRegister result,
 		KNumRegister number) {
 
-		KCalcRound.floor (result, number);
+		CRound.floor (result, number);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class KCalculator {
 		KNumRegister result,
 		KNumRegister number) {
 
-		KCalcRound.ceiling (result, number);
+		CRound.ceiling (result, number);
 	}
 
 	/**
