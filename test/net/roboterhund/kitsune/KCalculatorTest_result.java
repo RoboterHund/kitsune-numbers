@@ -125,7 +125,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 			null
 		);
 
-/* * * * * */
+		/* * * * * */
 		aString = "+2.5";
 		converter.fromString (result, aString);
 		calculator.truncate (result);

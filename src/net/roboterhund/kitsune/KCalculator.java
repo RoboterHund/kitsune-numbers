@@ -240,6 +240,30 @@ public class KCalculator {
 	}
 
 	/**
+	 * Get absolute value of number.
+	 *
+	 * @param number the number.
+	 */
+	public void abs (
+		KNumRegister number) {
+
+		abs (number, number);
+	}
+
+	/**
+	 * Get absolute value of number.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void abs (
+		KNumRegister result,
+		KNumRegister number) {
+
+		CInvert.abs (result, number);
+	}
+
+	/**
 	 * Primitive addition, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
