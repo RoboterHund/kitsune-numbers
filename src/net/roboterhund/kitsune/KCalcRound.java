@@ -6,8 +6,8 @@ import java.math.BigInteger;
  * Operations:
  * <ul>
  * <li>Integer.</li>
- * <li>TODO Ceiling.</li>
- * <li>TODO Floor.</li>
+ * <li>Floor.</li>
+ * <li>Ceiling.</li>
  * </ul>
  */
 public abstract class KCalcRound {
