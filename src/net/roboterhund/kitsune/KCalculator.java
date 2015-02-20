@@ -334,7 +334,7 @@ public class KCalculator {
 	 * @return {@code true} iff operation completed without overflow.
 	 */
 	boolean multiply (long factor_1, long factor_2) {
-		if (factor_2 > 0) {
+		if (factor_2 > 1) {
 			if (factor_1 > Long.MAX_VALUE / factor_2
 				|| factor_1 < Long.MIN_VALUE / factor_2) {
 				//    factor_1 * factor_2 > Long.MAX_VALUE
@@ -351,13 +351,9 @@ public class KCalculator {
 				return false;
 			}
 
-		} else if (factor_2 == -1) {
-			if (factor_1 == Long.MIN_VALUE) {
-				// factor_1 * factor_2 =
-				// Long.MIN_VALUE * -1 = Long.MAX_VALUE + 1
-				return false;
-			}
 		}
+		// multiplying by -1 is always valid because
+		// Long.MIN_VALUE is not allowed here
 
 		intResult = factor_1 * factor_2;
 		return true;

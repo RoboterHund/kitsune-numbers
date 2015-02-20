@@ -64,9 +64,9 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 		b.setValue (1);
 		calculator.divide (result, a, b);
 		assertResultEquals (
-			KProfile.LONG_INTEGER,
-			Long.MIN_VALUE,
-			1,
+			KProfile.BIG_INTEGER,
+			result.numerator,
+			result.denominator,
 			BigDecimal.valueOf (Long.MIN_VALUE)
 		);
 

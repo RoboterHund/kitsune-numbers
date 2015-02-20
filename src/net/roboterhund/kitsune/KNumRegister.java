@@ -197,6 +197,14 @@ public class KNumRegister {
 	 * @param longValue new value.
 	 */
 	public void setValue (long longValue) {
+		if (longValue == Long.MIN_VALUE) {
+			// Long.MIN_VALUE not allowed to avoid overflows
+			setValue (
+				KEdges.MIN_LONG
+			);
+			return;
+		}
+
 		setInteger (longValue);
 
 		// invalidated
@@ -218,6 +226,16 @@ public class KNumRegister {
 		long numerator,
 		long denominator) {
 
+		if (numerator == Long.MIN_VALUE
+			|| denominator == Long.MIN_VALUE) {
+			// Long.MIN_VALUE not allowed to avoid overflows
+			setValue (
+				BigInteger.valueOf (numerator),
+				BigInteger.valueOf (denominator)
+			);
+			return;
+		}
+
 		// BigIntegers invalidated
 		bigNumerator = null;
 		bigDenominator = null;
@@ -232,61 +250,15 @@ public class KNumRegister {
 			div = modulo;
 		}
 
+		// simplify fraction
+		numerator /= gcd;
+		denominator /= gcd;
+
+		// ensure denominator positive
 		if (denominator < 0) {
-			// negative denominator
-			if ((
-				numerator == Long.MIN_VALUE || denominator == Long.MIN_VALUE
-			) && (
-				gcd == 1 || gcd == -1
-			)) {
-				// cannot make denominator positive
-				// without overflowing either the numerator or the denominator
-				// and the fraction cannot be simplified
-
-				if (numerator == Long.MIN_VALUE) {
-					// denominator != Long.MIN_VALUE
-					denominator = -denominator;
-
-					bigNumerator = KEdges.MIN_LONG_NEGATED;
-					bigDenominator = BigInteger.valueOf (denominator);
-
-					profile =
-						(denominator == 1) ?
-							KProfile.BIG_INTEGER :
-							KProfile.BIG_RATIONAL;
-
-				} else {
-					// denominator == Long.MIN_VALUE
-					bigNumerator = BigInteger.valueOf (-numerator);
-					bigDenominator = KEdges.MIN_LONG_NEGATED;
-
-					profile = KProfile.BIG_RATIONAL;
-				}
-				return;
-
-			} else {
-				// simplify fraction
-				numerator /= gcd;
-				denominator /= gcd;
-
-				// ensure denominator positive
-				if (denominator < 0) {
-					numerator = -numerator;
-					denominator = -denominator;
-				}
-			}
-
-		} else {
-			// denominator positive
-			// GCD != Long.MIN_VALUE
-			gcd = Math.abs (gcd);
-			numerator /= gcd;
-			denominator /= gcd;
+			numerator = -numerator;
+			denominator = -denominator;
 		}
-		// apparently, the last 'else' can be removed
-		// and the previous one moved here
-		// but that would be a hack
-		// (it would require a long overflow to produce the correct result)
 
 		if (denominator == 1) {
 			// integer
@@ -308,7 +280,9 @@ public class KNumRegister {
 		this.bigDenominator = BigInteger.ONE;
 
 		if (bigValue.compareTo (KEdges.MAX_LONG) <= 0
-			&& bigValue.compareTo (KEdges.MIN_LONG) >= 0) {
+			&& bigValue.compareTo (KEdges.MIN_LONG) > 0) {
+			// Long.MIN_VALUE excluded
+
 			// compact
 			setInteger (bigValue.longValue ());
 
@@ -351,7 +325,9 @@ public class KNumRegister {
 			bigDenominator = BigInteger.ONE;
 
 			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
-				&& bigNumerator.compareTo (KEdges.MIN_LONG) >= 0) {
+				&& bigNumerator.compareTo (KEdges.MIN_LONG) > 0) {
+				// Long.MIN_VALUE excluded
+
 				// compact
 				setInteger (bigNumerator.longValue ());
 
@@ -365,8 +341,10 @@ public class KNumRegister {
 
 			// denominator must be positive at this point
 			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
-				&& bigNumerator.compareTo (KEdges.MIN_LONG) >= 0
+				&& bigNumerator.compareTo (KEdges.MIN_LONG) > 0
 				&& bigDenominator.compareTo (KEdges.MAX_LONG) <= 0) {
+				// Long.MIN_VALUE excluded
+
 				// compact
 				setIrreducibleFraction (
 					bigNumerator.longValue (),
@@ -406,7 +384,7 @@ public class KNumRegister {
 	 * The numerator and denominator must form an irreducible fraction,
 	 * where {@code denominator > 1}.
 	 */
-	private void setIrreducibleFraction (
+	void setIrreducibleFraction (
 		long numerator,
 		long denominator) {
 

@@ -103,10 +103,10 @@ public class KNumRegisterTest {
 		// min long
 		testedNumber = new KNumRegister (Long.MIN_VALUE);
 		assertTestedNumberEquals (
-			KProfile.LONG_INTEGER,
-			Long.MIN_VALUE,
-			1,
-			null
+			KProfile.BIG_INTEGER,
+			testedNumber.numerator,
+			testedNumber.denominator,
+			BigDecimal.valueOf (Long.MIN_VALUE)
 		);
 
 
@@ -156,9 +156,9 @@ public class KNumRegisterTest {
 		int d = 5;
 		testedNumber = new KNumRegister (Long.MIN_VALUE, d);
 		assertTestedNumberEquals (
-			KProfile.LONG_RATIONAL,
-			Long.MIN_VALUE,
-			d,
+			KProfile.BIG_RATIONAL,
+			testedNumber.numerator,
+			testedNumber.denominator,
 			new BigDecimal (Long.MIN_VALUE).divide (
 				new BigDecimal (d),
 				converter.exactMathContext
