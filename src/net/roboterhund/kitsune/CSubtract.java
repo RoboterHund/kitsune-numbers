@@ -40,22 +40,15 @@ abstract class CSubtract {
 			break;
 
 		case KProfile._LONG_RAT_:
-			if (calc.multiply (
-				minuend.numerator, subtrahend.denominator)
-				) {
+			if (calc.multiply (minuend.numerator, subtrahend.denominator)) {
 				long n1_mul_d2 = calc.intResult;
 
-				if (calc.multiply (
-					subtrahend.numerator, minuend.denominator)
-					) {
-					long n2_mul_d1 = calc.intResult;
+				if (calc.multiply (subtrahend.numerator, minuend.denominator)) {
 
-					if (calc.subtract (n1_mul_d2, n2_mul_d1)) {
+					if (calc.subtract (n1_mul_d2, calc.intResult)) {
 						long numerator = calc.intResult;
 
-						if (calc.multiply (
-							minuend.denominator, subtrahend.denominator)
-							) {
+						if (calc.multiply (minuend.denominator, subtrahend.denominator)) {
 							result.setValue (
 								numerator,
 								calc.intResult
@@ -70,9 +63,8 @@ abstract class CSubtract {
 
 		case KProfile._LONG_INT1:
 			if (calc.multiply (minuend.numerator, subtrahend.denominator)) {
-				long n1_mul_d2 = calc.intResult;
 
-				if (calc.subtract (n1_mul_d2, subtrahend.numerator)) {
+				if (calc.subtract (calc.intResult, subtrahend.numerator)) {
 					result.setValue (
 						calc.intResult,
 						subtrahend.denominator
@@ -85,9 +77,8 @@ abstract class CSubtract {
 
 		case KProfile._LONG_INT2:
 			if (calc.multiply (subtrahend.numerator, minuend.denominator)) {
-				long n2_mul_d1 = calc.intResult;
 
-				if (calc.subtract (minuend.numerator, n2_mul_d1)) {
+				if (calc.subtract (minuend.numerator, calc.intResult)) {
 					result.setValue (
 						calc.intResult,
 						minuend.denominator

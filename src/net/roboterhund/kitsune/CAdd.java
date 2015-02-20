@@ -44,14 +44,11 @@ abstract class CAdd {
 				long n1_mul_d2 = calc.intResult;
 
 				if (calc.multiply (term_2.numerator, term_1.denominator)) {
-					long n2_mul_d1 = calc.intResult;
 
-					if (calc.add (n1_mul_d2, n2_mul_d1)) {
+					if (calc.add (n1_mul_d2, calc.intResult)) {
 						long numerator = calc.intResult;
 
-						if (calc.multiply (
-							term_1.denominator, term_2.denominator)
-							) {
+						if (calc.multiply (term_1.denominator, term_2.denominator)) {
 							result.setValue (
 								numerator,
 								calc.intResult
@@ -66,9 +63,8 @@ abstract class CAdd {
 
 		case KProfile._LONG_INT1:
 			if (calc.multiply (term_1.numerator, term_2.denominator)) {
-				long n1_mul_d2 = calc.intResult;
 
-				if (calc.add (n1_mul_d2, term_2.numerator)) {
+				if (calc.add (calc.intResult, term_2.numerator)) {
 					result.setValue (
 						calc.intResult,
 						term_2.denominator
@@ -81,9 +77,8 @@ abstract class CAdd {
 
 		case KProfile._LONG_INT2:
 			if (calc.multiply (term_2.numerator, term_1.denominator)) {
-				long n2_mul_d1 = calc.intResult;
 
-				if (calc.add (term_1.numerator, n2_mul_d1)) {
+				if (calc.add (term_1.numerator, calc.intResult)) {
 					result.setValue (
 						calc.intResult,
 						term_1.denominator
