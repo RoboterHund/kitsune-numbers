@@ -4,11 +4,21 @@
 _Java_ package for arbitrary-precision arithmetic.
 
 This package was designed to provide a balanced data type for applications that:  
-...process numbers that mostly fall within the range of `int` or ` long`.  
-...but have to continue working with large numbers.  
+...process numbers that mostly fall within the range of `int` or ` long`  
+...but have to continue working with large numbers  
 ...and may not result in errors due to accumulated rounding.  
 
 ---
+
+Supported operations:
+
+	add subtract multiply divide modulo
+	truncate floor ceiling
+	abs negate inverse
+	compare
+
+---
+
 This package provides:
 
 - A _register_ class to store rational numbers.  
@@ -29,7 +39,10 @@ This package provides:
 It may be slower than using hard-coded data types, but it will spare the trouble of having to choose them. Also, it will be faster than using `BigDecimal` everywhere, and will not have the unstability of `double`.  
 
 ---
+
 It started as part of a private repo, but then it started to look as an independent module.
+
+The biggest problem is that operations with big numbers are still as slow as using `BigInteger`, but at least the exactitude of the results is guaranteed.
 
 _RoboterHund87_  
 _2015_  
