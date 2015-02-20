@@ -16,13 +16,15 @@
 package net.roboterhund.kitsune;
 
 /**
- * Singleton object to perform calculations with
+ * Perform calculations with
  * {@link KNumRegister} objects.
  */
 public class KCalculator {
 
 	/**
 	 * Result of last primitive calculation.
+	 * <p>
+	 * (intResult = intermediate result)
 	 *
 	 * @see net.roboterhund.kitsune.KCalculator#add(long, long)
 	 * @see net.roboterhund.kitsune.KCalculator#subtract(long, long)
