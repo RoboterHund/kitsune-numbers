@@ -216,7 +216,7 @@ public class KNumRegister {
 	/**
 	 * Set fractional value.
 	 * <p>
-	 * Fraction is automatically normalized.
+	 * Fraction is automatically reduced and normalized.
 	 *
 	 * @param numerator new numerator.
 	 * @param denominator new denominator.
@@ -253,6 +253,23 @@ public class KNumRegister {
 		// simplify fraction
 		numerator /= gcd;
 		denominator /= gcd;
+
+		setIrreducibleValue (numerator, denominator);
+	}
+
+	/**
+	 * Set fractional value.
+	 * <p>
+	 * Fraction must be irreducible.
+	 * <p>
+	 * Fraction is automatically normalized.
+	 *
+	 * @param numerator new numerator.
+	 * @param denominator new denominator.
+	 */
+	void setIrreducibleValue (
+		long numerator,
+		long denominator) {
 
 		// ensure denominator positive
 		if (denominator < 0) {
@@ -295,7 +312,7 @@ public class KNumRegister {
 	/**
 	 * Set fractional value.
 	 * <p>
-	 * Fraction is automatically normalized.
+	 * Fraction is automatically reduced and normalized.
 	 *
 	 * @param bigNumerator new numerator.
 	 * @param bigDenominator new denominator.
@@ -314,6 +331,27 @@ public class KNumRegister {
 			bigDenominator = bigDenominator.divide (gcd);
 		}
 
+		setIrreducibleValue (bigNumerator, bigDenominator, true);
+	}
+
+	/**
+	 * Set fractional value.
+	 * <p>
+	 * Fraction must be irreducible.
+	 * <p>
+	 * Fraction is automatically normalized.
+	 *
+	 * @param bigNumerator new numerator.
+	 * @param bigDenominator new denominator.
+	 * @param checkSize if {@code true}, check whether
+	 * the size of the numerator and denominator allow
+	 * switching to another profile.
+	 */
+	void setIrreducibleValue (
+		BigInteger bigNumerator,
+		BigInteger bigDenominator,
+		boolean checkSize) {
+
 		// ensure denominator positive
 		if (bigDenominator.signum () < 0) {
 			bigNumerator = bigNumerator.negate ();
@@ -324,7 +362,8 @@ public class KNumRegister {
 			// integer
 			bigDenominator = BigInteger.ONE;
 
-			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
+			if (checkSize
+				&& bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
 				&& bigNumerator.compareTo (KEdges.MIN_LONG) > 0) {
 				// Long.MIN_VALUE excluded
 
@@ -340,7 +379,8 @@ public class KNumRegister {
 			// rational
 
 			// denominator must be positive at this point
-			if (bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
+			if (checkSize
+				&& bigNumerator.compareTo (KEdges.MAX_LONG) <= 0
 				&& bigNumerator.compareTo (KEdges.MIN_LONG) > 0
 				&& bigDenominator.compareTo (KEdges.MAX_LONG) <= 0) {
 				// Long.MIN_VALUE excluded

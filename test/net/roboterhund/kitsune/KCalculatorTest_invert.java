@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 public class KCalculatorTest_invert extends KCalculatorTest {
 
 	@Test
-	public void testAbs () throws Exception {
+	public void testInvert () throws Exception {
 		reset ();
 
 		String stringValue;
@@ -32,46 +32,26 @@ public class KCalculatorTest_invert extends KCalculatorTest {
 
 		/* * * * * */
 		stringValue = "-1";
-		converter.fromString (result, stringValue);
-		calculator.abs (result);
-		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+		assertInvertCorrect (stringValue);
 
 		/* * * * * */
 		stringValue = "12.34";
-		converter.fromString (result, stringValue);
-		calculator.abs (result);
-		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+		assertInvertCorrect (stringValue);
 
 		/* * * * * */
 		stringValue = String.valueOf (Long.MAX_VALUE);
-		converter.fromString (result, stringValue);
-		calculator.abs (result);
-		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+		assertInvertCorrect (stringValue);
 
 		/* * * * * */
 		stringValue = String.valueOf (
 			BigDecimal.valueOf (Long.MIN_VALUE).subtract (BigDecimal.ONE));
-		converter.fromString (result, stringValue);
-		calculator.abs (result);
-		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+		assertInvertCorrect (stringValue);
 
 		/* * * * * */
 		bigValue = BigDecimal.valueOf (Long.MIN_VALUE);
 		bigValue = bigValue.pow (3);
 		stringValue = String.valueOf (bigValue);
-		converter.fromString (result, stringValue);
-		calculator.abs (result);
-		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+		assertInvertCorrect (stringValue);
 
 		/* * * * * */
 		bigValue = BigDecimal.valueOf (Long.MIN_VALUE);
@@ -80,11 +60,69 @@ public class KCalculatorTest_invert extends KCalculatorTest {
 			converter.inexactMathContext
 		);
 		stringValue = bigValue.toPlainString ();
-		converter.fromString (result, stringValue);
+		assertInvertCorrect (stringValue);
+	}
+
+	// test inversion operations
+	void assertInvertCorrect (String stringValue) {
+		BigDecimal bigValue = new BigDecimal (stringValue);
+
+		BigDecimal bigAbs = bigValue.abs ();
+		BigDecimal bigNegate = bigValue.negate ();
+		BigDecimal bigInverse;
+		try {
+			bigInverse = BigDecimal.ONE.divide (
+				bigValue,
+				converter.exactMathContext
+			);
+		} catch (ArithmeticException e) {
+			bigInverse = BigDecimal.ONE.divide (
+				bigValue,
+				converter.inexactMathContext
+			);
+		}
+
+		String stringAbs = bigAbs.stripTrailingZeros ().toPlainString ();
+		String stringNegate = bigNegate.stripTrailingZeros ().toPlainString ();
+		String stringInverse = bigInverse.stripTrailingZeros ().toPlainString ();
+
+		converter.fromString (a, stringValue);
+
+		// abs
+		result.copy (a);
 		calculator.abs (result);
 		assertEquals (
-			new BigDecimal (stringValue).abs (),
-			converter.toBigDecimal (result));
+			stringAbs,
+			converter.toString (result));
+
+		calculator.abs (result, a);
+		assertEquals (
+			stringAbs,
+			converter.toString (result));
+
+		// negate
+		result.copy (a);
+		calculator.negate (result);
+		assertEquals (
+			stringNegate,
+			converter.toString (result));
+
+		calculator.negate (result, a);
+		assertEquals (
+			stringNegate,
+			converter.toString (result));
+
+		// inverse
+		result.copy (a);
+		calculator.inverse (result);
+		assertEquals (
+			stringInverse,
+			converter.toString (result));
+
+		calculator.inverse (result, a);
+		assertEquals (
+			stringInverse,
+			converter.toString (result));
 	}
 
 }

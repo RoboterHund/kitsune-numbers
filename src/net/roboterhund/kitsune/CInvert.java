@@ -38,12 +38,9 @@ abstract class CInvert {
 		switch (number.profile) {
 		case KProfile.BIG_RATIONAL:
 		case KProfile.BIG_INTEGER:
-			if (result != number) {
-				result.copy (number);
-			}
-			if (result.bigNumerator.signum () < 0) {
-				result.bigNumerator = result.bigNumerator.negate ();
-			}
+			result.profile = number.profile;
+			result.bigNumerator = number.bigNumerator.abs ();
+			result.bigDenominator = number.bigDenominator;
 			break;
 
 		case KProfile.LONG_RATIONAL:
@@ -51,15 +48,67 @@ abstract class CInvert {
 		case KProfile.INT_RATIONAL:
 		case KProfile.INT_INTEGER:
 			result.setIrreducibleFraction (
-				Math.abs (result.numerator),
-				result.denominator
+				Math.abs (number.numerator),
+				number.denominator
 			);
 			break;
 		}
 	}
 
-	// TODO negate (additive inverse)
+	/**
+	 * Negate (additive inverse).
+	 */
+	static void negate (
+		KNumRegister result,
+		KNumRegister number) {
 
-	// TODO multiplicative inverse (reciprocal)
+		switch (number.profile) {
+		case KProfile.BIG_RATIONAL:
+		case KProfile.BIG_INTEGER:
+			result.profile = number.profile;
+			result.bigNumerator = number.bigNumerator.negate ();
+			result.bigDenominator = number.bigDenominator;
+			break;
+
+		case KProfile.LONG_RATIONAL:
+		case KProfile.LONG_INTEGER:
+		case KProfile.INT_RATIONAL:
+		case KProfile.INT_INTEGER:
+			result.setIrreducibleFraction (
+				-number.numerator,
+				number.denominator
+			);
+			break;
+		}
+	}
+
+	/**
+	 * Multiplicative inverse (reciprocal).
+	 */
+	static void inverse (
+		KNumRegister result,
+		KNumRegister number) {
+
+		switch (number.profile) {
+		case KProfile.BIG_RATIONAL:
+		case KProfile.BIG_INTEGER:
+			result.setIrreducibleValue (
+				number.bigDenominator,
+				number.bigNumerator,
+				false
+			);
+			break;
+
+		case KProfile.LONG_RATIONAL:
+		case KProfile.LONG_INTEGER:
+		case KProfile.INT_RATIONAL:
+		case KProfile.INT_INTEGER:
+			result.setIrreducibleValue (
+				number.denominator,
+				number.numerator
+			);
+			break;
+		}
+	}
 
 }

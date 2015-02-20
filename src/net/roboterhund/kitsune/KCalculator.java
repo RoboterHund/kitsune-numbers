@@ -264,6 +264,54 @@ public class KCalculator {
 	}
 
 	/**
+	 * Get negated number.
+	 *
+	 * @param number the number.
+	 */
+	public void negate (
+		KNumRegister number) {
+
+		negate (number, number);
+	}
+
+	/**
+	 * Get negated number.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void negate (
+		KNumRegister result,
+		KNumRegister number) {
+
+		CInvert.negate (result, number);
+	}
+
+	/**
+	 * Get multiplicative inverse of number.
+	 *
+	 * @param number the number.
+	 */
+	public void inverse (
+		KNumRegister number) {
+
+		inverse (number, number);
+	}
+
+	/**
+	 * Get multiplicative inverse of number.
+	 *
+	 * @param result overwritten with the result.
+	 * @param number the number.
+	 */
+	public void inverse (
+		KNumRegister result,
+		KNumRegister number) {
+
+		CInvert.inverse (result, number);
+	}
+
+	/**
 	 * Primitive addition, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
