@@ -58,7 +58,7 @@ abstract class CInvert {
 	/**
 	 * Negate (additive inverse).
 	 */
-	static void negate (
+	public static void negate (
 		KNumRegister result,
 		KNumRegister number) {
 
@@ -85,7 +85,7 @@ abstract class CInvert {
 	/**
 	 * Multiplicative inverse (reciprocal).
 	 */
-	static void inverse (
+	public static void inverse (
 		KNumRegister result,
 		KNumRegister number) {
 

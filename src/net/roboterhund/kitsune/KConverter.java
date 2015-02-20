@@ -699,7 +699,7 @@ public class KConverter {
 		KNumRegister register) {
 
 		return new IllegalArgumentException (
-			"Invalid KRegister profile: "
+			"Invalid KNumRegister profile: "
 				+ register.profile
 				+ ".");
 	}
