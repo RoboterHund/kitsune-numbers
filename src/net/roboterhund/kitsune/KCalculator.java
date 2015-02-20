@@ -312,6 +312,33 @@ public class KCalculator {
 	}
 
 	/**
+	 * Compare two numbers.
+	 * <p>
+	 * Result of {@code compare (n1, n2)}:
+	 * <ul>
+	 * <li>{@code result <  0  =>  (n1  < n2)}</li>
+	 * <li>{@code result >  0  =>  (n1  > n2)}</li>
+	 * <li>{@code result <= 0  =>  (n1 <= n2)}</li>
+	 * <li>{@code result >= 0  =>  (n1 >= n2)}</li>
+	 * <li>{@code result == 0  =>  (n1 == n2)}</li>
+	 * <li>{@code result != 0  =>  (n1 != n2)}</li>
+	 * </ul>
+	 *
+	 * @param number_1 first number.
+	 * @param number_2 second number.
+	 * @return A negative, zero or positive number,
+	 * as specified in description.
+	 * The magnitude of the returned number
+	 * is irrelevant.
+	 */
+	public long compare (
+		KNumRegister number_1,
+		KNumRegister number_2) {
+
+		return CCompare.compare (this, number_1, number_2);
+	}
+
+	/**
 	 * Primitive addition, guarded against {@code long} overflow.
 	 * <p>
 	 * Result stored in {@link net.roboterhund.kitsune.KCalculator#intResult}.
