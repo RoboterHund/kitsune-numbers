@@ -206,11 +206,6 @@ public class KNumRegister {
 		}
 
 		setInteger (longValue);
-
-		// invalidated
-		bigNumerator = null;
-
-		bigDenominator = BigInteger.ONE;
 	}
 
 	/**
