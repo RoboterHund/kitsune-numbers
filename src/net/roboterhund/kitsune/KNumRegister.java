@@ -236,10 +236,6 @@ public class KNumRegister {
 			return;
 		}
 
-		// BigIntegers invalidated
-		bigNumerator = null;
-		bigDenominator = null;
-
 		// find greatest common divisor with Euclid's algorithm
 		long gcd = numerator;
 		long div = denominator;
@@ -293,9 +289,6 @@ public class KNumRegister {
 	 * @param bigValue new value.
 	 */
 	public void setValue (BigInteger bigValue) {
-		this.bigNumerator = bigValue;
-		this.bigDenominator = BigInteger.ONE;
-
 		if (bigValue.compareTo (KEdges.MAX_LONG) <= 0
 			&& bigValue.compareTo (KEdges.MIN_LONG) > 0) {
 			// Long.MIN_VALUE excluded
@@ -307,6 +300,9 @@ public class KNumRegister {
 			// unable to compact
 			profile = KProfile.BIG_INTEGER;
 		}
+
+		this.bigNumerator = bigValue;
+		this.bigDenominator = BigInteger.ONE;
 	}
 
 	/**
@@ -416,6 +412,11 @@ public class KNumRegister {
 		)) ?
 			KProfile.INT_INTEGER :
 			KProfile.LONG_INTEGER;
+
+		// invalidated
+		this.bigNumerator = null;
+
+		this.bigDenominator = BigInteger.ONE;
 	}
 
 	/**
@@ -441,6 +442,10 @@ public class KNumRegister {
 		)) ?
 			KProfile.INT_RATIONAL :
 			KProfile.LONG_RATIONAL;
+
+		// invalidated
+		this.bigNumerator = null;
+		this.bigDenominator = null;
 	}
 
 	/**
