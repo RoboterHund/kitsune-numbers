@@ -33,6 +33,27 @@ public class KCalculator {
 	long intResult;
 
 	/**
+	 * Register pool.
+	 */
+	public final KNumRegisterPool regPool;
+
+	/**
+	 * Get new calculator with new register pool.
+	 */
+	public KCalculator () {
+		regPool = new KNumRegisterPool ();
+	}
+
+	/**
+	 * Get new calculator.
+	 *
+	 * @param regPool register pool.
+	 */
+	public KCalculator (KNumRegisterPool regPool) {
+		this.regPool = regPool;
+	}
+
+	/**
 	 * Add two numbers.
 	 *
 	 * @param add_to number to add to.
