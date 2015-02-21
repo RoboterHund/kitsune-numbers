@@ -156,6 +156,7 @@ abstract class CMultiply {
 		case KProfile.BIG_RATIONAL:
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
+			// TODO implement rational exponentiation
 			throw new IllegalArgumentException (
 				ERR_MSG_RATIONAL_EXPONENT
 			);
@@ -165,6 +166,7 @@ abstract class CMultiply {
 		case KProfile.INT_INTEGER:
 			// integer exponent
 
+			// TODO more convenient way to manage registers
 			KNumRegisterPool regPool = calc.regPool;
 
 			KRegCont cont_1 = regPool.get ();
@@ -200,6 +202,7 @@ abstract class CMultiply {
 
 			multiplier.copy (base);
 
+			// TODO check for faster way
 			if (CCompare.compare (calc, exp, zero) > 0) {
 				while (true) {
 					CDivide.divideRemainder (calc, exp, expModulo, exp, two);
