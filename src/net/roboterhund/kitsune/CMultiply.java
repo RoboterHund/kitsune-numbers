@@ -15,6 +15,8 @@
  */
 package net.roboterhund.kitsune;
 
+import net.roboterhund.kitsune.KNumRegisterPool.KRegCont;
+
 /**
  * Operations:
  * <ul>
@@ -22,6 +24,12 @@ package net.roboterhund.kitsune;
  * </ul>
  */
 abstract class CMultiply {
+
+	/**
+	 * Rational exponent error message.
+	 */
+	public static final String ERR_MSG_RATIONAL_EXPONENT =
+		"Rational exponents not supported.";
 
 	/**
 	 * Multiply two numbers.
@@ -132,6 +140,92 @@ abstract class CMultiply {
 				factor_1.bigNumerator.multiply (factor_2.bigNumerator)
 			);
 			break;
+		}
+	}
+
+	/**
+	 * Exponentiation.
+	 */
+	public static void power (
+		KCalculator calc,
+		KNumRegister result,
+		KNumRegister base,
+		KNumRegister exponent) {
+
+		switch (exponent.profile) {
+		case KProfile.BIG_RATIONAL:
+		case KProfile.LONG_RATIONAL:
+		case KProfile.INT_RATIONAL:
+			throw new IllegalArgumentException (
+				ERR_MSG_RATIONAL_EXPONENT
+			);
+
+		case KProfile.BIG_INTEGER:
+		case KProfile.LONG_INTEGER:
+		case KProfile.INT_INTEGER:
+			// integer exponent
+
+			KNumRegisterPool regPool = calc.regPool;
+
+			KRegCont cont_1 = regPool.get ();
+			KRegCont cont_2 = regPool.get ();
+			KRegCont cont_3 = regPool.get ();
+			KRegCont cont_4 = regPool.get ();
+			KRegCont cont_5 = regPool.get ();
+			KRegCont cont_6 = regPool.get ();
+			KRegCont cont_7 = regPool.get ();
+
+			KNumRegister zero = cont_1.reg;
+			KNumRegister one = cont_2.reg;
+			KNumRegister two = cont_3.reg;
+
+			KNumRegister raised = cont_4.reg;
+			KNumRegister exp = cont_5.reg;
+			KNumRegister multiplier = cont_6.reg;
+			KNumRegister expModulo = cont_7.reg;
+
+			zero.setZeroValue ();
+			one.setValue (1);
+			two.setValue (2);
+
+			raised.setValue (1);
+
+			boolean expNegative =
+				CCompare.compare (calc, exponent, zero) < 0;
+			if (expNegative) {
+				CInvert.negate (exp, exponent);
+			} else {
+				exp.copy (exponent);
+			}
+
+			multiplier.copy (base);
+
+			if (CCompare.compare (calc, exp, zero) > 0) {
+				while (true) {
+					CDivide.divideRemainder (calc, exp, expModulo, exp, two);
+					if (CCompare.compare (calc, expModulo, zero) != 0) {
+						CMultiply.multiply (calc, raised, raised, multiplier);
+					}
+					if (CCompare.compare (calc, exp, zero) == 0) {
+						break;
+					}
+					CMultiply.multiply (calc, multiplier, multiplier, multiplier);
+				}
+			}
+
+			if (expNegative) {
+				CInvert.inverse (result, raised);
+			} else {
+				result.copy (raised);
+			}
+
+			regPool.discard (cont_1);
+			regPool.discard (cont_2);
+			regPool.discard (cont_3);
+			regPool.discard (cont_4);
+			regPool.discard (cont_5);
+			regPool.discard (cont_6);
+			regPool.discard (cont_7);
 		}
 	}
 

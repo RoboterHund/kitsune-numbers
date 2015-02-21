@@ -144,6 +144,21 @@ public class KCalculator {
 	}
 
 	/**
+	 * Get base raised to exponent.
+	 *
+	 * @param result overwritten with the result.
+	 * @param base base raised to exponent.
+	 * @param exponent exponent, must be integer.
+	 */
+	public void power (
+		KNumRegister result,
+		KNumRegister base,
+		KNumRegister exponent) {
+
+		CMultiply.power (this, result, base, exponent);
+	}
+
+	/**
 	 * Get the integer part of a number.
 	 *
 	 * @param result overwritten with the result.
