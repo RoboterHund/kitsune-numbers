@@ -38,13 +38,6 @@ public class KCalculator {
 	public final KNumRegisterPool regPool;
 
 	/**
-	 * Get new calculator with new register pool.
-	 */
-	public KCalculator () {
-		regPool = new KNumRegisterPool ();
-	}
-
-	/**
 	 * Get new calculator.
 	 *
 	 * @param regPool register pool.
@@ -169,6 +162,26 @@ public class KCalculator {
 		KNumRegister divisor) {
 
 		CDivide.divide (this, result, dividend, divisor);
+	}
+
+	/**
+	 * Integer division.
+	 * <p>
+	 * Optionally, get remainder.
+	 *
+	 * @param result overwritten with the result.
+	 * @param remainder if not {@code null}, overwritten with the remainder.
+	 * @param dividend number that is divided (does not change).
+	 * @param divisor number by which to divide.
+	 * @throws java.lang.ArithmeticException division by zero.
+	 */
+	public void divide (
+		KNumRegister result,
+		KNumRegister remainder,
+		KNumRegister dividend,
+		KNumRegister divisor) {
+
+		CDivide.divideRemainder (this, result, remainder, dividend, divisor);
 	}
 
 	/**

@@ -30,7 +30,7 @@ public abstract class KCalculatorTest {
 
 	// reset objects
 	protected void reset () {
-		calculator = new KCalculator ();
+		calculator = new KCalculator (new KNumRegisterPool ());
 
 		result = new KNumRegister ();
 		a = new KNumRegister ();

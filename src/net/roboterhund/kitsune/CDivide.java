@@ -15,6 +15,8 @@
  */
 package net.roboterhund.kitsune;
 
+import net.roboterhund.kitsune.KNumRegisterPool.KRegCont;
+
 /**
  * Operations:
  * <ul>
@@ -169,13 +171,58 @@ abstract class CDivide {
 
 		// fallback
 
-		// a % b =
-		// a - (b * int (a / b))
-		CDivide.divide (calc, result, dividend, divisor);
-		CRound.truncate (result, result);
-		CMultiply.multiply (calc, result, result, divisor);
+		KNumRegisterPool regPool = calc.regPool;
 
-		CSubtract.subtract (calc, result, dividend, result);
+		KRegCont cont_1 = regPool.get ();
+		KNumRegister temp_1 = cont_1.reg;
+
+		// a % b
+		// = a - (b * int (a / b))
+		CDivide.divide (calc, temp_1, dividend, divisor);
+		CRound.truncate (temp_1, temp_1);
+		CMultiply.multiply (calc, temp_1, temp_1, divisor);
+		CSubtract.subtract (calc, result, dividend, temp_1);
+
+		regPool.discard (cont_1);
+	}
+
+	/**
+	 * Integer division.
+	 * <p>
+	 * Optionally store remainder.
+	 */
+	public static void divideRemainder (
+		KCalculator calc,
+		KNumRegister result,
+		KNumRegister remainder,
+		KNumRegister dividend,
+		KNumRegister divisor) {
+
+		KNumRegisterPool regPool = calc.regPool;
+
+		KRegCont cont_1 = regPool.get ();
+		KNumRegister temp_1 = cont_1.reg;
+
+		KRegCont cont_2 = regPool.get ();
+		KNumRegister temp_2 = cont_2.reg;
+
+		// a // b
+		// = int (a / b)
+		CDivide.divide (calc, temp_1, dividend, divisor);
+		CRound.truncate (temp_1, temp_1);
+
+		if (remainder != null) {
+			// a % b
+			// = a - (b * int (a / b))
+			// = a - (b * a // b)
+			CMultiply.multiply (calc, temp_2, temp_1, divisor);
+			CSubtract.subtract (calc, remainder, dividend, temp_2);
+		}
+
+		result.copy (temp_1);
+
+		regPool.discard (cont_1);
+		regPool.discard (cont_2);
 	}
 
 }
