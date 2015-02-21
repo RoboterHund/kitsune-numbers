@@ -90,7 +90,7 @@ public class KCalculatorTest_invert extends KCalculatorTest {
 
 		// abs
 		result.copy (a);
-		calculator.abs (result);
+		calculator.abs (result, result);
 		assertEquals (
 			stringAbs,
 			converter.toString (result));
@@ -102,7 +102,7 @@ public class KCalculatorTest_invert extends KCalculatorTest {
 
 		// negate
 		result.copy (a);
-		calculator.negate (result);
+		calculator.negate (result, result);
 		assertEquals (
 			stringNegate,
 			converter.toString (result));
@@ -114,7 +114,7 @@ public class KCalculatorTest_invert extends KCalculatorTest {
 
 		// inverse
 		result.copy (a);
-		calculator.inverse (result);
+		calculator.inverse (result, result);
 		assertEquals (
 			stringInverse,
 			converter.toString (result));

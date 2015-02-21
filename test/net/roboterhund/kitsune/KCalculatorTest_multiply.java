@@ -60,7 +60,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		// continue
 
 		b.setValue (1, 2);
-		calculator.multiply (result, b);
+		calculator.multiply (result, result, b);
 		assertResultEquals (
 			KProfile.LONG_INTEGER,
 			result.numerator,

@@ -38,7 +38,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		a.copy (result);
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,
 			4,
@@ -47,7 +47,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			2,
@@ -56,7 +56,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,
 			8,
@@ -78,7 +78,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		// the result reverts to simple fraction representation
-		calculator.subtract (result, b);
+		calculator.subtract (result, result, b);
 		assertResultEquals (
 			KProfile.LONG_INTEGER,
 			Long.MAX_VALUE,
@@ -97,7 +97,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		/* * * * * */
 		aString = "-2.5";
 		converter.fromString (result, aString);
-		calculator.truncate (result);
+		calculator.truncate (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			-2,
@@ -107,7 +107,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.floor (result);
+		calculator.floor (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			-3,
@@ -117,7 +117,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.ceiling (result);
+		calculator.ceiling (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			-2,
@@ -128,7 +128,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		/* * * * * */
 		aString = "+2.5";
 		converter.fromString (result, aString);
-		calculator.truncate (result);
+		calculator.truncate (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			2,
@@ -138,7 +138,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.floor (result);
+		calculator.floor (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			2,
@@ -148,7 +148,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.ceiling (result);
+		calculator.ceiling (result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			3,
@@ -159,7 +159,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		/* * * * * */
 		aString = "-2000000000000000000000000000.5";
 		converter.fromString (result, aString);
-		calculator.truncate (result);
+		calculator.truncate (result, result);
 		bigA = new BigDecimal (aString);
 		assertResultEquals (
 			KProfile.BIG_INTEGER,
@@ -174,7 +174,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.floor (result);
+		calculator.floor (result, result);
 		assertResultEquals (
 			KProfile.BIG_INTEGER,
 			result.numerator,
@@ -188,7 +188,7 @@ public class KCalculatorTest_result extends KCalculatorTest {
 		// continue
 
 		converter.fromString (result, aString);
-		calculator.ceiling (result);
+		calculator.ceiling (result, result);
 		assertResultEquals (
 			KProfile.BIG_INTEGER,
 			result.numerator,

@@ -49,20 +49,6 @@ public class KCalculator {
 	/**
 	 * Add two numbers.
 	 *
-	 * @param add_to number to add to.
-	 * Overwritten with the result of the addition.
-	 * @param term_2 number to add.
-	 */
-	public void add (
-		KNumRegister add_to,
-		KNumRegister term_2) {
-
-		add (add_to, add_to, term_2);
-	}
-
-	/**
-	 * Add two numbers.
-	 *
 	 * @param result overwritten with the result.
 	 * @param term_1 first term.
 	 * @param term_2 second term.
@@ -73,20 +59,6 @@ public class KCalculator {
 		KNumRegister term_2) {
 
 		CAdd.add (this, result, term_1, term_2);
-	}
-
-	/**
-	 * Subtract two numbers.
-	 *
-	 * @param subtract_from number to subtract from.
-	 * Overwritten with the result of the subtraction.
-	 * @param subtrahend number subtracted.
-	 */
-	public void subtract (
-		KNumRegister subtract_from,
-		KNumRegister subtrahend) {
-
-		subtract (subtract_from, subtract_from, subtrahend);
 	}
 
 	/**
@@ -107,20 +79,6 @@ public class KCalculator {
 	/**
 	 * Multiply two numbers.
 	 *
-	 * @param multiplied first factor.
-	 * Overwritten with the result of the multiplication.
-	 * @param factor_2 second factor.
-	 */
-	public void multiply (
-		KNumRegister multiplied,
-		KNumRegister factor_2) {
-
-		multiply (multiplied, multiplied, factor_2);
-	}
-
-	/**
-	 * Multiply two numbers.
-	 *
 	 * @param result overwritten with the result.
 	 * @param factor_1 first factor.
 	 * @param factor_2 second factor.
@@ -131,21 +89,6 @@ public class KCalculator {
 		KNumRegister factor_2) {
 
 		CMultiply.multiply (this, result, factor_1, factor_2);
-	}
-
-	/**
-	 * Divide two numbers.
-	 *
-	 * @param divided number that is divided.
-	 * Overwritten with the result of the division.
-	 * @param divisor number by which to divide.
-	 * @throws java.lang.ArithmeticException division by zero.
-	 */
-	public void divide (
-		KNumRegister divided,
-		KNumRegister divisor) {
-
-		divide (divided, divided, divisor);
 	}
 
 	/**
@@ -201,18 +144,6 @@ public class KCalculator {
 	}
 
 	/**
-	 * Leave only the integer part of a number.
-	 *
-	 * @param number the number.
-	 * Overwritten, decimal part is discarded.
-	 */
-	public void truncate (
-		KNumRegister number) {
-
-		truncate (number, number);
-	}
-
-	/**
 	 * Get the integer part of a number.
 	 *
 	 * @param result overwritten with the result.
@@ -223,18 +154,6 @@ public class KCalculator {
 		KNumRegister number) {
 
 		CRound.truncate (result, number);
-	}
-
-	/**
-	 * Get {@code floor (number)}.
-	 *
-	 * @param number the number.
-	 * Overwritten, decimal part is discarded.
-	 */
-	public void floor (
-		KNumRegister number) {
-
-		floor (number, number);
 	}
 
 	/**
@@ -253,18 +172,6 @@ public class KCalculator {
 	/**
 	 * Get {@code ceiling (number)}.
 	 *
-	 * @param number the number.
-	 * Overwritten, decimal part is discarded.
-	 */
-	public void ceiling (
-		KNumRegister number) {
-
-		ceiling (number, number);
-	}
-
-	/**
-	 * Get {@code ceiling (number)}.
-	 *
 	 * @param result overwritten with the result.
 	 * @param number the number.
 	 */
@@ -273,17 +180,6 @@ public class KCalculator {
 		KNumRegister number) {
 
 		CRound.ceiling (result, number);
-	}
-
-	/**
-	 * Get absolute value of number.
-	 *
-	 * @param number the number.
-	 */
-	public void abs (
-		KNumRegister number) {
-
-		abs (number, number);
 	}
 
 	/**
@@ -302,17 +198,6 @@ public class KCalculator {
 	/**
 	 * Get negated number.
 	 *
-	 * @param number the number.
-	 */
-	public void negate (
-		KNumRegister number) {
-
-		negate (number, number);
-	}
-
-	/**
-	 * Get negated number.
-	 *
 	 * @param result overwritten with the result.
 	 * @param number the number.
 	 */
@@ -321,17 +206,6 @@ public class KCalculator {
 		KNumRegister number) {
 
 		CInvert.negate (result, number);
-	}
-
-	/**
-	 * Get multiplicative inverse of number.
-	 *
-	 * @param number the number.
-	 */
-	public void inverse (
-		KNumRegister number) {
-
-		inverse (number, number);
 	}
 
 	/**

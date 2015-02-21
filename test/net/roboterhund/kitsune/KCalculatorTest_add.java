@@ -39,7 +39,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, result);
+		calculator.add (result, result, result);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			6,
@@ -48,7 +48,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			7,
@@ -105,7 +105,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		/* * * * * */
 		result.setValue (0);
 		converter.fromDouble (a, 0.5);
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,
 			1,
@@ -114,7 +114,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			1,
@@ -123,7 +123,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		);
 		// continue
 
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_RATIONAL,
 			3,
@@ -134,7 +134,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		/* * * * * */
 		a.setValue (Integer.MAX_VALUE);
 		result.setValue (0);
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			Integer.MAX_VALUE,
@@ -144,7 +144,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		// continue
 
 		a.setValue (1);
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.LONG_INTEGER,
 			(long) Integer.MAX_VALUE + 1,
@@ -154,7 +154,7 @@ public class KCalculatorTest_add extends KCalculatorTest {
 		// continue
 
 		a.setValue (-1);
-		calculator.add (result, a);
+		calculator.add (result, result, a);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			Integer.MAX_VALUE,

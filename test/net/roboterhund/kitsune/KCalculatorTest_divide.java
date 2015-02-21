@@ -40,7 +40,7 @@ public class KCalculatorTest_divide extends KCalculatorTest {
 		// continue
 
 		b.setValue (1, 6);
-		calculator.divide (result, b);
+		calculator.divide (result, result, b);
 		assertResultEquals (
 			KProfile.INT_INTEGER,
 			4,
