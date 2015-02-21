@@ -83,7 +83,7 @@ public class KCalculatorTest_random extends KCalculatorTest {
 			bigDecimalOperand,
 			true,
 			out,
-			false
+			true
 		);
 
 		out.printf ("\n");

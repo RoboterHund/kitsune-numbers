@@ -420,7 +420,6 @@ public class KConverter {
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
 			return toBigDecimal (fromRegister)
-				.stripTrailingZeros ()
 				.toPlainString ();
 
 		case KProfile.BIG_INTEGER:
