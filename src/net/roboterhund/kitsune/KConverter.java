@@ -238,7 +238,7 @@ public class KConverter {
 	/**
 	 * Convert to {@code double}.
 	 * <p>
-	 * This method
+	 * <b>Note</b>: this method may involve object creation and
 	 * is subject to the limitations of the {@code double} data type.
 	 *
 	 * @param fromRegister number to convert.
@@ -246,13 +246,12 @@ public class KConverter {
 	 * {@code fromRegister} as possible.
 	 */
 	public double toDouble (KNumRegister fromRegister) {
+		double doubleValue;
+
 		switch (fromRegister.profile) {
 		case KProfile.BIG_RATIONAL:
-			lastConversionStatus = KConversionStatus.INEXACT;
-
-			return fromRegister.bigNumerator
-				.divide (fromRegister.bigDenominator)
-				.doubleValue ();
+			doubleValue = toBigDecimal (fromRegister).doubleValue ();
+			break;
 
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
@@ -261,16 +260,8 @@ public class KConverter {
 				(double) fromRegister.numerator / fromRegister.denominator;
 
 		case KProfile.BIG_INTEGER:
-			double doubleValue = fromRegister.bigNumerator.doubleValue ();
-
-			if (doubleValue == Double.POSITIVE_INFINITY
-				|| doubleValue == Double.NEGATIVE_INFINITY) {
-				lastConversionStatus = KConversionStatus.OVERFLOW;
-
-			} else {
-				lastConversionStatus = KConversionStatus.INEXACT;
-			}
-			return doubleValue;
+			doubleValue = fromRegister.bigNumerator.doubleValue ();
+			break;
 
 		case KProfile.LONG_INTEGER:
 			lastConversionStatus = KConversionStatus.INEXACT;
@@ -283,6 +274,15 @@ public class KConverter {
 		default:
 			throw newIllegalProfileException (fromRegister);
 		}
+
+		if (doubleValue == Double.POSITIVE_INFINITY
+			|| doubleValue == Double.NEGATIVE_INFINITY) {
+			lastConversionStatus = KConversionStatus.OVERFLOW;
+		} else {
+			lastConversionStatus = KConversionStatus.INEXACT;
+		}
+
+		return doubleValue;
 	}
 
 	/**

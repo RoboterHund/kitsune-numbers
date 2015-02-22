@@ -158,6 +158,35 @@ public class KConverterTest {
 				&& !converter.lastConversionValid ()
 				&& !converter.lastConversionExact ()
 		);
+
+		converter.fromString (
+			register,
+			"0.33333333333333333333333333333333333333333333333333333333333"
+		);
+		doubleValue = converter.toDouble (register);
+		double diff_actual_expected = Math.abs (
+			doubleValue
+				- 0.33333333333333333333333333333333333333333333333333333333333
+		);
+		assertTrue (diff_actual_expected < 2.220446049250313E-16);
+		assertTrue (
+			!converter.lastConversionFailed ()
+				&& converter.lastConversionValid ()
+				&& !converter.lastConversionExact ()
+		);
+
+		converter.fromDouble (
+			register,
+			Double.MAX_VALUE
+		);
+		new KCalculator (new KNumRegisterPool ())
+			.multiply (register, register, new KNumRegister (2));
+		converter.toDouble (register);
+		assertTrue (
+			converter.lastConversionFailed ()
+				&& !converter.lastConversionValid ()
+				&& !converter.lastConversionExact ()
+		);
 	}
 
 	// test register value
