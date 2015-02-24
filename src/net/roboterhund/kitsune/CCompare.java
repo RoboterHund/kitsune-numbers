@@ -145,7 +145,7 @@ abstract class CCompare {
 	 * | 0 (zero)
 	 * | +1 (positive)}
 	 */
-	static long getSign (KNumRegister number) {
+	static int getSign (KNumRegister number) {
 		if (number.bigNumerator != null) {
 			return number.bigNumerator.signum ();
 		} else if (number.numerator > 0) {
