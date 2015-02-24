@@ -25,9 +25,19 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 
 	public static final String NO_RAISE = "no raise";
 
+	KNumRegister maxError;
+
 	@Test
 	public void testMultiply () throws Exception {
 		reset ();
+
+		converter = new KConverter (100);
+
+		maxError = new KNumRegister ();
+		converter.fromString (
+			maxError,
+			"0.00000001"
+		);
 
 		/* * * * * */
 		converter.fromString (a, "12.34");
@@ -79,7 +89,9 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 
 		/* * * * * */
 		assertMultiplyCorrect ("2", "4", true, true);
-		assertMultiplyCorrect ("123.45", "24", true, true);
+		assertMultiplyCorrect ("2", "0.5", true, true);
+		assertMultiplyCorrect ("123.45", "24", true, false);
+		assertMultiplyCorrect ("10000", "0.5", true, false);
 		assertMultiplyCorrect ("1000000000.1", "2", true, false);
 		assertMultiplyCorrect ("1000000000.1", "-1000000000.1", false, false);
 		assertMultiplyCorrect (
@@ -108,14 +120,17 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		String expectedPower;
 		boolean expectedRaised;
 
+		String actual;
+
 		converter.fromString (a, string_1);
 		converter.fromString (b, string_2);
 
 		/* * * * * */
 		calculator.multiply (result, a, b);
+		actual = converter.toString (result);
 		assertEquals (
 			expectedProduct,
-			converter.toString (result)
+			actual
 		);
 
 		boolean raised;
@@ -133,7 +148,8 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 			}
 
 			try {
-				calculator.power (result, a, b);
+				calculator.power (result, a, b, maxError);
+				actual = converter.toString (result);
 				raised = true;
 			} catch (IllegalArgumentException e) {
 				if (e.getMessage ().equals (CMultiply.ERR_MSG_RATIONAL_EXPONENT)) {
@@ -144,10 +160,22 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 			}
 			assertEquals (expectedRaised, raised);
 			if (raised) {
-				assertEquals (
-					expectedPower,
-					converter.toString (result)
-				);
+				try {
+					assertEquals (
+						expectedPower,
+						actual
+					);
+				} catch (AssertionError error) {
+					CommonTest.out.printf (
+						"%s ^ %s\n"
+							+ " = %s (KCalculator)\n"
+							+ " = %s (Math.pow)\n",
+						string_1,
+						string_2,
+						actual,
+						expectedPower
+					);
+				}
 			}
 		}
 
@@ -155,9 +183,10 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		expectedProduct = expectedProduct (big_2, big_1);
 
 		calculator.multiply (result, b, a);
+		actual = converter.toString (result);
 		assertEquals (
 			expectedProduct,
-			converter.toString (result)
+			actual
 		);
 
 		if (raise_2_to_1) {
@@ -174,7 +203,8 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 			}
 
 			try {
-				calculator.power (result, b, a);
+				calculator.power (result, b, a, maxError);
+				actual = converter.toString (result);
 				raised = true;
 			} catch (IllegalArgumentException e) {
 				if (e.getMessage ().equals (CMultiply.ERR_MSG_RATIONAL_EXPONENT)) {
@@ -185,10 +215,22 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 			}
 			assertEquals (expectedRaised, raised);
 			if (raised) {
-				assertEquals (
-					expectedPower,
-					converter.toString (result)
-				);
+				try {
+					assertEquals (
+						expectedPower,
+						actual
+					);
+				} catch (AssertionError error) {
+					CommonTest.out.printf (
+						"%s ^ %s\n"
+							+ " = %s (KCalculator)"
+							+ " = %s (Math.pow)",
+						string_1,
+						string_2,
+						actual,
+						expectedPower
+					);
+				}
 			}
 		}
 	}
@@ -202,33 +244,40 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 
 	// expected power
 	private String expectedPower (BigDecimal big_1, BigDecimal big_2) {
-		int exp;
+		String power;
 		try {
-			exp = big_2.intValueExact ();
-		} catch (ArithmeticException e) {
-			throw new IllegalArgumentException (NO_RAISE);
-		}
-		if (exp > 0) {
-			BigDecimal result;
-			result = big_1.pow (exp, converter.exactMathContext);
-			return CommonTest.stripTrailingZeros (result).toPlainString ();
-		} else {
-			// Integer.MIN_VALUE not supported
-			BigDecimal result;
-			BigDecimal pow = big_1.pow (-exp, converter.exactMathContext);
-			try {
-				result = BigDecimal.ONE.divide (
-					pow,
-					converter.exactMathContext
-				);
-			} catch (ArithmeticException e) {
-				result = BigDecimal.ONE.divide (
-					pow,
-					converter.inexactMathContext
-				);
+			int exp = big_2.intValueExact ();
+			if (exp > 0) {
+				BigDecimal result;
+				result = big_1.pow (exp, converter.exactMathContext);
+				return CommonTest.stripTrailingZeros (result).toPlainString ();
+			} else {
+				// Integer.MIN_VALUE not supported
+				BigDecimal result;
+				BigDecimal pow = big_1.pow (-exp, converter.exactMathContext);
+				try {
+					result = BigDecimal.ONE.divide (
+						pow,
+						converter.exactMathContext
+					);
+				} catch (ArithmeticException e) {
+					result = BigDecimal.ONE.divide (
+						pow,
+						converter.inexactMathContext
+					);
+				}
+				power = CommonTest.stripTrailingZeros (result).toPlainString ();
 			}
-			return CommonTest.stripTrailingZeros (result).toPlainString ();
+
+		} catch (ArithmeticException e) {
+			double base = big_1.doubleValue ();
+			double exp = big_2.doubleValue ();
+			BigDecimal result;
+			result = BigDecimal.valueOf (Math.pow (base, exp));
+			power = CommonTest.stripTrailingZeros (result).toPlainString ();
 		}
+
+		return power;
 	}
 
 }

@@ -150,86 +150,182 @@ abstract class CMultiply {
 		KCalculator calc,
 		KNumRegister result,
 		KNumRegister base,
-		KNumRegister exponent) {
+		KNumRegister exponent,
+		KNumRegister maxError) {
 
 		switch (exponent.profile) {
 		case KProfile.BIG_RATIONAL:
 		case KProfile.LONG_RATIONAL:
 		case KProfile.INT_RATIONAL:
-			// TODO implement rational exponentiation
-			throw new IllegalArgumentException (
-				ERR_MSG_RATIONAL_EXPONENT
-			);
+			// rational exponent
+			if (base.profile == KProfile.INT_RATIONAL
+				&& base.numerator == 0) {
+				// 0
+				result.setZeroValue ();
+				return;
+			}
 
-		case KProfile.BIG_INTEGER:
-		case KProfile.LONG_INTEGER:
-		case KProfile.INT_INTEGER:
-			// integer exponent
-
-			// TODO more convenient way to manage registers
 			KNumRegisterPool regPool = calc.regPool;
 
 			KRegCont cont_1 = regPool.get ();
 			KRegCont cont_2 = regPool.get ();
 			KRegCont cont_3 = regPool.get ();
-			KRegCont cont_4 = regPool.get ();
-			KRegCont cont_5 = regPool.get ();
-			KRegCont cont_6 = regPool.get ();
-			KRegCont cont_7 = regPool.get ();
 
-			KNumRegister zero = cont_1.reg;
-			KNumRegister one = cont_2.reg;
-			KNumRegister two = cont_3.reg;
+			KNumRegister raiseExponent = cont_1.reg;
+			KNumRegister rootExponent = cont_2.reg;
+			KNumRegister temp_1 = cont_3.reg;
 
-			KNumRegister raised = cont_4.reg;
-			KNumRegister exp = cont_5.reg;
-			KNumRegister multiplier = cont_6.reg;
-			KNumRegister expModulo = cont_7.reg;
-
-			zero.setZeroValue ();
-			one.setValue (1);
-			two.setValue (2);
-
-			raised.setValue (1);
-
-			boolean expNegative =
-				CCompare.compare (calc, exponent, zero) < 0;
-			if (expNegative) {
-				CInvert.negate (exp, exponent);
-			} else {
-				exp.copy (exponent);
-			}
-
-			multiplier.copy (base);
-
-			// TODO check for faster way
-			if (CCompare.compare (calc, exp, zero) > 0) {
-				while (true) {
-					CDivide.divideRemainder (calc, exp, expModulo, exp, two);
-					if (CCompare.compare (calc, expModulo, zero) != 0) {
-						CMultiply.multiply (calc, raised, raised, multiplier);
-					}
-					if (CCompare.compare (calc, exp, zero) == 0) {
-						break;
-					}
-					CMultiply.multiply (calc, multiplier, multiplier, multiplier);
-				}
-			}
-
-			if (expNegative) {
-				CInvert.inverse (result, raised);
-			} else {
-				result.copy (raised);
-			}
+			// TODO implement "timeout" mechanism
+			CRound.split (raiseExponent, rootExponent, exponent);
+			CMultiply.exponential (calc, temp_1, base, raiseExponent);
+			CMultiply.principalRoot (calc, result, temp_1, rootExponent, maxError);
 
 			regPool.discard (cont_1);
 			regPool.discard (cont_2);
 			regPool.discard (cont_3);
-			regPool.discard (cont_4);
-			regPool.discard (cont_5);
-			regPool.discard (cont_6);
-			regPool.discard (cont_7);
+			break;
+
+		case KProfile.BIG_INTEGER:
+		case KProfile.LONG_INTEGER:
+		case KProfile.INT_INTEGER:
+			// integer exponent
+			exponential (calc, result, base, exponent);
+			break;
 		}
+	}
+
+	/**
+	 * Raise base to integer root.
+	 */
+	private static void exponential (
+		KCalculator calc,
+		KNumRegister result,
+		KNumRegister base,
+		KNumRegister exponent) {
+
+		KNumRegisterPool regPool = calc.regPool;
+
+		KRegCont cont_1 = regPool.get ();
+		KRegCont cont_2 = regPool.get ();
+		KRegCont cont_3 = regPool.get ();
+		KRegCont cont_4 = regPool.get ();
+		KRegCont cont_5 = regPool.get ();
+		KRegCont cont_6 = regPool.get ();
+		KRegCont cont_7 = regPool.get ();
+
+		KNumRegister zero = cont_1.reg;
+		KNumRegister one = cont_2.reg;
+		KNumRegister two = cont_3.reg;
+
+		KNumRegister raised = cont_4.reg;
+		KNumRegister exp = cont_5.reg;
+		KNumRegister multiplier = cont_6.reg;
+		KNumRegister expModulo = cont_7.reg;
+
+		zero.setZeroValue ();
+		one.setValue (1);
+		two.setValue (2);
+
+		raised.setValue (1);
+
+		boolean expNegative =
+			CCompare.compare (calc, exponent, zero) < 0;
+		if (expNegative) {
+			CInvert.negate (exp, exponent);
+		} else {
+			exp.copy (exponent);
+		}
+
+		multiplier.copy (base);
+
+		// TODO check for faster way
+		if (CCompare.compare (calc, exp, zero) > 0) {
+			while (true) {
+				CDivide.divideRemainder (calc, exp, expModulo, exp, two);
+				if (CCompare.compare (calc, expModulo, zero) != 0) {
+					CMultiply.multiply (calc, raised, raised, multiplier);
+				}
+				if (CCompare.compare (calc, exp, zero) == 0) {
+					break;
+				}
+				CMultiply.multiply (calc, multiplier, multiplier, multiplier);
+			}
+		}
+
+		if (expNegative) {
+			CInvert.inverse (result, raised);
+		} else {
+			result.copy (raised);
+		}
+
+		regPool.discard (cont_1);
+		regPool.discard (cont_2);
+		regPool.discard (cont_3);
+		regPool.discard (cont_4);
+		regPool.discard (cont_5);
+		regPool.discard (cont_6);
+		regPool.discard (cont_7);
+	}
+
+	/**
+	 * Compute principal root.
+	 */
+	private static void principalRoot (
+		KCalculator calc,
+		KNumRegister result,
+		KNumRegister base,
+		KNumRegister rootIndex,
+		KNumRegister maxError) {
+
+		if (CCompare.getSign (base) == -1) {
+			throw new ArithmeticException (
+				"Roots of negative numbers not supported."
+			);
+		}
+
+		KNumRegisterPool regPool = calc.regPool;
+
+		KRegCont cont_1 = regPool.get ();
+		KRegCont cont_2 = regPool.get ();
+		KRegCont cont_3 = regPool.get ();
+
+		KNumRegister approx = cont_1.reg;
+		KNumRegister index_minus_one = cont_2.reg;
+		KNumRegister delta = cont_3.reg;
+
+		// a_0
+		approx.copy (base);
+
+		// 1
+		index_minus_one.setValue (1);
+		// n - 1
+		CSubtract.subtract (calc, index_minus_one, rootIndex, index_minus_one);
+
+		while (true) {
+			// a_i ^ (n - 1)
+			CMultiply.exponential (calc, delta, approx, index_minus_one);
+			// base / (a_i ^ (n - 1))
+			CDivide.divide (calc, delta, base, delta);
+			// base / (a_i ^ (n - 1)) - a_i
+			CSubtract.subtract (calc, delta, delta, approx);
+			// delta = (base / (a_i ^ (n - 1)) - a_i) / n
+			CDivide.divide (calc, delta, delta, rootIndex);
+
+			// a_(i+1) = a_i + delta
+			CAdd.add (calc, approx, approx, delta);
+
+			CInvert.abs (delta, delta);
+			if (CCompare.compare (calc, delta, maxError) < 0) {
+				// |delta| < error
+				break;
+			}
+		}
+
+		result.copy (approx);
+
+		regPool.discard (cont_1);
+		regPool.discard (cont_2);
+		regPool.discard (cont_3);
 	}
 
 }

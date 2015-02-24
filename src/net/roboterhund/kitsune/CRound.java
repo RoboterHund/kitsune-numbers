@@ -23,6 +23,7 @@ import java.math.BigInteger;
  * <li>Integer.</li>
  * <li>Floor.</li>
  * <li>Ceiling.</li>
+ * <li>Split into numerator and denominator.</li>
  * </ul>
  */
 abstract class CRound {
@@ -140,6 +141,34 @@ abstract class CRound {
 			if (result != number) {
 				result.copy (number);
 			}
+			break;
+		}
+	}
+
+	/**
+	 * Split number into numerator and denominator.
+	 */
+	static void split (
+		KNumRegister resultNumerator,
+		KNumRegister resultDenominator,
+		KNumRegister number) {
+
+		switch (number.profile) {
+		case KProfile.BIG_RATIONAL:
+		case KProfile.BIG_INTEGER:
+			BigInteger bigNumerator = number.bigNumerator;
+			BigInteger bigDenominator = number.bigDenominator;
+
+			resultNumerator.setValue (bigNumerator);
+			resultDenominator.setValue (bigDenominator);
+			break;
+
+		default:
+			long numerator = number.numerator;
+			long denominator = number.denominator;
+
+			resultNumerator.setInteger (numerator);
+			resultDenominator.setInteger (denominator);
 			break;
 		}
 	}

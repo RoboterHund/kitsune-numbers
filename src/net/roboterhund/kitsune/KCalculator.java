@@ -153,9 +153,10 @@ public class KCalculator {
 	public void power (
 		KNumRegister result,
 		KNumRegister base,
-		KNumRegister exponent) {
+		KNumRegister exponent,
+		KNumRegister maxError) {
 
-		CMultiply.power (this, result, base, exponent);
+		CMultiply.power (this, result, base, exponent, maxError);
 	}
 
 	/**

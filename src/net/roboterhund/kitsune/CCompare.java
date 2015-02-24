@@ -137,4 +137,24 @@ abstract class CCompare {
 		throw new RuntimeException ("CCompare.compareTo: Invalid route.");
 	}
 
+	/**
+	 * Get sign of number.
+	 *
+	 * @return {@code
+	 * -1 (negative)
+	 * | 0 (zero)
+	 * | +1 (positive)}
+	 */
+	static long getSign (KNumRegister number) {
+		if (number.bigNumerator != null) {
+			return number.bigNumerator.signum ();
+		} else if (number.numerator > 0) {
+			return 1;
+		} else if (number.numerator == 0) {
+			return 0;
+		} else {
+			return -1;
+		}
+	}
+
 }

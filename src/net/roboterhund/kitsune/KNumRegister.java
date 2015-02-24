@@ -396,7 +396,7 @@ public class KNumRegister {
 	 * Set numerator and denominator, where
 	 * {@code denominator = 1}.
 	 */
-	private void setInteger (long numerator) {
+	void setInteger (long numerator) {
 		this.numerator = numerator;
 		this.denominator = 1;
 
