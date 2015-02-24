@@ -28,8 +28,8 @@ abstract class CMultiply {
 	/**
 	 * Rational exponent error message.
 	 */
-	public static final String ERR_MSG_RATIONAL_EXPONENT =
-		"Rational exponents not supported.";
+	public static final String ERR_MSG_NEGATIVE_BASE =
+		"Roots of negative numbers not supported.";
 
 	/**
 	 * Multiply two numbers.
@@ -269,6 +269,8 @@ abstract class CMultiply {
 
 	/**
 	 * Compute principal root.
+	 * <p>
+	 * {@code rootIndex} must be a positive integer.
 	 */
 	private static void principalRoot (
 		KCalculator calc,
@@ -278,8 +280,8 @@ abstract class CMultiply {
 		KNumRegister maxError) {
 
 		if (CCompare.getSign (base) == -1) {
-			throw new ArithmeticException (
-				"Roots of negative numbers not supported."
+			throw new IllegalArgumentException (
+				ERR_MSG_NEGATIVE_BASE
 			);
 		}
 
@@ -288,36 +290,50 @@ abstract class CMultiply {
 		KRegCont cont_1 = regPool.get ();
 		KRegCont cont_2 = regPool.get ();
 		KRegCont cont_3 = regPool.get ();
+		KRegCont cont_4 = regPool.get ();
+		KRegCont cont_5 = regPool.get ();
 
-		KNumRegister approx = cont_1.reg;
-		KNumRegister index_minus_one = cont_2.reg;
-		KNumRegister delta = cont_3.reg;
+		KNumRegister two = cont_1.reg;
+		KNumRegister lowBound = cont_2.reg;
+		KNumRegister highBound = cont_3.reg;
+		KNumRegister approx = cont_4.reg;
+		KNumRegister temp_1 = cont_5.reg;
 
-		// a_0
-		approx.copy (base);
+		// 2
+		two.setValue (2);
+
+		// 0
+		lowBound.setZeroValue ();
 
 		// 1
-		index_minus_one.setValue (1);
-		// n - 1
-		CSubtract.subtract (calc, index_minus_one, rootIndex, index_minus_one);
+		highBound.setValue (1);
+		if (CCompare.compare (calc, base, highBound) > 0) {
+			// base > 1
+			highBound.copy (base);
+		}
 
+		long sign;
 		while (true) {
-			// a_i ^ (n - 1)
-			CMultiply.exponential (calc, delta, approx, index_minus_one);
-			// base / (a_i ^ (n - 1))
-			CDivide.divide (calc, delta, base, delta);
-			// base / (a_i ^ (n - 1)) - a_i
-			CSubtract.subtract (calc, delta, delta, approx);
-			// delta = (base / (a_i ^ (n - 1)) - a_i) / n
-			CDivide.divide (calc, delta, delta, rootIndex);
-
-			// a_(i+1) = a_i + delta
-			CAdd.add (calc, approx, approx, delta);
-
-			CInvert.abs (delta, delta);
-			if (CCompare.compare (calc, delta, maxError) < 0) {
-				// |delta| < error
+			// lb + hb
+			CAdd.add (calc, approx, lowBound, highBound);
+			// (lb + hb) / 2
+			// = estimated root
+			CDivide.divide (calc, approx, approx, two);
+			// estimated root ^ exponent
+			CMultiply.exponential (calc, temp_1, approx, rootIndex);
+			// (estimated root ^ exponent) - base
+			CSubtract.subtract (calc, temp_1, temp_1, base);
+			sign = CCompare.getSign (temp_1);
+			// |(estimated root ^ exponent) - base|
+			CInvert.abs (temp_1, temp_1);
+			if (CCompare.compare (calc, temp_1, maxError) < 0) {
+				// |(estimated root ^ exponent) - base| < error
 				break;
+			}
+			if (sign > 0) {
+				highBound.copy (approx);
+			} else {
+				lowBound.copy (approx);
 			}
 		}
 
@@ -326,6 +342,8 @@ abstract class CMultiply {
 		regPool.discard (cont_1);
 		regPool.discard (cont_2);
 		regPool.discard (cont_3);
+		regPool.discard (cont_4);
+		regPool.discard (cont_5);
 	}
 
 }

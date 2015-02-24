@@ -36,7 +36,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		maxError = new KNumRegister ();
 		converter.fromString (
 			maxError,
-			"0.00000001"
+			"0.00000000000000000000000000000000000000000000000001"
 		);
 
 		/* * * * * */
@@ -91,7 +91,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		assertMultiplyCorrect ("2", "4", true, true);
 		assertMultiplyCorrect ("2", "0.5", true, true);
 		assertMultiplyCorrect ("123.45", "24", true, false);
-		assertMultiplyCorrect ("10000", "0.5", true, false);
+		assertMultiplyCorrect ("123.45", "2.5", true, false);
 		assertMultiplyCorrect ("1000000000.1", "2", true, false);
 		assertMultiplyCorrect ("1000000000.1", "-1000000000.1", false, false);
 		assertMultiplyCorrect (
@@ -139,7 +139,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 				expectedPower = expectedPower (big_1, big_2);
 				expectedRaised = true;
 			} catch (IllegalArgumentException e) {
-				if (e.getMessage ().equals (NO_RAISE)) {
+				if (NO_RAISE.equals (e.getMessage ())) {
 					expectedPower = null;
 					expectedRaised = false;
 				} else {
@@ -152,7 +152,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 				actual = converter.toString (result);
 				raised = true;
 			} catch (IllegalArgumentException e) {
-				if (e.getMessage ().equals (CMultiply.ERR_MSG_RATIONAL_EXPONENT)) {
+				if (CMultiply.ERR_MSG_NEGATIVE_BASE.equals (e.getMessage ())) {
 					raised = false;
 				} else {
 					throw e;
@@ -194,7 +194,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 				expectedPower = expectedPower (big_2, big_1);
 				expectedRaised = true;
 			} catch (IllegalArgumentException e) {
-				if (e.getMessage ().equals (NO_RAISE)) {
+				if (NO_RAISE.equals (e.getMessage ())) {
 					expectedPower = null;
 					expectedRaised = false;
 				} else {
@@ -207,7 +207,7 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 				actual = converter.toString (result);
 				raised = true;
 			} catch (IllegalArgumentException e) {
-				if (e.getMessage ().equals (CMultiply.ERR_MSG_RATIONAL_EXPONENT)) {
+				if (CMultiply.ERR_MSG_NEGATIVE_BASE.equals (e.getMessage ())) {
 					raised = false;
 				} else {
 					throw e;
@@ -271,6 +271,9 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 
 		} catch (ArithmeticException e) {
 			double base = big_1.doubleValue ();
+			if (base < 0) {
+				throw new IllegalArgumentException (NO_RAISE);
+			}
 			double exp = big_2.doubleValue ();
 			BigDecimal result;
 			result = BigDecimal.valueOf (Math.pow (base, exp));
