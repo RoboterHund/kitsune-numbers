@@ -211,25 +211,20 @@ abstract class CMultiply {
 		KRegCont cont_4 = regPool.get ();
 		KRegCont cont_5 = regPool.get ();
 		KRegCont cont_6 = regPool.get ();
-		KRegCont cont_7 = regPool.get ();
 
-		KNumRegister zero = cont_1.reg;
-		KNumRegister one = cont_2.reg;
-		KNumRegister two = cont_3.reg;
+		KNumRegister one = cont_1.reg;
+		KNumRegister two = cont_2.reg;
+		KNumRegister raised = cont_3.reg;
+		KNumRegister exp = cont_4.reg;
+		KNumRegister multiplier = cont_5.reg;
+		KNumRegister expModulo = cont_6.reg;
 
-		KNumRegister raised = cont_4.reg;
-		KNumRegister exp = cont_5.reg;
-		KNumRegister multiplier = cont_6.reg;
-		KNumRegister expModulo = cont_7.reg;
-
-		zero.setZeroValue ();
 		one.setValue (1);
 		two.setValue (2);
 
 		raised.setValue (1);
 
-		boolean expNegative =
-			CCompare.compare (calc, exponent, zero) < 0;
+		boolean expNegative = CCompare.getSign (exponent) == -1;
 		if (expNegative) {
 			CInvert.negate (exp, exponent);
 		} else {
@@ -238,14 +233,13 @@ abstract class CMultiply {
 
 		multiplier.copy (base);
 
-		// TODO check for faster way
-		if (CCompare.compare (calc, exp, zero) > 0) {
+		if (CCompare.getSign (exp) > 0) {
 			while (true) {
 				CDivide.divideRemainder (calc, exp, expModulo, exp, two);
-				if (CCompare.compare (calc, expModulo, zero) != 0) {
+				if (CCompare.getSign (expModulo) != 0) {
 					CMultiply.multiply (calc, raised, raised, multiplier);
 				}
-				if (CCompare.compare (calc, exp, zero) == 0) {
+				if (CCompare.getSign (exp) == 0) {
 					break;
 				}
 				CMultiply.multiply (calc, multiplier, multiplier, multiplier);
@@ -264,7 +258,6 @@ abstract class CMultiply {
 		regPool.discard (cont_4);
 		regPool.discard (cont_5);
 		regPool.discard (cont_6);
-		regPool.discard (cont_7);
 	}
 
 	/**
