@@ -14,9 +14,12 @@ This package was designed to provide a balanced data type for applications that:
 The available operations are:
 
 	add subtract multiply divide modulo
+	power*
 	truncate floor ceiling
 	abs negate inverse
 	compare
+
+*Rational exponents: limited precision, negative base not supported, not suited for large degree roots.
 
 Possible conversion (to and from) are:
 
