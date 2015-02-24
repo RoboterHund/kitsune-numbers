@@ -90,6 +90,9 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 		/* * * * * */
 		assertMultiplyCorrect ("2", "4", true, true);
 		assertMultiplyCorrect ("2", "0.5", true, true);
+		assertMultiplyCorrect ("0.01", "0.5", true, true);
+		assertMultiplyCorrect ("1.45", "1000", true, true);
+		assertMultiplyCorrect ("1.45", "24", true, true);
 		assertMultiplyCorrect ("123.45", "24", true, false);
 		assertMultiplyCorrect ("123.45", "2.5", true, false);
 		assertMultiplyCorrect ("1000000000.1", "2", true, false);
@@ -166,6 +169,11 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 						actual
 					);
 				} catch (AssertionError error) {
+					//noinspection ConstantConditions
+					assertEquals (
+						expectedPower.substring (0, expectedPower.length () - 1),
+						actual.substring (0, expectedPower.length () - 1)
+					);
 					CommonTest.out.printf (
 						"%s ^ %s\n"
 							+ " = %s (KCalculator)\n"
@@ -221,12 +229,17 @@ public class KCalculatorTest_multiply extends KCalculatorTest {
 						actual
 					);
 				} catch (AssertionError error) {
+					//noinspection ConstantConditions
+					assertEquals (
+						expectedPower.substring (0, expectedPower.length () - 1),
+						actual.substring (0, expectedPower.length () - 1)
+					);
 					CommonTest.out.printf (
 						"%s ^ %s\n"
-							+ " = %s (KCalculator)"
-							+ " = %s (Math.pow)",
-						string_1,
+							+ " = %s (KCalculator)\n"
+							+ " = %s (Math.pow)\n",
 						string_2,
+						string_1,
 						actual,
 						expectedPower
 					);

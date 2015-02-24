@@ -290,7 +290,7 @@ abstract class CMultiply {
 		KNumRegister lowBound = cont_2.reg;
 		KNumRegister highBound = cont_3.reg;
 		KNumRegister approx = cont_4.reg;
-		KNumRegister temp_1 = cont_5.reg;
+		KNumRegister error = cont_5.reg;
 
 		// 2
 		two.setValue (2);
@@ -313,13 +313,13 @@ abstract class CMultiply {
 			// = estimated root
 			CDivide.divide (calc, approx, approx, two);
 			// estimated root ^ exponent
-			CMultiply.exponential (calc, temp_1, approx, rootIndex);
+			CMultiply.exponential (calc, error, approx, rootIndex);
 			// (estimated root ^ exponent) - base
-			CSubtract.subtract (calc, temp_1, temp_1, base);
-			sign = CCompare.getSign (temp_1);
+			CSubtract.subtract (calc, error, error, base);
+			sign = CCompare.getSign (error);
 			// |(estimated root ^ exponent) - base|
-			CInvert.abs (temp_1, temp_1);
-			if (CCompare.compare (calc, temp_1, maxError) < 0) {
+			CInvert.abs (error, error);
+			if (CCompare.compare (calc, error, maxError) < 0) {
 				// |(estimated root ^ exponent) - base| < error
 				break;
 			}
@@ -329,6 +329,20 @@ abstract class CMultiply {
 				lowBound.copy (approx);
 			}
 		}
+
+		// allowed error
+		error.setValue (1);
+		if (CCompare.compare (calc, maxError, error) < 0) {
+			// allowedError < 1
+			CInvert.inverse (error, maxError);
+			CRound.truncate (error, error);
+			CInvert.inverse (error, error);
+		}
+
+		// rounding
+		CDivide.divide (calc, approx, approx, error);
+		CRound.truncate (approx, approx);
+		CMultiply.multiply (calc, approx, approx, error);
 
 		result.copy (approx);
 
